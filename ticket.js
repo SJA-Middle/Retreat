@@ -6,7 +6,7 @@ async function drawTicket(t) {
   // 웹 글꼴은 쓰는 글자만 그때그때 받아오므로, 그릴 글자를 미리 불러 둔다(이름 글자가 다른 글꼴로 나오는 것 방지)
   try {
     const all = [t.label, t.title, t.big, t.bigLabel].concat(t.when.flat(), t.rows.flat(), t.pay.map(p => p[0])).join(' ');
-    await Promise.all(["400 52px 'Black Han Sans'", "400 15px 'Pretendard Variable'", "700 15px 'Pretendard Variable'"].map(f => document.fonts.load(f, all)));
+    await Promise.all(["400 52px 'Black Han Sans'", "400 17px 'Pretendard Variable'", "600 17px 'Pretendard Variable'", "700 15px 'Pretendard Variable'"].map(f => document.fonts.load(f, all)));
     await document.fonts.ready;
   } catch (e) { }
   const S = 2, W = 420, P = 24, IW = W - P * 2;
@@ -36,17 +36,25 @@ async function drawTicket(t) {
   head();
   const cutY = y; y += 22;
   // 큰 글씨(접수 번호 또는 이름)
-  y += 6;
-  font(400, 52, disp);
-  ops.push(['t', t.bigLabel, P, y + 44, '#586379', 400, 14]);
-  ops.push(['tr', t.big, W - P, y + 48, '#17214A', 400, 52, disp]);
-  y += 66;
+  y += 8;
+  if (t.bigMode === 'name') {
+    // 이름 바로 옆에 '선생님'
+    font(400, 44, disp); const nw = x.measureText(t.big).width;
+    ops.push(['t', t.big, P, y + 44, '#17214A', 400, 44, disp]);
+    ops.push(['t', t.bigLabel, P + nw + 10, y + 42, '#586379', 400, 17]);
+    y += 60;
+  } else {
+    // '접수 번호' 글자를 번호 바로 위에
+    ops.push(['t', t.bigLabel, P, y + 14, '#586379', 400, 14]);
+    ops.push(['t', t.big, P, y + 22 + 50, '#17214A', 400, 52, disp]);
+    y += 94;
+  }
   // 항목
   t.rows.forEach(([k, v]) => {
-    font(600, 15); const ls = wrap(v, IW - 98);
-    ops.push(['t', k, P, y + 16, '#586379', 400, 15]);
-    ls.forEach(l => { ops.push(['t', l, P + 98, y + 16, '#1A2233', 600, 15]); y += 24; });
-    y += 4;
+    font(600, 17); const ls = wrap(v, IW - 104);
+    ops.push(['t', k, P, y + 18, '#586379', 400, 17]);
+    ls.forEach(l => { ops.push(['t', l, P + 104, y + 18, '#1A2233', 600, 17]); y += 27; });
+    y += 5;
   });
   // 회비 안내
   if (t.pay.length) {

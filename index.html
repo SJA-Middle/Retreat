@@ -124,10 +124,10 @@ main { max-width: 620px; margin: 0 auto; padding: 4px 16px calc(120px + env(safe
   radial-gradient(circle at 100% 50%, transparent 11px, var(--paper) 11.5px) right / 51% 100% no-repeat; position: relative; }
 .ticket .cut::after { content: ''; position: absolute; left: 18px; right: 18px; top: 50%; border-top: 2px dashed var(--line); }
 .ticket .body { background: var(--paper); border-radius: 0 0 22px 22px; padding: 6px 22px 22px; }
-.ticket .no { display: flex; align-items: baseline; justify-content: space-between; }
+.ticket .no { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin-top: 8px; }
 .ticket .no span { color: var(--sub); font-size: 14px; }
 .ticket .no b { font-family: var(--display); font-weight: 400; font-size: 52px; line-height: 1; color: var(--night); letter-spacing: .02em; }
-.ticket dl { display: grid; grid-template-columns: 86px 1fr; gap: 8px 12px; margin: 16px 0 0; font-size: 15px; }
+.ticket dl { display: grid; grid-template-columns: 92px 1fr; gap: 10px 12px; margin: 20px 0 0; font-size: 17px; }
 .ticket dt { color: var(--sub); }
 .ticket dd { margin: 0; font-weight: 600; }
 .ticket .pay { margin-top: 18px; padding: 12px 14px; border-radius: 12px; background: #FDF6E3; font-size: 14px; color: #6B4B00; }
@@ -164,7 +164,7 @@ main { max-width: 620px; margin: 0 auto; padding: 4px 16px calc(120px + env(safe
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script src="config.js"></script>
-<script src="ticket.js?v=3"></script>
+<script src="ticket.js?v=4"></script>
 <script>
 const $ = s => document.querySelector(s);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -519,10 +519,12 @@ function done(r) {
   $('#actions').hidden = true;
   $('#sky').classList.add('compact');
   const m = String(r.ts || '').match(/^\d{4}-(\d{2})-(\d{2}) (\d{2}:\d{2})/);
-  const when = m ? (+m[1]) + '월 ' + (+m[2]) + '일 ' + m[3] : '';
+  const m0 = String(r.ts || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  const wd = m0 ? '(' + '일월화수목금토'[new Date(+m0[1], +m0[2] - 1, +m0[3]).getDay()] + ')' : '';
+  const when = m ? (+m[1]) + '월 ' + (+m[2]) + '일' + wd + ' ' + m[3] : '';
   const cs = getComputedStyle(document.documentElement);
   ticketImg.data = { label: '참가 접수증', color: (cs.getPropertyValue('--night') || '#17214A').trim(), title: r.title || C.title, when: [['일시', r.dates], ['장소', r.place]].filter(x => x[1]),
-    bigLabel: '접수 번호', big: String(r.no).padStart(3, '0'), rows: [['이름', r.name], ['부서·학년', r.dept + ' ' + r.grade], ['접수 시각', when]],
+    bigMode: 'stack', bigLabel: '접수 번호', big: String(r.no).padStart(3, '0'), rows: [['이름', r.name], ['부서·학년', r.dept + ' ' + r.grade], ['접수 시각', when]],
     pay: r.fee || r.account ? [r.fee ? ['회비 ' + r.fee, true] : null, r.account ? [r.account, !r.fee] : null, ['입금하실 때 학생 이름으로 보내 주세요.', false]].filter(Boolean) : [],
     logos: ['church.png', 'jungdeung.png'], file: r.name };
   $('#main').innerHTML = '<p class="snap">이 접수증을 캡처하거나 아래 버튼으로 저장해 두세요.</p>' +

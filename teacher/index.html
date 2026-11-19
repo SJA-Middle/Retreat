@@ -127,7 +127,7 @@ main { max-width: 620px; margin: 0 auto; padding: 4px 16px calc(120px + env(safe
 .ticket .no { display: flex; align-items: baseline; justify-content: space-between; }
 .ticket .no span { color: var(--sub); font-size: 14px; }
 .ticket .no b { font-family: var(--display); font-weight: 400; font-size: 52px; line-height: 1; color: var(--night); letter-spacing: .02em; }
-.ticket dl { display: grid; grid-template-columns: 86px 1fr; gap: 8px 12px; margin: 16px 0 0; font-size: 15px; }
+.ticket dl { display: grid; grid-template-columns: 92px 1fr; gap: 10px 12px; margin: 20px 0 0; font-size: 17px; }
 .ticket dt { color: var(--sub); }
 .ticket dd { margin: 0; font-weight: 600; }
 .ticket .pay { margin-top: 18px; padding: 12px 14px; border-radius: 12px; background: #FDF6E3; font-size: 14px; color: #6B4B00; }
@@ -160,6 +160,8 @@ main { max-width: 620px; margin: 0 auto; padding: 4px 16px calc(120px + env(safe
 .cons .ft input { width: 24px; height: 24px; accent-color: var(--night); flex: none; margin: 0; }
 .ticket.staff .head { background: var(--pine); }
 .ticket .no b.nm { font-size: 40px; }
+.ticket .no.nmrow { justify-content: flex-start; gap: 10px; margin-top: 8px; }
+.ticket .no.nmrow span { font-size: 17px; }
 </style>
 </head>
 <body>
@@ -183,7 +185,7 @@ main { max-width: 620px; margin: 0 auto; padding: 4px 16px calc(120px + env(safe
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script src="../config.js"></script>
-<script src="../ticket.js?v=3"></script>
+<script src="../ticket.js?v=4"></script>
 <script>
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
@@ -474,16 +476,18 @@ function done(r) {
   $('#actions').hidden = true;
   $('#sky').classList.add('compact');
   const m = String(r.ts || '').match(/^\d{4}-(\d{2})-(\d{2}) (\d{2}:\d{2})/);
-  const when = m ? (+m[1]) + '월 ' + (+m[2]) + '일 ' + m[3] : '';
+  const m0 = String(r.ts || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  const wd = m0 ? '(' + '일월화수목금토'[new Date(+m0[1], +m0[2] - 1, +m0[3]).getDay()] + ')' : '';
+  const when = m ? (+m[1]) + '월 ' + (+m[2]) + '일' + wd + ' ' + m[3] : '';
   const cs = getComputedStyle(document.documentElement);
   ticketImg.data = { label: '교사 참석 접수증', color: (cs.getPropertyValue('--pine') || '#2E6E5C').trim(), title: r.title || C.title, when: [['일시', r.dates], ['장소', r.place]].filter(x => x[1]),
-    bigLabel: '선생님', big: r.name, rows: [['참석', r.arrive], ['이동', r.move === '버스' ? '교회 버스' : r.move === '카풀' ? '카풀 (' + r.ride + ')' : r.move]].concat(r.leadHope ? [['조장', '희망']] : []).concat([['접수 시각', when]]),
+    bigMode: 'name', bigLabel: '선생님', big: r.name, rows: [['참석', r.arrive], ['이동', r.move === '버스' ? '교회 버스' : r.move === '카풀' ? '카풀 (' + r.ride + ')' : r.move]].concat(r.leadHope ? [['조장', '희망']] : []).concat([['접수 시각', when]]),
     pay: r.account ? [['회비 입금 계좌', false], [r.account, true], ['입금하실 때 선생님 이름으로 보내 주세요.', false]] : [],
     logos: ['../church.png', '../jungdeung.png'], file: r.name };
   $('#main').innerHTML = '<p class="snap">이 접수증을 캡처하거나 아래 버튼으로 저장해 두세요.</p>' +
     '<div class="ticket staff" role="group" aria-label="교사 참석 접수증">' +
     '<div class="head"><small>교사 참석 접수증</small><h2>' + esc(r.title || C.title) + '</h2>' + (r.dates || r.place ? '<p class="when">' + [['일시', r.dates], ['장소', r.place]].filter(x => x[1]).map(x => '<span>' + x[0] + '</span>' + esc(x[1])).join('<br>') + '</p>' : '') + '</div>' +
-    '<div class="cut"></div><div class="body"><div class="no"><span>선생님</span><b class="nm">' + esc(r.name) + '</b></div>' +
+    '<div class="cut"></div><div class="body"><div class="no nmrow"><b class="nm">' + esc(r.name) + '</b><span>선생님</span></div>' +
     '<dl><dt>참석</dt><dd>' + esc(r.arrive) + '</dd><dt>이동</dt><dd>' + esc(r.move === '버스' ? '교회 버스' : r.move === '카풀' ? '카풀 (' + r.ride + ')' : r.move) + '</dd>' + (r.leadHope ? '<dt>조장</dt><dd>희망</dd>' : '') + '<dt>접수 시각</dt><dd>' + esc(when) + '</dd></dl>' +
     (r.account ? '<div class="pay">회비 입금 계좌<br><b>' + esc(r.account) + '</b><br>입금하실 때 선생님 이름으로 보내 주세요.</div>' : '') +
     '</div></div>' +
