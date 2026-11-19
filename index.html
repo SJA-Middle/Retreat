@@ -553,6 +553,8 @@ window.addEventListener('pageshow', e => { if (e.persisted && step !== 99) { Obj
     C = fresh;
     renderHead();
     if (first || step === -1 || (!C.open && step < 99)) renderIntro();
+    // 주소 끝에 ?demo 를 붙이면 신청하지 않고 접수증 화면을 미리 볼 수 있다(저장되는 것 없음)
+    if (/[?&]demo\b/.test(location.search)) { const d = new Date(Date.now() + 9 * 3600e3).toISOString(); const ts = d.slice(0, 10) + ' ' + d.slice(11, 19); done({ no: 1, name: '홍길동', dept: '2부', grade: '2학년', ts, title: C.title, dates: C.dates, place: C.place, fee: C.fee, account: C.account }); }
   } catch (e) {
     if (C) return;
     $('#main').innerHTML = '<section class="fail"><p><b>신청서를 불러오지 못했어요.</b></p><p style="color:var(--sub);margin-top:8px">' + esc(e.message) + '</p><button class="btn block" style="margin-top:18px" onclick="location.reload()">다시 불러오기</button></section>';
