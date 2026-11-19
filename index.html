@@ -133,6 +133,13 @@ main { max-width: 620px; margin: 0 auto; padding: 4px 16px calc(120px + env(safe
 .ticket .pay { margin-top: 18px; padding: 12px 14px; border-radius: 12px; background: #FDF6E3; font-size: 14px; color: #6B4B00; }
 .after { text-align: center; color: var(--sub); font-size: 14px; margin-top: 22px; }
 .after .btn { margin-top: 14px; }
+.snap { max-width: 420px; margin: 16px auto 0; padding: 12px 14px; border-radius: 12px; background: #FFF4D6; color: #6B4B00; font-size: 14px; font-weight: 600; text-align: center; line-height: 1.5; }
+.after .acts2 { display: grid; gap: 10px; max-width: 420px; margin: 16px auto 0; }
+.after .acts2 .btn { margin-top: 0; }
+.tkimg { position: fixed; inset: 0; z-index: 60; background: #0d1330e6; overflow: auto; padding: 24px 16px; }
+.tkimg .in { max-width: 420px; margin: 0 auto; display: grid; gap: 12px; }
+.tkimg p { color: #fff; text-align: center; font-size: 15px; line-height: 1.5; }
+.tkimg img { width: 100%; border-radius: 16px; -webkit-touch-callout: default; }
 .fail { background: var(--paper); border-radius: var(--r-l); padding: 22px 20px; margin-top: -10px; position: relative; }
 </style>
 </head>
@@ -157,6 +164,7 @@ main { max-width: 620px; margin: 0 auto; padding: 4px 16px calc(120px + env(safe
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script src="config.js"></script>
+<script src="ticket.js"></script>
 <script>
 const $ = s => document.querySelector(s);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -337,11 +345,11 @@ function vStudent() {
 }
 function stepGuardian() {
   return '<h2>보호자 연락처를 알려 주세요</h2><p class="lead">수련회 중에 급한 일이 생기면 이 번호로 연락드려요.</p>' +
-    input('gname', '보호자 이름', { max: 20, ac: 'name' }) +
+    input('gname', '보호자 이름', { max: 20, ac: 'off' }) +
     '<div class="field"><span class="label">학생과의 관계</span>' + choice('grel', ['아버지', '어머니', '기타']) +
     '<input class="inp etc" id="grelEtc" data-k="grelEtc" placeholder="예: 할머니" value="' + esc(F.grelEtc) + '" maxlength="10"' + (F.grel === '기타' ? '' : ' hidden') + '>' +
     '<div class="err" data-e="grel"></div></div>' +
-    input('gphone', '보호자 휴대폰', { im: 'tel', ph: '010-0000-0000', ac: 'tel', max: 13 });
+    input('gphone', '보호자 휴대폰', { im: 'tel', ph: '010-0000-0000', ac: 'off', max: 13 });
 }
 function vGuardian() {
   let ok = need('gname', '보호자 이름을 적어 주세요.');
@@ -512,17 +520,27 @@ function done(r) {
   $('#sky').classList.add('compact');
   const m = String(r.ts || '').match(/^\d{4}-(\d{2})-(\d{2}) (\d{2}:\d{2})/);
   const when = m ? (+m[1]) + '월 ' + (+m[2]) + '일 ' + m[3] : '';
-  $('#main').innerHTML = '<div class="ticket" role="group" aria-label="참가 접수증">' +
+  const cs = getComputedStyle(document.documentElement);
+  ticketImg.data = { label: '참가 접수증', color: (cs.getPropertyValue('--night') || '#17214A').trim(), title: r.title || C.title, when: [['일시', r.dates], ['장소', r.place]].filter(x => x[1]),
+    bigLabel: '접수 번호', big: String(r.no).padStart(3, '0'), rows: [['이름', r.name], ['부서·학년', r.dept + ' ' + r.grade], ['접수 시각', when]],
+    pay: r.fee || r.account ? [r.fee ? ['회비 ' + r.fee, true] : null, r.account ? [r.account, !r.fee] : null, ['입금하실 때 학생 이름으로 보내 주세요.', false]].filter(Boolean) : [],
+    logos: ['church.png', 'jungdeung.png'], file: r.name };
+  $('#main').innerHTML = '<p class="snap">이 접수증을 캡처하거나 아래 버튼으로 저장해 두세요.</p>' +
+    '<div class="ticket" role="group" aria-label="참가 접수증">' +
     '<div class="head"><small>참가 접수증</small><h2>' + esc(r.title || C.title) + '</h2>' + (r.dates || r.place ? '<p class="when">' + [['일시', r.dates], ['장소', r.place]].filter(x => x[1]).map(x => '<span>' + x[0] + '</span>' + esc(x[1])).join('<br>') + '</p>' : '') + '</div>' +
     '<div class="cut"></div><div class="body"><div class="no"><span>접수 번호</span><b>' + String(r.no).padStart(3, '0') + '</b></div>' +
     '<dl><dt>이름</dt><dd>' + esc(r.name) + '</dd><dt>부서·학년</dt><dd>' + esc(r.dept + ' ' + r.grade) + '</dd><dt>접수 시각</dt><dd>' + esc(when) + '</dd></dl>' +
     (r.fee || r.account ? '<div class="pay">' + (r.fee ? '회비 <b>' + esc(r.fee) + '</b>' : '') + (r.account ? '<br>' + esc(r.account) : '') + '<br>입금하실 때 학생 이름으로 보내 주세요.</div>' : '') +
     '</div></div>' +
     '<div class="after"><p>' + (r.updated ? '이미 접수된 신청서를 새 내용으로 바꿨어요.' : '신청이 접수되었어요.') + ' 조와 버스는 수련회 전에 따로 안내드려요.</p>' +
-    '<button class="btn light" id="again">다른 학생 신청하기</button></div>';
+    '<div class="acts2"><button class="btn lamp block" id="saveT">접수증 저장하기</button><button class="btn light block" id="again">첫 화면으로</button></div></div>';
+  $('#saveT').onclick = saveTicket;
   $('#again').onclick = () => { Object.assign(F, F0()); renderIntro(); window.scrollTo(0, 0); };
   window.scrollTo(0, 0);
 }
+
+// 뒤로 가기 등으로 예전 화면이 그대로 되살아나면 처음부터 새로 쓰게 한다
+window.addEventListener('pageshow', e => { if (e.persisted && step !== 99) { Object.assign(F, F0()); if (C) renderIntro(); window.scrollTo(0, 0); } });
 
 (async function start() {
   try { const c = JSON.parse(localStorage.getItem('rt-cfg') || 'null'); if (c && c.title) { C = c; renderHead(); renderIntro(); } } catch (e) { }

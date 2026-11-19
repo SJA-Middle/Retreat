@@ -133,6 +133,13 @@ main { max-width: 620px; margin: 0 auto; padding: 4px 16px calc(120px + env(safe
 .ticket .pay { margin-top: 18px; padding: 12px 14px; border-radius: 12px; background: #FDF6E3; font-size: 14px; color: #6B4B00; }
 .after { text-align: center; color: var(--sub); font-size: 14px; margin-top: 22px; }
 .after .btn { margin-top: 14px; }
+.snap { max-width: 420px; margin: 16px auto 0; padding: 12px 14px; border-radius: 12px; background: #FFF4D6; color: #6B4B00; font-size: 14px; font-weight: 600; text-align: center; line-height: 1.5; }
+.after .acts2 { display: grid; gap: 10px; max-width: 420px; margin: 16px auto 0; }
+.after .acts2 .btn { margin-top: 0; }
+.tkimg { position: fixed; inset: 0; z-index: 60; background: #0d1330e6; overflow: auto; padding: 24px 16px; }
+.tkimg .in { max-width: 420px; margin: 0 auto; display: grid; gap: 12px; }
+.tkimg p { color: #fff; text-align: center; font-size: 15px; line-height: 1.5; }
+.tkimg img { width: 100%; border-radius: 16px; -webkit-touch-callout: default; }
 .fail { background: var(--paper); border-radius: var(--r-l); padding: 22px 20px; margin-top: -10px; position: relative; }
 .who { display: inline-block; margin-top: 10px; padding: 4px 12px; border-radius: 8px; background: #ffffff1f; color: #fff; font-weight: 700; font-size: 15px; }
 .sky.compact .who { margin-top: 4px; font-size: 13px; padding: 2px 10px; }
@@ -176,6 +183,7 @@ main { max-width: 620px; margin: 0 auto; padding: 4px 16px calc(120px + env(safe
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script src="../config.js"></script>
+<script src="../ticket.js"></script>
 <script>
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
@@ -467,17 +475,27 @@ function done(r) {
   $('#sky').classList.add('compact');
   const m = String(r.ts || '').match(/^\d{4}-(\d{2})-(\d{2}) (\d{2}:\d{2})/);
   const when = m ? (+m[1]) + '월 ' + (+m[2]) + '일 ' + m[3] : '';
-  $('#main').innerHTML = '<div class="ticket staff" role="group" aria-label="교사 참석 접수증">' +
+  const cs = getComputedStyle(document.documentElement);
+  ticketImg.data = { label: '교사 참석 접수증', color: (cs.getPropertyValue('--pine') || '#2E6E5C').trim(), title: r.title || C.title, when: [['일시', r.dates], ['장소', r.place]].filter(x => x[1]),
+    bigLabel: '선생님', big: r.name, rows: [['참석', r.arrive], ['이동', r.move === '버스' ? '교회 버스' : r.move === '카풀' ? '카풀 (' + r.ride + ')' : r.move]].concat(r.leadHope ? [['조장', '희망']] : []).concat([['접수 시각', when]]),
+    pay: r.account ? [['회비 입금 계좌', false], [r.account, true], ['입금하실 때 선생님 이름으로 보내 주세요.', false]] : [],
+    logos: ['../church.png', '../jungdeung.png'], file: r.name };
+  $('#main').innerHTML = '<p class="snap">이 접수증을 캡처하거나 아래 버튼으로 저장해 두세요.</p>' +
+    '<div class="ticket staff" role="group" aria-label="교사 참석 접수증">' +
     '<div class="head"><small>교사 참석 접수증</small><h2>' + esc(r.title || C.title) + '</h2>' + (r.dates || r.place ? '<p class="when">' + [['일시', r.dates], ['장소', r.place]].filter(x => x[1]).map(x => '<span>' + x[0] + '</span>' + esc(x[1])).join('<br>') + '</p>' : '') + '</div>' +
     '<div class="cut"></div><div class="body"><div class="no"><span>선생님</span><b class="nm">' + esc(r.name) + '</b></div>' +
     '<dl><dt>참석</dt><dd>' + esc(r.arrive) + '</dd><dt>이동</dt><dd>' + esc(r.move === '버스' ? '교회 버스' : r.move === '카풀' ? '카풀 (' + r.ride + ')' : r.move) + '</dd>' + (r.leadHope ? '<dt>조장</dt><dd>희망</dd>' : '') + '<dt>접수 시각</dt><dd>' + esc(when) + '</dd></dl>' +
     (r.account ? '<div class="pay">회비 입금 계좌<br><b>' + esc(r.account) + '</b><br>입금하실 때 선생님 이름으로 보내 주세요.</div>' : '') +
     '</div></div>' +
     '<div class="after"><p>' + (r.updated ? '이미 접수된 신청서를 새 내용으로 바꿨어요.' : '신청이 접수되었어요.') + ' 조와 차량은 정해지면 따로 안내드려요.</p>' +
-    '<button class="btn light" id="again">다른 선생님 신청하기</button></div>';
+    '<div class="acts2"><button class="btn lamp block" id="saveT">접수증 저장하기</button><button class="btn light block" id="again">첫 화면으로</button></div></div>';
+  $('#saveT').onclick = saveTicket;
   $('#again').onclick = () => { Object.assign(F, F0()); renderIntro(); window.scrollTo(0, 0); };
   window.scrollTo(0, 0);
 }
+
+// 뒤로 가기 등으로 예전 화면이 그대로 되살아나면 처음부터 새로 쓰게 한다
+window.addEventListener('pageshow', e => { if (e.persisted && step !== 99) { Object.assign(F, F0()); if (C) renderIntro(); window.scrollTo(0, 0); } });
 
 (async function start() {
   const use = c => { C = c; T = c.t; renderHead(); };
