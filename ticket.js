@@ -49,14 +49,15 @@ async function drawTicket(t) {
     t.pay.forEach(([txt, b]) => { font(b ? 700 : 400, 14); wrap(txt, IW - 28).forEach(l => { ops.push(['t', l, P + 14, y + 15, '#6B4B00', b ? 700 : 400, 14]); y += 22; }); });
     y += 12; ops.push(['pay', p0, y]);
   }
-  y += 22;
-  const bodyEnd = y;
-  // 교회 로고
+  // 교회 로고: 흰 카드 안 맨 아래에 넣어 로고 바탕(흰색)과 어울리게
   const logos = (await Promise.all(t.logos.map(loadImg))).filter(Boolean);
-  y += 20; const lh = 30; const logoY = y; y += lh + 20;
-  const H = y;
-  cv.width = W * S; cv.height = H * S; x.scale(S, S);
-  x.fillStyle = '#EEF1F7'; x.fillRect(0, 0, W, H);
+  const lh = 30; let lineY = 0, logoY = 0;
+  if (logos.length) { y += 22; lineY = y; y += 18; logoY = y; y += lh + 20; } else y += 22;
+  const bodyEnd = y;
+  const M = 16, H = y;
+  cv.width = (W + M * 2) * S; cv.height = (H + M * 2) * S; x.scale(S, S);
+  x.fillStyle = '#EEF1F7'; x.fillRect(0, 0, W + M * 2, H + M * 2);
+  x.translate(M, M);
   const rr = (x0, y0, w, h, r) => { x.beginPath(); x.moveTo(x0 + r[0], y0); x.lineTo(x0 + w - r[1], y0); x.quadraticCurveTo(x0 + w, y0, x0 + w, y0 + r[1]); x.lineTo(x0 + w, y0 + h - r[2]); x.quadraticCurveTo(x0 + w, y0 + h, x0 + w - r[2], y0 + h); x.lineTo(x0 + r[3], y0 + h); x.quadraticCurveTo(x0, y0 + h, x0, y0 + h - r[3]); x.lineTo(x0, y0 + r[0]); x.quadraticCurveTo(x0, y0, x0 + r[0], y0); x.closePath(); };
   // 카드 몸통
   x.fillStyle = '#fff'; rr(0, 0, W, bodyEnd, [22, 22, 22, 22]); x.fill();
@@ -77,6 +78,7 @@ async function drawTicket(t) {
   x.textAlign = 'left';
   // 로고 (가운데 정렬)
   if (logos.length) {
+    x.strokeStyle = '#E1E5EE'; x.lineWidth = 1; x.beginPath(); x.moveTo(P, lineY); x.lineTo(W - P, lineY); x.stroke();
     const ws = logos.map(i => i.naturalWidth * lh / i.naturalHeight), gap = 18;
     let lx = (W - ws.reduce((a, b) => a + b, 0) - gap * (ws.length - 1)) / 2;
     logos.forEach((i, k) => { x.drawImage(i, lx, logoY, ws[k], lh); lx += ws[k] + gap; });
