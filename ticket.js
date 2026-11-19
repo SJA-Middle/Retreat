@@ -3,7 +3,12 @@
 const ticketImg = { data: null };
 function loadImg(src) { return new Promise(res => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = src; }); }
 async function drawTicket(t) {
-  try { await document.fonts.ready; } catch (e) { }
+  // 웹 글꼴은 쓰는 글자만 그때그때 받아오므로, 그릴 글자를 미리 불러 둔다(이름 글자가 다른 글꼴로 나오는 것 방지)
+  try {
+    const all = [t.label, t.title, t.big, t.bigLabel].concat(t.when.flat(), t.rows.flat(), t.pay.map(p => p[0])).join(' ');
+    await Promise.all(["400 52px 'Black Han Sans'", "400 15px 'Pretendard Variable'", "700 15px 'Pretendard Variable'"].map(f => document.fonts.load(f, all)));
+    await document.fonts.ready;
+  } catch (e) { }
   const S = 2, W = 420, P = 24, IW = W - P * 2;
   const disp = "'Black Han Sans', 'Pretendard Variable', sans-serif", body = "'Pretendard Variable', Pretendard, -apple-system, sans-serif";
   const cv = document.createElement('canvas'), x = cv.getContext('2d');
