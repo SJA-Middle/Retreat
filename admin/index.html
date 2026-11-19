@@ -107,6 +107,12 @@ nav.tabs button[aria-current="page"] svg { stroke: var(--night); }
 .prow .mid { flex: 1; min-width: 0; }
 .prow .end { display: flex; gap: 6px; align-items: center; flex: none; }
 .prow.off { opacity: .5; }
+.prow.pay { cursor: default; }
+.paybtn { flex: none; min-width: 92px; min-height: 42px; padding: 0 14px; border-radius: 999px; border: 1.5px solid var(--night); background: var(--paper); color: var(--night); font-size: 15px; font-weight: 700; cursor: pointer; }
+.paybtn[aria-pressed="true"] { background: var(--pine); border-color: var(--pine); color: #fff; }
+.paybtn[aria-pressed="true"]::before { content: '✓ '; }
+.paysum { display: flex; justify-content: space-between; align-items: baseline; padding: 4px 2px 10px; font-size: 14px; color: var(--sub); }
+.paysum b { color: var(--ink); font-size: 18px; }
 .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
 .dot.paid { background: var(--pine); } .dot.unpaid { background: var(--line); border: 1.5px solid var(--mist); }
 .count { font-size: 14px; color: var(--sub); margin: 4px 2px 8px; display: flex; justify-content: space-between; align-items: center; }
@@ -438,7 +444,7 @@ V.home = () => {
     '</div>' +
     '<div class="stat sec">' +
     '<div class="box"><div class="k">참가 신청</div><div class="v">' + a.length + '<small>명</small></div><div class="split"><span class="tag m">남 ' + m + '</span><span class="tag f">여 ' + f + '</span>' + (D.people.length - a.length ? '<span class="tag dim">취소 ' + (D.people.length - a.length) + '</span>' : '') + '</div></div>' +
-    '<div class="box"><div class="k">회비 입금</div><div class="v">' + paid + '<small>/' + a.length + '</small></div><div class="bar ok"><i style="width:' + (a.length ? paid / a.length * 100 : 0) + '%"></i></div></div>' +
+    '<div class="box" id="toPay" role="button" style="cursor:pointer"><div class="k">회비 입금</div><div class="v">' + paid + '<small>/' + a.length + '</small></div><div class="bar ok"><i style="width:' + (a.length ? paid / a.length * 100 : 0) + '%"></i></div></div>' +
     '<div class="box"><div class="k">조 배정</div><div class="v">' + placed + '<small>/' + a.length + '</small></div><div class="bar"><i style="width:' + (a.length ? placed / a.length * 100 : 0) + '%"></i></div></div>' +
     '<div class="box"><div class="k">희망 친구와 같은 조</div><div class="v">' + rep.happy + '<small>/' + rep.wishers + '</small></div><div class="muted">희망을 적은 학생 기준</div></div>' +
     '</div>' +
@@ -462,13 +468,14 @@ B.home = () => {
   const mi = $('#moreIss'); if (mi) mi.onclick = () => { sub.allIss = 1; show('home', true); };
   $('#copyApply').onclick = () => copy(APPLY_URL);
   const ts = $('#toSet'); if (ts) ts.onclick = () => show('settings');
+  $('#toPay').onclick = () => { sub.flt = 'pay'; sub.q = ''; show('list'); };
 };
 function copy(t) {
   (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => toast('링크를 복사했어요'), () => { prompt('아래 링크를 복사해 주세요', t); });
 }
 
 // 명단
-const FILTERS = [['all', '전체'], ['m', '남'], ['f', '여'], ['none', '미배정'], ['unpaid', '회비 미납'], ['health', '건강 특이사항'], ['off', '취소']];
+const FILTERS = [['all', '전체'], ['m', '남'], ['f', '여'], ['none', '미배정'], ['pay', '회비 체크'], ['health', '건강 특이사항'], ['off', '취소']];
 V.list = () => {
   const fl = sub.flt || 'all', q = (sub.q || '').trim();
   let L = D.people.filter(p => {
@@ -477,14 +484,21 @@ V.list = () => {
     if (fl === 'm') return p.gender === '남';
     if (fl === 'f') return p.gender === '여';
     if (fl === 'none') return !p.room || !D.rmap[p.room];
-    if (fl === 'unpaid') return p.paid !== '예';
+    if (fl === 'pay') return true;
     if (fl === 'health') return !!p.health;
     return true;
   });
   if (q) L = L.filter(p => [p.name, p.school, p.gname, p.phone, p.gphone, p.dept, p.church, p.grade].join(' ').indexOf(q) >= 0 || digits(p.gphone + p.phone).indexOf(digits(q) || '@') >= 0);
   L.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
-  return '<div class="search">' + ic('search') + '<input class="inp" id="q" type="search" placeholder="이름, 학교, 전화번호로 찾기" value="' + esc(q) + '"></div>' +
-    '<div class="chips" role="group">' + FILTERS.map(f => '<button data-f="' + f[0] + '" aria-pressed="' + (fl === f[0]) + '">' + f[1] + '</button>').join('') + '</div>' +
+  const head = '<div class="search">' + ic('search') + '<input class="inp" id="q" type="search" placeholder="' + (fl === 'pay' ? '입금자 이름(학생·보호자)이나 전화번호로 찾기' : '이름, 학교, 전화번호로 찾기') + '" value="' + esc(q) + '"></div>' +
+    '<div class="chips" role="group">' + FILTERS.map(f => '<button data-f="' + f[0] + '" aria-pressed="' + (fl === f[0]) + '">' + f[1] + '</button>').join('') + '</div>';
+  if (fl === 'pay') {
+    const all = D.act.filter(p => p.paid === '예').length;
+    return head + '<div class="paysum"><span>입금 확인 <b>' + all + '</b> / ' + D.act.length + '명 · 미납 ' + (D.act.length - all) + '명</span><span>' + (isAdmin() ? '계좌 확인 후 누르세요' : '관리자만 바꿀 수 있어요') + '</span></div>' +
+      (L.length ? '<div class="plist">' + L.map(payrow).join('') + '</div>'
+        : '<div class="empty box"><b>찾는 학생이 없어요</b>입금자 이름이 보호자 이름일 수도 있어요.</div>');
+  }
+  return head +
     '<div class="count"><span>' + L.length + '명</span>' + (isAdmin() ? '<button class="btn small light" id="addP">직접 추가</button>' : '') + '</div>' +
     (L.length ? '<div class="plist">' + L.map(prow).join('') + '</div>' : '<div class="empty box"><b>' + (D.people.length ? '찾는 학생이 없어요' : '아직 신청한 학생이 없어요') + '</b>' + (D.people.length ? '검색어나 필터를 바꿔 보세요.' : '신청 페이지 링크를 공지하면 여기에 바로 나타나요.') + '</div>');
 };
@@ -496,7 +510,35 @@ function prow(p) {
     '<span class="end">' + (p.health ? '<span class="tag lamp">건강</span>' : '') + (p.join !== '예' ? '<span class="tag dim">취소</span>' : r ? '<span class="tag ' + gcls(p.gender) + '">' + esc(r.no) + '조</span>' : '<span class="tag dim">미배정</span>') +
     '<span class="dot ' + (p.paid === '예' ? 'paid' : 'unpaid') + '" title="' + (p.paid === '예' ? '회비 입금' : '회비 미납') + '"></span></span></button>';
 }
+function payrow(p) {
+  const on = p.paid === '예';
+  return '<div class="prow pay" data-pid="' + p.id + '"><span class="av ' + gcls(p.gender) + '">' + esc(p.name.slice(-2)) + '</span>' +
+    '<span class="mid"><span class="nm">' + esc(p.name) + '</span><br><span class="ds">보호자 ' + esc(p.gname || '—') + (p.paynote ? ' · ' + esc(p.paynote) : '') + '</span></span>' +
+    (isAdmin() ? '<button class="paybtn" data-pay="' + p.id + '" aria-pressed="' + on + '">' + (on ? '입금' : '입금 확인') + '</button>'
+      : '<span class="tag ' + (on ? 'ok">입금' : 'dim">미납') + '</span>') + '</div>';
+}
+let payBusy = 0, payLast = null;
+async function togglePay(id) {
+  const p = D.byId[id]; if (!p) return;
+  const on = p.paid !== '예', t = new Date();
+  if (!on && !(await ask(p.name + ' 학생을 회비 미납으로 되돌릴까요?', '미납으로'))) return;
+  const note = on ? (t.getMonth() + 1) + '/' + t.getDate() + ' 확인 (' + U.name + ')' : '';
+  p.paid = on ? '예' : ''; p.paynote = note;
+  const y = window.scrollY; show('list', true); window.scrollTo(0, y);
+  payBusy++;
+  try {
+    payLast = await call('personSave', { id, fields: { paid: on, paynote: note } });
+    toast(p.name + ' ' + (on ? '입금 확인했어요' : '미납으로 바꿨어요'));
+  } catch (e) {
+    p.paid = on ? '' : '예'; toast((e.message || '저장하지 못했어요') + ' 다시 눌러 주세요.');
+    const y2 = window.scrollY; show('list', true); window.scrollTo(0, y2);
+  } finally {
+    if (--payBusy === 0 && payLast) { const y3 = window.scrollY; const r = payLast; payLast = null; set(r); window.scrollTo(0, y3); }
+  }
+}
 B.list = () => {
+  $$('[data-pay]').forEach(b => b.onclick = () => togglePay(b.dataset.pay));
+  $$('.prow.pay').forEach(r => r.onclick = e => { if (!e.target.closest('[data-pay]')) person(r.dataset.pid); });
   const q = $('#q');
   q.oninput = () => { sub.q = q.value; const pos = q.selectionStart; show('list', true); const n = $('#q'); n.focus(); n.setSelectionRange(pos, pos); };
   $$('.chips button').forEach(b => b.onclick = () => { sub.flt = b.dataset.f; show('list', true); });
