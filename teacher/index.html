@@ -206,8 +206,9 @@ async function api(a, params) {
     return j.data;
   } finally { busy(false); }
 }
-function saveDraft() { try { const o = {}; KEEP.forEach(k => o[k] = F[k]); localStorage.setItem(DRAFT, JSON.stringify(o)); } catch (e) { } }
-function loadDraft() { try { return JSON.parse(localStorage.getItem(DRAFT) || 'null'); } catch (e) { return null; } }
+// 쓰다 만 신청서는 저장하지 않는다(다시 들어오면 새 신청서). 예전에 저장된 것도 지운다
+function saveDraft() { }
+function loadDraft() { clearDraft(); return null; }
 function clearDraft() { try { localStorage.removeItem(DRAFT); } catch (e) { } }
 const digits = s => String(s || '').replace(/\D/g, '');
 function fmtPhone(v) {
