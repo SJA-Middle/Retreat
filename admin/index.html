@@ -361,6 +361,7 @@ function showLogin(must) {
 async function logout(silent) {
   if (!silent && U) { try { await call('logout'); } catch (e) { } }
   U = null; D = null; store.del(KEY);
+  try { sessionStorage.removeItem('rt-d'); } catch (e) { }
   closeSheet();
   showLogin();
 }
@@ -377,11 +378,13 @@ async function start() {
   await load();
 }
 async function load() {
+  if (!D) { try { const c = JSON.parse(sessionStorage.getItem('rt-d') || 'null'); if (c && c.me && c.me.name === U.name) set(c); } catch (e) { } }
   const r = await run(() => call('data'));
   if (!r) { if (!D) $('#v').innerHTML = '<div class="empty"><b>불러오지 못했어요</b>잠시 후 위의 새로고침을 눌러 주세요.</div>'; return; }
   set(r);
 }
 function set(r) {
+  try { sessionStorage.setItem('rt-d', JSON.stringify(r)); } catch (e) { }
   D = r;
   $('#ttl').textContent = D.cfg.title || '수련회';
   document.title = (D.cfg.title || '수련회') + ' 운영';

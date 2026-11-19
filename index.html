@@ -437,11 +437,16 @@ function done(r) {
 }
 
 (async function start() {
+  try { const c = JSON.parse(localStorage.getItem('rt-cfg') || 'null'); if (c && c.title) { C = c; renderHead(); renderIntro(); } } catch (e) { }
   try {
-    C = await api('cfg');
+    const fresh = await api('cfg');
+    try { localStorage.setItem('rt-cfg', JSON.stringify(fresh)); } catch (e) { }
+    const first = !C;
+    C = fresh;
     renderHead();
-    renderIntro();
+    if (first || step === -1 || (!C.open && step < 99)) renderIntro();
   } catch (e) {
+    if (C) return;
     $('#main').innerHTML = '<section class="fail"><p><b>신청서를 불러오지 못했어요.</b></p><p style="color:var(--sub);margin-top:8px">' + esc(e.message) + '</p><button class="btn block" style="margin-top:18px" onclick="location.reload()">다시 불러오기</button></section>';
   }
 })();
