@@ -1,0 +1,121 @@
+/* 새중앙교회 중등부 수련회 — 공통 스타일 (신청 페이지·운영 앱) */
+:root {
+  --night: #17214A;
+  --night-2: #24336E;
+  --lantern: #F4C14F;
+  --lantern-deep: #C98E12;
+  --snow: #F3F5FA;
+  --paper: #FFFFFF;
+  --ink: #1A2233;
+  --sub: #586379;
+  --mist: #98A1B5;
+  --line: #E1E5EE;
+  --pine: #2E6E5C;
+  --pine-soft: #E2EFEA;
+  --alert: #BE3D36;
+  --alert-soft: #FBEAE8;
+  --boy: #3D64C2;
+  --boy-soft: #E7EDFA;
+  --girl: #BC4A74;
+  --girl-soft: #F9E8EF;
+  --r-s: 10px;
+  --r-m: 16px;
+  --r-l: 24px;
+  --display: 'Black Han Sans', 'Pretendard Variable', sans-serif;
+  --body: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; background: var(--snow); }
+body {
+  margin: 0; font-family: var(--body); font-size: 16px; line-height: 1.55; color: var(--ink);
+  background: var(--snow); word-break: keep-all; overflow-wrap: anywhere;
+  -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent;
+}
+h1, h2, h3, p { margin: 0; }
+button, input, select, textarea { font: inherit; color: inherit; }
+a { color: var(--night-2); }
+[hidden] { display: none !important; }
+:focus-visible { outline: 3px solid var(--lantern); outline-offset: 2px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* 입력 */
+.field { display: block; margin: 0 0 18px; }
+.field > span, .label { display: block; font-size: 14px; font-weight: 600; color: var(--sub); margin-bottom: 6px; }
+.field small, .hint { display: block; font-size: 13px; color: var(--mist); margin-top: 6px; }
+.inp {
+  width: 100%; min-height: 50px; padding: 12px 14px; font-size: 17px; background: var(--paper);
+  border: 1.5px solid var(--line); border-radius: var(--r-s); transition: border-color .15s;
+  appearance: none; -webkit-appearance: none;
+}
+.inp:focus { outline: none; border-color: var(--night-2); box-shadow: 0 0 0 3px rgba(36, 51, 110, .12); }
+.inp.bad { border-color: var(--alert); }
+textarea.inp { min-height: 96px; resize: vertical; line-height: 1.5; }
+select.inp { background-image: linear-gradient(45deg, transparent 50%, var(--sub) 50%), linear-gradient(135deg, var(--sub) 50%, transparent 50%); background-position: calc(100% - 20px) 22px, calc(100% - 14px) 22px; background-size: 6px 6px; background-repeat: no-repeat; padding-right: 36px; }
+
+/* 고르는 버튼 묶음 */
+.choice { display: flex; flex-wrap: wrap; gap: 8px; }
+.choice button {
+  flex: 1 1 0; min-width: 72px; min-height: 50px; padding: 10px 12px; border-radius: var(--r-s);
+  background: var(--paper); border: 1.5px solid var(--line); font-size: 16px; font-weight: 600; color: var(--sub); cursor: pointer;
+}
+.choice button[aria-pressed="true"] { background: var(--night); border-color: var(--night); color: #fff; }
+.choice.bad button { border-color: var(--alert); }
+
+/* 버튼 */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 0 22px;
+  border: 0; border-radius: 14px; font-size: 17px; font-weight: 700; cursor: pointer; text-decoration: none;
+  background: var(--night); color: #fff; transition: transform .1s, background .15s;
+}
+.btn:active { transform: scale(.98); }
+.btn[disabled] { opacity: .5; cursor: default; }
+.btn.light { background: var(--paper); color: var(--night); border: 1.5px solid var(--line); }
+.btn.lamp { background: var(--lantern); color: var(--night); }
+.btn.warn { background: var(--alert); }
+.btn.small { min-height: 40px; padding: 0 14px; font-size: 15px; border-radius: 11px; }
+.btn.block { width: 100%; }
+.link { background: none; border: 0; padding: 4px 0; color: var(--night-2); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+
+.err { color: var(--alert); font-size: 14px; margin-top: 6px; }
+.tag { display: inline-flex; align-items: center; padding: 1px 8px; border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 20px; white-space: nowrap; }
+.tag.must { background: var(--alert-soft); color: var(--alert); }
+.tag.opt { background: var(--snow); color: var(--sub); }
+.tag.ok { background: var(--pine-soft); color: var(--pine); }
+.tag.m { background: var(--boy-soft); color: var(--boy); }
+.tag.f { background: var(--girl-soft); color: var(--girl); }
+.tag.dim { background: #EEF0F5; color: var(--sub); }
+.tag.lamp { background: #FDF1D2; color: #8A5E00; }
+
+/* 알림 */
+#toast {
+  position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom)); transform: translate(-50%, 20px);
+  background: var(--night); color: #fff; padding: 12px 18px; border-radius: 14px; font-size: 15px; font-weight: 600;
+  opacity: 0; pointer-events: none; transition: .2s; z-index: 50; max-width: calc(100% - 32px); text-align: center;
+}
+#toast.on { opacity: 1; transform: translate(-50%, 0); }
+#busy { position: fixed; inset: 0 0 auto; height: 3px; background: var(--lantern); transform: scaleX(0); transform-origin: left; transition: transform .4s; z-index: 60; }
+#busy.on { transform: scaleX(.85); transition: transform 8s cubic-bezier(.1, .8, .2, 1); }
+
+/* 밤하늘 */
+.sky { position: relative; background: var(--night); color: #fff; overflow: hidden; isolation: isolate; }
+.sky::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; opacity: .9;
+  background-image:
+    radial-gradient(1.2px 1.2px at 12% 18%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 27% 42%, #ffffffcc 50%, transparent 51%),
+    radial-gradient(1.6px 1.6px at 44% 12%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 58% 33%, #ffffffaa 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 71% 9%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 83% 27%, #ffffffcc 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 92% 48%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 6% 56%, #ffffff99 50%, transparent 51%),
+    radial-gradient(1px 1px at 36% 64%, #ffffff88 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 64% 58%, #ffffffbb 50%, transparent 51%),
+    radial-gradient(120% 70% at 80% -10%, #33468f 0%, transparent 60%);
+}
+.ridge { position: absolute; left: 0; right: 0; bottom: -1px; width: 100%; height: 56px; display: block; z-index: -1; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

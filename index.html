@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#17214A">
+<title>중등부 수련회 신청</title>
+<meta name="description" content="새중앙교회 드림공동체 중등부 수련회 참가 신청">
+<meta property="og:title" content="중등부 수련회 신청">
+<meta property="og:description" content="새중앙교회 드림공동체 중등부 수련회 참가 신청서">
+<link rel="icon" href="logo.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+.sky .in { max-width: 620px; margin: 0 auto; padding: calc(28px + env(safe-area-inset-top)) 20px 84px; }
+.org { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #ffffffcc; font-weight: 600; }
+.org img { height: 26px; width: auto; filter: brightness(0) invert(1); opacity: .9; }
+.state { display: inline-flex; align-items: center; gap: 7px; margin-top: 30px; padding: 5px 12px 5px 10px; border-radius: 999px; font-size: 14px; font-weight: 700; background: var(--lantern); color: var(--night); }
+.state::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--night); box-shadow: 0 0 0 3px #17214A33; }
+.state.closed { background: #ffffff22; color: #fff; }
+.state.closed::before { background: #ffffff88; box-shadow: none; }
+h1.title { font-family: var(--display); font-weight: 400; font-size: clamp(42px, 12.5vw, 72px); line-height: 1.04; letter-spacing: -.01em; margin-top: 14px; }
+.theme { margin-top: 12px; font-size: 18px; color: #ffffffdd; font-weight: 500; }
+.facts { display: grid; grid-template-columns: auto 1fr; gap: 8px 18px; margin: 28px 0 0; font-size: 16px; }
+.facts dt { color: #ffffff99; font-size: 14px; padding-top: 1px; }
+.facts dd { margin: 0; font-weight: 600; }
+.sky.compact .in { padding-top: calc(14px + env(safe-area-inset-top)); padding-bottom: 46px; }
+.sky.compact h1.title { font-size: 26px; margin-top: 6px; }
+.sky.compact .state, .sky.compact .theme, .sky.compact .facts { display: none; }
+.sky.compact .ridge { height: 30px; }
+
+main { max-width: 620px; margin: 0 auto; padding: 4px 16px calc(120px + env(safe-area-inset-bottom)); }
+.intro { background: var(--paper); border-radius: var(--r-l); padding: 22px 20px; margin-top: -10px; position: relative; box-shadow: 0 10px 30px -18px #17214A55; }
+.intro p + p { margin-top: 10px; }
+.intro .notice { white-space: pre-line; }
+.intro .muted { color: var(--sub); font-size: 15px; }
+.intro .btn { margin-top: 22px; }
+.draft { margin-top: 12px; font-size: 14px; color: var(--sub); text-align: center; }
+
+.prog { position: sticky; top: 0; z-index: 5; background: var(--snow); padding: 14px 0 12px; margin: 0 0 6px; }
+.prog .row { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; color: var(--sub); }
+.prog b { font-size: 18px; color: var(--ink); }
+.prog .bar { height: 6px; background: var(--line); border-radius: 3px; margin-top: 10px; overflow: hidden; }
+.prog .bar i { display: block; height: 100%; background: var(--night); border-radius: 3px; transition: width .3s; }
+
+.panel { background: var(--paper); border-radius: var(--r-l); padding: 22px 18px 6px; }
+.panel h2 { font-size: 22px; line-height: 1.35; margin-bottom: 6px; }
+.panel .lead { color: var(--sub); font-size: 15px; margin-bottom: 22px; }
+.notes { margin: 4px 0 20px; padding: 14px 16px 14px 34px; background: var(--snow); border-radius: var(--r-m); font-size: 14px; color: var(--sub); }
+.notes li + li { margin-top: 4px; }
+.etc { margin-top: 8px; }
+
+.cons { border: 1.5px solid var(--line); border-radius: var(--r-m); margin-bottom: 12px; overflow: hidden; }
+.cons.on { border-color: var(--night-2); }
+.cons .top { display: flex; align-items: center; gap: 12px; padding: 14px 14px; cursor: pointer; }
+.cons .top input { width: 24px; height: 24px; accent-color: var(--night); flex: none; margin: 0; }
+.cons .top .t { flex: 1; font-weight: 600; font-size: 16px; line-height: 1.4; }
+.cons details { border-top: 1px solid var(--line); background: #FAFBFD; }
+.cons summary { padding: 10px 14px; font-size: 14px; color: var(--sub); cursor: pointer; list-style: none; }
+.cons summary::-webkit-details-marker { display: none; }
+.cons summary::after { content: ' 펼치기'; }
+.cons details[open] summary::after { content: ' 접기'; }
+.cons dl { margin: 0; padding: 0 14px 14px; font-size: 14px; color: var(--ink); display: grid; grid-template-columns: 76px 1fr; gap: 6px 10px; }
+.cons dt { color: var(--sub); }
+.cons dd { margin: 0; }
+.cons .choice { padding: 0 14px 14px; }
+.allbtn { margin-bottom: 14px; }
+.cons.bad { border-color: var(--alert); }
+
+.rrn { display: flex; align-items: center; gap: 8px; }
+.rrn .inp { text-align: center; letter-spacing: .12em; font-variant-numeric: tabular-nums; }
+.rrn .inp:first-child { flex: 6; } .rrn .inp:last-of-type { flex: 7; }
+.rrn .dash { color: var(--mist); font-size: 20px; }
+.eye { margin-top: 6px; }
+.lock { display: flex; gap: 10px; align-items: flex-start; background: var(--snow); border-radius: var(--r-m); padding: 12px 14px; font-size: 14px; color: var(--sub); margin: -4px 0 20px; }
+.lock svg { flex: none; margin-top: 2px; }
+
+.review { margin: 0 0 18px; }
+.review h3 { display: flex; justify-content: space-between; align-items: center; font-size: 16px; padding: 12px 0 8px; border-bottom: 1px solid var(--line); }
+.review dl { display: grid; grid-template-columns: 110px 1fr; gap: 8px 12px; margin: 10px 0 0; font-size: 15px; }
+.review dt { color: var(--sub); }
+.review dd { margin: 0; font-weight: 600; }
+
+.actions { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; background: linear-gradient(transparent, var(--snow) 22%); padding: 22px 16px calc(14px + env(safe-area-inset-bottom)); }
+.actions .in { max-width: 620px; margin: 0 auto; display: flex; gap: 10px; }
+.actions .btn.light { flex: 0 0 104px; }
+.actions .btn:last-child { flex: 1; }
+
+/* 접수증 */
+.ticket { margin: 18px auto 0; max-width: 420px; filter: drop-shadow(0 18px 30px #17214A30); }
+.ticket .head { background: var(--night); color: #fff; border-radius: 22px 22px 0 0; padding: 22px 22px 26px; position: relative; overflow: hidden; }
+.ticket .head small { color: #ffffffaa; font-size: 13px; }
+.ticket .head h2 { font-family: var(--display); font-weight: 400; font-size: 30px; line-height: 1.15; margin-top: 4px; }
+.ticket .head p { color: #ffffffcc; font-size: 14px; margin-top: 8px; }
+.ticket .cut { height: 22px; background:
+  radial-gradient(circle at 0 50%, transparent 11px, var(--paper) 11.5px) left / 51% 100% no-repeat,
+  radial-gradient(circle at 100% 50%, transparent 11px, var(--paper) 11.5px) right / 51% 100% no-repeat; position: relative; }
+.ticket .cut::after { content: ''; position: absolute; left: 18px; right: 18px; top: 50%; border-top: 2px dashed var(--line); }
+.ticket .body { background: var(--paper); border-radius: 0 0 22px 22px; padding: 6px 22px 22px; }
+.ticket .no { display: flex; align-items: baseline; justify-content: space-between; }
+.ticket .no span { color: var(--sub); font-size: 14px; }
+.ticket .no b { font-family: var(--display); font-weight: 400; font-size: 52px; line-height: 1; color: var(--night); letter-spacing: .02em; }
+.ticket dl { display: grid; grid-template-columns: 86px 1fr; gap: 8px 12px; margin: 16px 0 0; font-size: 15px; }
+.ticket dt { color: var(--sub); }
+.ticket dd { margin: 0; font-weight: 600; }
+.ticket .pay { margin-top: 18px; padding: 12px 14px; border-radius: 12px; background: #FDF6E3; font-size: 14px; color: #6B4B00; }
+.after { text-align: center; color: var(--sub); font-size: 14px; margin-top: 22px; }
+.after .btn { margin-top: 14px; }
+.fail { background: var(--paper); border-radius: var(--r-l); padding: 22px 20px; margin-top: -10px; position: relative; }
+</style>
+</head>
+<body>
+<div id="busy"></div>
+<header class="sky" id="sky">
+  <div class="in">
+    <div class="org"><img src="jungdeung.png" alt="" onerror="this.remove()">새중앙교회 드림공동체 중등부</div>
+    <span class="state" id="state" hidden></span>
+    <h1 class="title" id="title">수련회 신청</h1>
+    <p class="theme" id="theme" hidden></p>
+    <dl class="facts" id="facts"></dl>
+  </div>
+  <svg class="ridge" viewBox="0 0 400 56" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 56 L0 38 L38 22 L70 34 L112 8 L150 30 L188 18 L224 36 L262 14 L300 32 L338 20 L372 34 L400 26 L400 56 Z" fill="#24336E" opacity=".9"/>
+    <path d="M0 56 L0 46 L48 34 L92 44 L140 30 L186 46 L236 34 L284 46 L330 36 L372 46 L400 40 L400 56 Z" fill="var(--snow)"/>
+  </svg>
+</header>
+<main id="main"></main>
+<div class="actions" id="actions" hidden><div class="in"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="config.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+let C = null, step = -1, sending = false;
+const F = { writer: '', name: '', gender: '', dept: '', grade: '', school: '', phone: '', gname: '', grel: '', grelEtc: '', gphone: '',
+  w1: '', w2: '', w3: '', c1: false, c2: false, c3: false, c4: null, c5: false, rrn1: '', rrn2: '', health: '', hp: '' };
+const KEEP = ['writer', 'name', 'gender', 'dept', 'grade', 'school', 'phone', 'gname', 'grel', 'grelEtc', 'gphone', 'w1', 'w2', 'w3'];
+const DRAFT = 'rt-apply-draft';
+
+function toast(m) { const t = $('#toast'); t.textContent = m; t.className = 'on'; clearTimeout(toast.t); toast.t = setTimeout(() => t.className = '', 2600); }
+function busy(on) { $('#busy').className = on ? 'on' : ''; }
+async function api(a, params) {
+  busy(true);
+  try {
+    let r;
+    try { r = await fetch(window.RT_API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ a, params: params || {} }) }); }
+    catch (e) { throw new Error('인터넷 연결을 확인하고 다시 시도해 주세요.'); }
+    let j;
+    try { j = await r.json(); } catch (e) { throw new Error('서버가 응답하지 않아요. 잠시 후 다시 시도해 주세요.'); }
+    if (!j.ok) throw new Error(j.error || '처리하지 못했어요.');
+    return j.data;
+  } finally { busy(false); }
+}
+function saveDraft() { try { const o = {}; KEEP.forEach(k => o[k] = F[k]); localStorage.setItem(DRAFT, JSON.stringify(o)); } catch (e) { } }
+function loadDraft() { try { return JSON.parse(localStorage.getItem(DRAFT) || 'null'); } catch (e) { return null; } }
+function clearDraft() { try { localStorage.removeItem(DRAFT); } catch (e) { } }
+const digits = s => String(s || '').replace(/\D/g, '');
+function fmtPhone(v) {
+  const d = digits(v).slice(0, 11);
+  if (d.startsWith('02')) return d.length > 9 ? d.slice(0, 2) + '-' + d.slice(2, 6) + '-' + d.slice(6) : d.length > 5 ? d.slice(0, 2) + '-' + d.slice(2, 5) + '-' + d.slice(5) : d.length > 2 ? d.slice(0, 2) + '-' + d.slice(2) : d;
+  if (d.length > 10) return d.slice(0, 3) + '-' + d.slice(3, 7) + '-' + d.slice(7);
+  if (d.length > 6) return d.slice(0, 3) + '-' + d.slice(3, 6) + '-' + d.slice(6);
+  if (d.length > 3) return d.slice(0, 3) + '-' + d.slice(3);
+  return d;
+}
+const okPhone = v => /^0\d{1,2}-\d{3,4}-\d{4}$/.test(v);
+
+// ── 머리 부분 ──
+function renderHead() {
+  $('#title').textContent = C.title || '수련회 신청';
+  document.title = (C.title || '수련회') + ' 신청';
+  const th = $('#theme');
+  th.hidden = !C.theme; th.textContent = C.theme || '';
+  const st = $('#state');
+  st.hidden = false;
+  st.textContent = C.open ? '신청 받는 중' : '신청 기간이 아니에요';
+  st.className = 'state' + (C.open ? '' : ' closed');
+  const rows = [['일정', C.dates], ['장소', C.place], ['회비', C.fee], ['신청 마감', C.deadline ? fmtDate(C.deadline) + '까지' : '']].filter(r => r[1]);
+  $('#facts').innerHTML = rows.map(r => '<dt>' + r[0] + '</dt><dd>' + esc(r[1]) + '</dd>').join('');
+}
+function fmtDate(s) {
+  const d = new Date(s + 'T00:00:00+09:00');
+  if (isNaN(d)) return s;
+  return (d.getMonth() + 1) + '월 ' + d.getDate() + '일(' + '일월화수목금토'[d.getDay()] + ')';
+}
+
+// ── 첫 화면 ──
+function renderIntro() {
+  step = -1;
+  $('#sky').classList.remove('compact');
+  $('#actions').hidden = true;
+  if (!C.open) {
+    $('#main').innerHTML = '<section class="intro"><p><b>지금은 수련회 신청을 받지 않아요.</b></p><p class="muted">신청 기간이 아니거나 마감되었어요. 궁금한 점은 담당 선생님께 문의해 주세요.</p></section>';
+    return;
+  }
+  const d = loadDraft();
+  $('#main').innerHTML = '<section class="intro">' +
+    (C.notice ? '<p class="notice">' + esc(C.notice) + '</p>' : '<p>수련회 참가 신청서예요. 학생 본인이나 보호자가 작성해 주세요.</p>') +
+    '<p class="muted">작성에는 5분 정도 걸려요. 여행자보험 가입을 위해 학생 주민등록번호가 필요하니 미리 준비해 주세요.</p>' +
+    '<button class="btn lamp block" id="go">신청서 쓰기</button>' +
+    (d && d.name ? '<p class="draft">' + esc(d.name) + ' 학생 신청서를 쓰던 중이에요. 이어서 쓸 수 있어요.</p>' : '') +
+    '</section>';
+  $('#go').onclick = () => { if (d) Object.assign(F, d); go(0); };
+}
+
+// ── 단계 ──
+const STEPS = [
+  { t: '학생 정보', r: stepStudent, v: vStudent },
+  { t: '보호자', r: stepGuardian, v: vGuardian },
+  { t: '같은 조 친구', r: stepFriends, v: () => true },
+  { t: '개인정보 동의', r: stepConsent, v: vConsent },
+  { t: '보험·건강', r: stepInsure, v: vInsure },
+  { t: '마지막 확인', r: stepReview, v: () => true },
+];
+function go(i) {
+  step = i;
+  $('#toast').className = '';
+  $('#sky').classList.add('compact');
+  const s = STEPS[i];
+  $('#main').innerHTML = '<div class="prog"><div class="row"><b>' + s.t + '</b><span>' + (i + 1) + ' / ' + STEPS.length + '</span></div>' +
+    '<div class="bar"><i style="width:' + ((i + 1) / STEPS.length * 100) + '%"></i></div></div><section class="panel" id="panel"></section>';
+  $('#panel').innerHTML = s.r();
+  bind();
+  const last = i === STEPS.length - 1;
+  $('#actions').hidden = false;
+  $('#actions .in').innerHTML = '<button class="btn light" id="prev">이전</button><button class="btn' + (last ? ' lamp' : '') + '" id="next">' + (last ? '신청서 보내기' : '다음') + '</button>';
+  $('#prev').onclick = () => { saveDraft(); i === 0 ? renderIntro() : go(i - 1); window.scrollTo(0, 0); };
+  $('#next').onclick = () => {
+    if (!STEPS[i].v()) { const b = document.querySelector('.bad, .err'); if (b) b.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
+    saveDraft();
+    if (last) submit(); else { go(i + 1); window.scrollTo(0, 0); }
+  };
+  window.scrollTo(0, 0);
+}
+
+function choice(key, list, labels) {
+  return '<div class="choice" role="group" data-k="' + key + '">' + list.map((v, j) =>
+    '<button type="button" data-v="' + esc(v) + '" aria-pressed="' + (F[key] === v) + '">' + esc((labels || list)[j]) + '</button>').join('') + '</div>';
+}
+function input(key, label, o) {
+  o = o || {};
+  return '<label class="field"><span>' + label + (o.opt ? ' <span class="tag opt">선택</span>' : '') + '</span>' +
+    '<input class="inp" data-k="' + key + '" value="' + esc(F[key]) + '"' + (o.type ? ' type="' + o.type + '"' : '') +
+    (o.im ? ' inputmode="' + o.im + '"' : '') + (o.ph ? ' placeholder="' + esc(o.ph) + '"' : '') + (o.ac ? ' autocomplete="' + o.ac + '"' : ' autocomplete="off"') +
+    (o.max ? ' maxlength="' + o.max + '"' : '') + '>' + (o.hint ? '<small>' + o.hint + '</small>' : '') + '<div class="err" data-e="' + key + '"></div></label>';
+}
+function group(key, label, list, labels) {
+  return '<div class="field"><span class="label" id="l-' + key + '">' + label + '</span>' + choice(key, list, labels) + '<div class="err" data-e="' + key + '"></div></div>';
+}
+function bind() {
+  document.querySelectorAll('.choice[data-k]').forEach(g => g.onclick = e => {
+    const b = e.target.closest('button'); if (!b) return;
+    const k = g.dataset.k;
+    F[k] = b.dataset.v;
+    g.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
+    g.classList.remove('bad'); setErr(k, '');
+    if (k === 'grel') { const e2 = $('#grelEtc'); if (e2) e2.hidden = F.grel !== '기타'; }
+    if (k === 'c4') { F.c4 = b.dataset.v === 'y'; }
+  });
+  document.querySelectorAll('input.inp[data-k], textarea.inp[data-k]').forEach(el => el.oninput = () => {
+    const k = el.dataset.k;
+    if (k === 'phone' || k === 'gphone') { el.value = fmtPhone(el.value); }
+    if (k === 'rrn1' || k === 'rrn2') { el.value = digits(el.value); if (k === 'rrn1' && el.value.length === 6) $('[data-k=rrn2]').focus(); }
+    F[k] = el.value;
+    el.classList.remove('bad'); setErr(k, '');
+  });
+}
+function setErr(k, m) { const e = document.querySelector('[data-e="' + k + '"]'); if (e) e.textContent = m; const el = document.querySelector('[data-k="' + k + '"]'); if (el) el.classList.toggle('bad', !!m); }
+function need(k, m) { if (!String(F[k] || '').trim()) { setErr(k, m); return false; } return true; }
+
+function stepStudent() {
+  return '<h2>수련회에 가는 학생을 알려 주세요</h2><p class="lead">교회 명단과 맞춰 볼 수 있게 정확하게 적어 주세요.</p>' +
+    group('writer', '누가 작성하나요?', ['학생 본인', '보호자']) +
+    input('name', '학생 이름', { ac: 'off', max: 20 }) +
+    group('gender', '성별', ['남', '여'], ['남학생', '여학생']) +
+    group('dept', '예배 부서', ['1부', '2부', '3부(열린예배)'], ['1부', '2부', '3부 열린예배']) +
+    group('grade', '학년', ['1학년', '2학년', '3학년'], ['중1', '중2', '중3']) +
+    input('school', '학교', { ph: '예: 백운중', max: 30 }) +
+    input('phone', '학생 휴대폰', { opt: 1, im: 'tel', ph: '010-0000-0000', hint: '휴대폰이 없으면 비워 두세요.', max: 13 });
+}
+function vStudent() {
+  let ok = true;
+  ['writer', 'gender', 'dept', 'grade'].forEach(k => { if (!F[k]) { setErr(k, '하나를 골라 주세요.'); document.querySelector('.choice[data-k=' + k + ']').classList.add('bad'); ok = false; } });
+  ok = need('name', '학생 이름을 적어 주세요.') && ok;
+  ok = need('school', '다니는 학교를 적어 주세요.') && ok;
+  if (F.phone && !okPhone(F.phone)) { setErr('phone', '전화번호를 끝까지 적어 주세요.'); ok = false; }
+  return ok;
+}
+function stepGuardian() {
+  return '<h2>보호자 연락처를 알려 주세요</h2><p class="lead">수련회 중에 급한 일이 생기면 이 번호로 연락드려요.</p>' +
+    input('gname', '보호자 이름', { max: 20, ac: 'name' }) +
+    '<div class="field"><span class="label">학생과의 관계</span>' + choice('grel', ['아버지', '어머니', '기타']) +
+    '<input class="inp etc" id="grelEtc" data-k="grelEtc" placeholder="예: 할머니" value="' + esc(F.grelEtc) + '" maxlength="10"' + (F.grel === '기타' ? '' : ' hidden') + '>' +
+    '<div class="err" data-e="grel"></div></div>' +
+    input('gphone', '보호자 휴대폰', { im: 'tel', ph: '010-0000-0000', ac: 'tel', max: 13 });
+}
+function vGuardian() {
+  let ok = need('gname', '보호자 이름을 적어 주세요.');
+  if (!F.grel) { setErr('grel', '관계를 골라 주세요.'); document.querySelector('.choice[data-k=grel]').classList.add('bad'); ok = false; }
+  else if (F.grel === '기타' && !F.grelEtc.trim()) { setErr('grel', '관계를 적어 주세요.'); ok = false; }
+  if (!okPhone(F.gphone)) { setErr('gphone', '보호자 휴대폰 번호를 끝까지 적어 주세요.'); ok = false; }
+  return ok;
+}
+function stepFriends() {
+  return '<h2>같은 방을 쓰고 싶은 친구가 있나요?</h2><p class="lead">수련회에서는 숙소가 곧 조예요. 3명까지 적을 수 있어요.</p>' +
+    '<ul class="notes"><li>친구도 수련회를 신청해야 같은 조가 될 수 있어요.</li><li>남학생과 여학생은 같은 조가 될 수 없어요.</li><li>방 정원 때문에 모두 반영되지 않을 수 있지만, 최대한 함께할 수 있게 짤게요.</li></ul>' +
+    [1, 2, 3].map(n => input('w' + n, '친구 ' + n, { opt: 1, ph: n === 1 ? '이름 (같은 이름이 있으면 학교도)' : '', max: 20 })).join('');
+}
+
+// 동의
+function consentList() {
+  const keep = C.keep || '수련회 종료 후 1개월 이내 파기';
+  return [
+    { k: 'c1', must: 1, t: '개인정보 수집·이용 동의', d: [['목적', '수련회 참가 접수, 조(숙소)·차량 배정, 비상 연락과 안전 관리'], ['항목', '학생 이름·성별·부서·학년·학교·연락처, 보호자 이름·관계·연락처, 같은 조 희망 친구'], ['보유 기간', keep], ['안내', '동의하지 않을 수 있지만, 이 경우 수련회에 신청할 수 없어요.']] },
+    { k: 'c2', must: 1, t: '고유식별정보(주민등록번호) 수집·이용 동의', d: [['목적', '수련회 기간 여행자보험 가입'], ['항목', '학생 주민등록번호'], ['보유 기간', '보험 가입을 마치면 바로 파기'], ['안내', '동의하지 않을 수 있지만, 보험에 가입할 수 없어 수련회에 참가하기 어려워요.']] },
+    { k: 'c3', must: 1, t: '개인정보 제3자(보험사) 제공 동의', d: [['받는 곳', C.insurer || '여행자보험 보험사'], ['목적', '여행자보험 가입과 보험금 청구 처리'], ['항목', '학생 이름·성별·생년월일·주민등록번호'], ['보유 기간', '보험 계약 관련 법령에서 정한 기간'], ['안내', '동의하지 않을 수 있지만, 보험에 가입할 수 없어 수련회에 참가하기 어려워요.']] },
+    { k: 'c4', must: 0, t: '민감정보(건강정보) 수집·이용 동의', d: [['목적', '수련회 중 건강·안전 관리 (담당 선생님과 공유)'], ['항목', '건강 상태, 알레르기, 먹는 약 등 특이사항'], ['보유 기간', keep], ['안내', '동의하지 않아도 신청할 수 있어요. 이 경우 건강 특이사항을 받지 않아요.']] },
+    { k: 'c5', must: 1, t: '보호자(법정대리인) 확인', d: [['안내', '만 14세 미만 학생의 개인정보를 처리하려면 보호자 동의가 필요해요. 학생이 직접 작성하는 경우에도 보호자께서 위 내용을 확인하신 뒤 체크해 주세요.']] },
+  ];
+}
+function stepConsent() { return render3(true); }
+function render3(ret) {
+  const html = '<h2>개인정보 수집에 동의해 주세요</h2><p class="lead">수련회 운영과 여행자보험 가입에 꼭 필요한 정보만 받아요. 항목마다 내용을 펼쳐 볼 수 있어요.</p>' +
+    '<button type="button" class="btn light block allbtn" id="all">필수 항목 모두 동의</button>' +
+    consentList().map(c => '<div class="cons' + (c.k === 'c4' ? (F.c4 !== null ? ' on' : '') : (F[c.k] ? ' on' : '')) + '" data-c="' + c.k + '">' +
+      (c.k === 'c4'
+        ? '<div class="top" style="cursor:default"><span class="t">' + c.t + '</span><span class="tag opt">선택</span></div>' + choice('c4', ['y', 'n'], ['동의해요', '동의하지 않아요'])
+        : '<label class="top"><input type="checkbox" data-cb="' + c.k + '"' + (F[c.k] ? ' checked' : '') + '><span class="t">' + (c.k === 'c5' ? '보호자가 위 내용을 확인하고 동의했어요' : c.t) + '</span><span class="tag must">필수</span></label>') +
+      '<details><summary>' + (c.k === 'c5' ? '보호자 확인 안내' : '내용') + '</summary><dl>' + c.d.map(x => '<dt>' + x[0] + '</dt><dd>' + esc(x[1]) + '</dd>').join('') + '</dl></details>' +
+      '</div>').join('') + '<div class="err" data-e="consent"></div>';
+  // c4 버튼 표시값
+  const html2 = html.replace('data-v="y" aria-pressed="false"', 'data-v="y" aria-pressed="' + (F.c4 === true) + '"').replace('data-v="n" aria-pressed="false"', 'data-v="n" aria-pressed="' + (F.c4 === false) + '"');
+  if (ret) { setTimeout(bindConsent); return html2; }
+  $('#panel').innerHTML = html2; bind(); bindConsent();
+}
+function bindConsent() {
+  document.querySelectorAll('[data-cb]').forEach(cb => cb.onchange = () => {
+    F[cb.dataset.cb] = cb.checked; cb.closest('.cons').classList.toggle('on', cb.checked); cb.closest('.cons').classList.remove('bad'); setErr('consent', '');
+  });
+  const g = document.querySelector('.choice[data-k=c4]');
+  if (g) g.addEventListener('click', () => { g.closest('.cons').classList.add('on'); g.closest('.cons').classList.remove('bad'); });
+  $('#all').onclick = () => {
+    ['c1', 'c2', 'c3', 'c5'].forEach(k => { F[k] = true; const cb = document.querySelector('[data-cb=' + k + ']'); cb.checked = true; cb.closest('.cons').classList.add('on'); cb.closest('.cons').classList.remove('bad'); });
+    setErr('consent', '');
+    if (F.c4 === null) { const c = document.querySelector('[data-c=c4]'); c.scrollIntoView({ block: 'center', behavior: 'smooth' }); toast('건강정보 동의 여부도 골라 주세요'); }
+  };
+}
+function vConsent() {
+  let ok = true;
+  ['c1', 'c2', 'c3', 'c5'].forEach(k => { if (!F[k]) { document.querySelector('[data-c=' + k + ']').classList.add('bad'); ok = false; } });
+  if (F.c4 === null) { document.querySelector('[data-c=c4]').classList.add('bad'); ok = false; }
+  if (!ok) setErr('consent', F.c4 === null && ['c1', 'c2', 'c3', 'c5'].every(k => F[k]) ? '건강정보 동의 여부를 골라 주세요.' : '필수 항목에 모두 동의해야 신청할 수 있어요.');
+  return ok;
+}
+
+// 보험·건강
+function stepInsure() {
+  return '<h2>여행자보험 가입 정보</h2><p class="lead">수련회 기간 동안 ' + esc(C.insurer || '여행자보험') + ' 보험에 가입해요.</p>' +
+    '<div class="field"><span class="label">학생 주민등록번호</span><div class="rrn">' +
+    '<input class="inp" data-k="rrn1" inputmode="numeric" maxlength="6" placeholder="앞 6자리" value="' + esc(F.rrn1) + '" autocomplete="off" aria-label="주민등록번호 앞자리">' +
+    '<span class="dash">-</span><input class="inp" data-k="rrn2" type="password" inputmode="numeric" maxlength="7" placeholder="뒤 7자리" value="' + esc(F.rrn2) + '" autocomplete="off" aria-label="주민등록번호 뒷자리"></div>' +
+    '<button type="button" class="link eye" id="eye">뒷자리 보기</button><div class="err" data-e="rrn1"></div><div class="err" data-e="rrn2"></div></div>' +
+    '<div class="lock"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5.5 7V5a2.5 2.5 0 015 0v2" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>' +
+    '<span>암호화해서 보관하고, 보험 가입을 마치면 바로 지워요. 선생님들이 보는 명단에는 뒷자리가 보이지 않아요.</span></div>' +
+    (F.c4 ? '<label class="field"><span>건강·알레르기 등 특이사항 <span class="tag opt">선택</span></span><textarea class="inp" data-k="health" maxlength="300" placeholder="예: 땅콩 알레르기, 매일 아침 먹는 약이 있어요">' + esc(F.health) + '</textarea><small>담당 선생님이 수련회 중에 참고해요. 없으면 비워 두세요.</small></label>'
+      : '<p class="hint" style="margin-bottom:20px">건강정보 수집에 동의하지 않아 건강 특이사항은 받지 않아요. <button type="button" class="link" id="toC4">동의로 바꾸기</button></p>');
+}
+function vInsure() {
+  const a = F.rrn1, b = F.rrn2;
+  if (a.length !== 6) { setErr('rrn1', '앞 6자리를 적어 주세요.'); return false; }
+  const mm = +a.slice(2, 4), dd = +a.slice(4, 6);
+  if (mm < 1 || mm > 12 || dd < 1 || dd > 31) { setErr('rrn1', '앞자리 생년월일을 확인해 주세요.'); return false; }
+  if (b.length !== 7) { setErr('rrn2', '뒤 7자리를 적어 주세요.'); return false; }
+  const g = +b[0];
+  if (g < 1 || g > 4) { setErr('rrn2', '뒷자리 첫 숫자를 확인해 주세요.'); return false; }
+  if ((g % 2 ? '남' : '여') !== F.gender) { setErr('rrn2', '학생 정보에서 고른 성별(' + F.gender + '학생)과 주민등록번호가 맞지 않아요.'); return false; }
+  return true;
+}
+document.addEventListener('click', e => {
+  if (e.target.id === 'eye') { const i = $('[data-k=rrn2]'); const show = i.type === 'password'; i.type = show ? 'text' : 'password'; e.target.textContent = show ? '뒷자리 가리기' : '뒷자리 보기'; }
+  if (e.target.id === 'toC4') { go(3); setTimeout(() => document.querySelector('[data-c=c4]').scrollIntoView({ block: 'center' }), 50); }
+  const ed = e.target.closest('[data-edit]'); if (ed) go(+ed.dataset.edit);
+});
+
+function stepReview() {
+  const rel = F.grel === '기타' ? F.grelEtc : F.grel;
+  const sec = (t, i, rows) => '<div class="review"><h3>' + t + '<button type="button" class="link" data-edit="' + i + '">고치기</button></h3><dl>' +
+    rows.filter(r => r).map(r => '<dt>' + r[0] + '</dt><dd>' + esc(r[1] || '—') + '</dd>').join('') + '</dl></div>';
+  const fr = [F.w1, F.w2, F.w3].filter(x => x.trim()).join(', ');
+  return '<h2>이대로 신청할까요?</h2><p class="lead">보내기 전에 한 번 더 확인해 주세요.</p>' +
+    sec('학생', 0, [['이름', F.name.replace(/\s+/g, '')], ['성별', F.gender + '학생'], ['부서·학년', F.dept + ' ' + F.grade], ['학교', F.school], ['휴대폰', F.phone], ['작성자', F.writer]]) +
+    sec('보호자', 1, [['이름', F.gname.replace(/\s+/g, '') + ' (' + rel + ')'], ['휴대폰', F.gphone]]) +
+    sec('같은 조 친구', 2, [['희망', fr || '없음']]) +
+    sec('동의·보험', 3, [['필수 동의', '모두 동의'], ['건강정보', F.c4 ? '동의' : '동의하지 않음'], ['주민등록번호', F.rrn1 + '-' + F.rrn2[0] + '●●●●●●'], F.c4 && F.health ? ['건강 특이사항', F.health] : null]);
+}
+
+async function submit() {
+  if (sending) return;
+  sending = true;
+  const btn = $('#next'); btn.disabled = true; btn.textContent = '보내는 중…';
+  try {
+    const r = await api('apply', {
+      writer: F.writer, name: F.name, gender: F.gender, dept: F.dept, grade: F.grade, school: F.school, phone: F.phone,
+      gname: F.gname, grel: F.grel === '기타' ? F.grelEtc : F.grel, gphone: F.gphone, w1: F.w1, w2: F.w2, w3: F.w3,
+      consent: { c1: F.c1, c2: F.c2, c3: F.c3, c4: F.c4 === true, c5: F.c5 }, rrn: F.rrn1 + F.rrn2, health: F.c4 ? F.health : '', hp: F.hp,
+    });
+    clearDraft();
+    F.rrn1 = F.rrn2 = F.health = '';
+    done(r);
+  } catch (e) {
+    toast(e.message);
+    btn.disabled = false; btn.textContent = '신청서 보내기';
+  } finally { sending = false; }
+}
+function done(r) {
+  step = 99;
+  $('#actions').hidden = true;
+  $('#sky').classList.add('compact');
+  const m = String(r.ts || '').match(/^\d{4}-(\d{2})-(\d{2}) (\d{2}:\d{2})/);
+  const when = m ? (+m[1]) + '월 ' + (+m[2]) + '일 ' + m[3] : '';
+  $('#main').innerHTML = '<div class="ticket" role="group" aria-label="참가 접수증">' +
+    '<div class="head"><small>참가 접수증</small><h2>' + esc(r.title || C.title) + '</h2>' + (r.dates || r.place ? '<p>' + esc([r.dates, r.place].filter(Boolean).join(', ')) + '</p>' : '') + '</div>' +
+    '<div class="cut"></div><div class="body"><div class="no"><span>접수 번호</span><b>' + String(r.no).padStart(3, '0') + '</b></div>' +
+    '<dl><dt>이름</dt><dd>' + esc(r.name) + '</dd><dt>부서·학년</dt><dd>' + esc(r.dept + ' ' + r.grade) + '</dd><dt>접수 시각</dt><dd>' + esc(when) + '</dd></dl>' +
+    (r.fee || r.account ? '<div class="pay">' + (r.fee ? '회비 <b>' + esc(r.fee) + '</b>' : '') + (r.account ? '<br>' + esc(r.account) : '') + '<br>입금하실 때 학생 이름으로 보내 주세요.</div>' : '') +
+    '</div></div>' +
+    '<div class="after"><p>' + (r.updated ? '이미 접수된 신청서를 새 내용으로 바꿨어요.' : '신청이 접수되었어요.') + ' 조와 버스는 수련회 전에 따로 안내드려요.</p>' +
+    '<button class="btn light" id="again">다른 학생 신청하기</button></div>';
+  $('#again').onclick = () => { Object.keys(F).forEach(k => F[k] = k.startsWith('c') ? false : ''); F.c4 = null; renderIntro(); window.scrollTo(0, 0); };
+  window.scrollTo(0, 0);
+}
+
+(async function start() {
+  try {
+    C = await api('cfg');
+    renderHead();
+    renderIntro();
+  } catch (e) {
+    $('#main').innerHTML = '<section class="fail"><p><b>신청서를 불러오지 못했어요.</b></p><p style="color:var(--sub);margin-top:8px">' + esc(e.message) + '</p><button class="btn block" style="margin-top:18px" onclick="location.reload()">다시 불러오기</button></section>';
+  }
+})();
+</script>
+</body>
+</html>
