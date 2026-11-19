@@ -117,6 +117,8 @@ main { max-width: 620px; margin: 0 auto; padding: 4px 16px calc(120px + env(safe
 .ticket .head small { color: #ffffffaa; font-size: 13px; }
 .ticket .head h2 { font-family: var(--display); font-weight: 400; font-size: 30px; line-height: 1.15; margin-top: 4px; }
 .ticket .head p { color: #ffffffcc; font-size: 14px; margin-top: 8px; }
+.ticket .head p.when { line-height: 1.7; }
+.ticket .head p.when span { color: #ffffff88; margin-right: 8px; }
 .ticket .cut { height: 22px; background:
   radial-gradient(circle at 0 50%, transparent 11px, var(--paper) 11.5px) left / 51% 100% no-repeat,
   radial-gradient(circle at 100% 50%, transparent 11px, var(--paper) 11.5px) right / 51% 100% no-repeat; position: relative; }
@@ -466,7 +468,7 @@ function done(r) {
   const m = String(r.ts || '').match(/^\d{4}-(\d{2})-(\d{2}) (\d{2}:\d{2})/);
   const when = m ? (+m[1]) + '월 ' + (+m[2]) + '일 ' + m[3] : '';
   $('#main').innerHTML = '<div class="ticket staff" role="group" aria-label="교사 참석 접수증">' +
-    '<div class="head"><small>교사 참석 접수증</small><h2>' + esc(r.title || C.title) + '</h2>' + (r.dates || r.place ? '<p>' + esc([r.dates, r.place].filter(Boolean).join(', ')) + '</p>' : '') + '</div>' +
+    '<div class="head"><small>교사 참석 접수증</small><h2>' + esc(r.title || C.title) + '</h2>' + (r.dates || r.place ? '<p class="when">' + [['일시', r.dates], ['장소', r.place]].filter(x => x[1]).map(x => '<span>' + x[0] + '</span>' + esc(x[1])).join('<br>') + '</p>' : '') + '</div>' +
     '<div class="cut"></div><div class="body"><div class="no"><span>선생님</span><b class="nm">' + esc(r.name) + '</b></div>' +
     '<dl><dt>참석</dt><dd>' + esc(r.arrive) + '</dd><dt>이동</dt><dd>' + esc(r.move === '버스' ? '교회 버스' : r.move === '카풀' ? '카풀 (' + r.ride + ')' : r.move) + '</dd>' + (r.leadHope ? '<dt>조장</dt><dd>희망</dd>' : '') + '<dt>접수 시각</dt><dd>' + esc(when) + '</dd></dl>' +
     (r.account ? '<div class="pay">회비 입금 계좌<br><b>' + esc(r.account) + '</b><br>입금하실 때 선생님 이름으로 보내 주세요.</div>' : '') +
