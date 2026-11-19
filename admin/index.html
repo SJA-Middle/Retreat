@@ -27,7 +27,7 @@ body { min-height: 100vh; }
 #login form { max-width: 420px; width: calc(100% - 32px); margin: -36px auto 0; background: var(--paper); border-radius: var(--r-l); padding: 24px 20px; position: relative; box-shadow: 0 14px 30px -20px #17214A66; }
 #login .pin { letter-spacing: .5em; text-align: center; font-size: 22px; font-variant-numeric: tabular-nums; }
 .org { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #ffffffcc; font-weight: 600; }
-.org img { height: 24px; filter: brightness(0) invert(1); opacity: .9; }
+.org img { height: 30px; width: auto; background: #fff; border-radius: 8px; padding: 3px 7px; }
 
 /* 앱 틀 */
 .top { position: sticky; top: 0; z-index: 20; background: var(--night); color: #fff; padding: calc(10px + env(safe-area-inset-top)) 16px 10px; }
@@ -228,7 +228,7 @@ nav.tabs button[aria-current="page"] svg { stroke: var(--night); }
 
 <section id="login" hidden>
   <div class="sky"><div class="in">
-    <div class="org"><img src="../jungdeung.png" alt="" onerror="this.remove()">새중앙교회 드림공동체 중등부</div>
+    <div class="org"><img src="../jungdeung.png" alt="드림공동체 중등부" onerror="this.remove()">새중앙교회</div>
     <h1>수련회 운영</h1>
     <p>관리자와 조 담당 선생님이 쓰는 화면이에요.</p>
   </div>

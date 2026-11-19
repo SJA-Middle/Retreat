@@ -19,7 +19,7 @@
 <style>
 .sky .in { max-width: 620px; margin: 0 auto; padding: calc(28px + env(safe-area-inset-top)) 20px 84px; }
 .org { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #ffffffcc; font-weight: 600; }
-.org img { height: 26px; width: auto; filter: brightness(0) invert(1); opacity: .9; }
+.org img { height: 30px; width: auto; background: #fff; border-radius: 8px; padding: 3px 7px; }
 .state { display: inline-flex; align-items: center; gap: 7px; margin-top: 30px; padding: 5px 12px 5px 10px; border-radius: 999px; font-size: 14px; font-weight: 700; background: var(--lantern); color: var(--night); }
 .state::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--night); box-shadow: 0 0 0 3px #17214A33; }
 .state.closed { background: #ffffff22; color: #fff; }
@@ -118,7 +118,7 @@ main { max-width: 620px; margin: 0 auto; padding: 4px 16px calc(120px + env(safe
 <div id="busy"></div>
 <header class="sky" id="sky">
   <div class="in">
-    <div class="org"><img src="jungdeung.png" alt="" onerror="this.remove()">새중앙교회 드림공동체 중등부</div>
+    <div class="org"><img src="jungdeung.png" alt="드림공동체 중등부" onerror="this.remove()">새중앙교회</div>
     <span class="state" id="state" hidden></span>
     <h1 class="title" id="title">수련회 신청</h1>
     <p class="theme" id="theme" hidden></p>
