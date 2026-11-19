@@ -26,7 +26,11 @@ body.home main { padding-bottom: 32px; }
 .state::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--night); box-shadow: 0 0 0 3px #17214A33; }
 .state.closed { background: #ffffff22; color: #fff; }
 .state.closed::before { background: #ffffff88; box-shadow: none; }
-h1.title { font-family: var(--display); font-weight: 400; font-size: clamp(42px, 12.5vw, 72px); line-height: 1.04; letter-spacing: -.01em; margin-top: 14px; }
+h1.title { font-family: var(--display); font-weight: 400; font-size: clamp(36px, 9.6vw, 64px); line-height: 1.12; letter-spacing: -.01em; margin-top: 14px; }
+h1.title span { display: block; }
+h1.title em { font-style: normal; color: var(--lantern); }
+.org img { height: 26px; width: auto; display: block; }
+.org { display: flex; align-items: center; gap: 10px; }
 .theme { margin-top: 14px; color: #ffffffdd; }
 .theme span { display: block; }
 .theme .t1 { font-size: 22px; font-weight: 800; color: var(--lantern); letter-spacing: .01em; }
@@ -37,6 +41,8 @@ h1.title { font-family: var(--display); font-weight: 400; font-size: clamp(42px,
 .facts dd { margin: 0; font-weight: 600; }
 .sky.compact .in { padding-top: calc(14px + env(safe-area-inset-top)); padding-bottom: 46px; }
 .sky.compact h1.title { font-size: 26px; margin-top: 6px; }
+.sky.compact h1.title .t2 { display: none; }
+.sky.compact .org img { height: 20px; }
 .sky.compact .state, .sky.compact .theme, .sky.compact .facts { display: none; }
 .sky.compact .ridge { height: 30px; }
 
@@ -149,9 +155,9 @@ main { max-width: 620px; margin: 0 auto; padding: 4px 16px calc(120px + env(safe
 <div id="busy"></div>
 <header class="sky" id="sky">
   <div class="in">
-    <div class="org">새중앙교회 중등부 수련회 교사 신청서</div>
+    <div class="org"><img src="../sja-white.png" alt="새중앙교회" onerror="this.remove()"><span>새중앙교회 중등부</span></div>
     <span class="state" id="state" hidden></span>
-    <h1 class="title" id="title">수련회</h1>
+    <h1 class="title" id="title"><span class="t1">수련회</span><span class="t2"><em>교사</em>신청서</span></h1>
     <p class="theme" id="theme" hidden></p>
     <dl class="facts" id="facts"></dl>
   </div>
@@ -171,10 +177,10 @@ const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 let C = null, T = null, step = -1, sending = false;
-const F0 = () => ({ name: '', gender: '', dept: '', phone: '', arrive: '', move: '', carpool: '', nights: [], hope: '', praise: false, leadHope: false,
+const F0 = () => ({ name: '', gender: '', dept: '', phone: '', arrive: '', move: '', carpool: '', ride: '', nights: [], hope: '', praise: false, leadHope: false,
   health: '', note: '', c1: false, c2: false, c3: false, c4: false, rrn1: '', rrn2: '', hp: '' });
 const F = F0();
-const KEEP = ['name', 'gender', 'dept', 'phone', 'arrive', 'move', 'carpool', 'nights', 'hope', 'praise', 'leadHope', 'note'];
+const KEEP = ['name', 'gender', 'dept', 'phone', 'arrive', 'move', 'carpool', 'ride', 'nights', 'hope', 'praise', 'leadHope', 'note'];
 const DRAFT = 'rt-teacher-draft';
 const TEAM_INFO = {
   진행팀: '프로그램 준비와 진행을 맡아요. 찬양팀도 진행팀에 속해요.',
@@ -212,18 +218,18 @@ function fmtPhone(v) {
 }
 const okPhone = v => /^0\d{1,2}-\d{3,4}-\d{4}$/.test(v);
 const isMain = () => T && F.arrive === T.arrive[0];
-const isVisit = () => /방문|숙박 안 함/.test(F.arrive);
-const leadOk = () => T && T.arrive.indexOf(F.arrive) >= 0 && T.arrive.indexOf(F.arrive) <= 1 && !isVisit();
+const isVisit = () => false;
+const leadOk = () => true;
 
 // ── 머리 ──
 function renderHead() {
-  $('#title').textContent = C.title || '수련회';
-  document.title = (C.title || '수련회') + ' 교사 신청';
+  $('#title .t1').textContent = C.title || '수련회';
+  document.title = (C.title || '수련회') + ' 교사신청서';
   const th = $('#theme'); th.hidden = !C.theme; th.innerHTML = String(C.theme || '').split(/\n|\\n/).map(x => x.trim()).filter(Boolean).map((x, i) => '<span class="t' + (i ? 2 : 1) + '">' + esc(x) + '</span>').join('');
   const st = $('#state'); st.hidden = false;
   st.textContent = T.open ? '교사 신청 받는 중' : '교사 신청 기간이 아니에요';
   st.className = 'state' + (T.open ? '' : ' closed');
-  const rows = [['일정', C.dates], ['장소', C.place], ['교사 회비', T.fee], ['신청 마감', T.deadline ? fmtDate(T.deadline) + '까지' : '']].filter(r => r[1]);
+  const rows = [['일정', C.dates], ['장소', C.place], ['신청 마감', T.deadline ? fmtDate(T.deadline) + '까지' : '']].filter(r => r[1]);
   $('#facts').innerHTML = rows.map(r => '<dt>' + r[0] + '</dt><dd>' + esc(r[1]) + '</dd>').join('');
 }
 function fmtDate(s) {
@@ -242,8 +248,8 @@ function renderIntro() {
   }
   const d = loadDraft();
   $('#main').innerHTML = '<section class="intro">' +
-    (T.notice ? '<p class="notice">' + esc(T.notice) + '</p>' : '<p>수련회를 함께 섬겨 주시는 선생님들의 참석 신청서예요. 출발 시간과 이동 방법, 섬기고 싶은 팀을 알려 주시면 팀과 조, 차량 편성에 반영할게요.</p>') +
-    '<p class="muted">작성에는 3분 정도 걸려요.' + (T.ins ? ' 여행자보험 가입을 위해 주민등록번호가 필요해요.' : '') + '</p>' +
+    (T.notice ? '<p class="notice">' + esc(T.notice) + '</p>' : '<p>수련회를 함께 섬겨 주시는 선생님들의 참석 신청서예요. 참석 일정과 오시는 방법을 알려 주시면 조와 차량, 숙소 준비에 반영할게요.</p>') +
+    '<p class="muted">작성에는 2분 정도 걸려요.' + (T.ins ? ' 여행자보험 가입을 위해 주민등록번호가 필요해요.' : '') + '</p>' +
     '<button class="btn lamp block" id="go">교사 신청서 쓰기</button>' +
     (d && d.name ? '<p class="draft">' + esc(d.name) + ' 선생님 신청서를 쓰던 중이에요. 이어서 쓸 수 있어요.</p>' : '') + '</section>';
   $('#go').onclick = () => { if (d) Object.assign(F, d); if (!Array.isArray(F.nights)) F.nights = []; go(0); };
@@ -252,8 +258,7 @@ function renderIntro() {
 // ── 단계 ──
 const STEPS = [
   { t: '기본 정보', r: stepBasic, v: vBasic },
-  { t: '참석 일정과 이동', r: stepTrip, v: vTrip },
-  { t: '섬길 팀', r: stepServe, v: vServe },
+  { t: '참석 일정', r: stepTrip, v: vTrip },
   { t: '개인정보 제공동의', r: stepConsent, v: vConsent },
   { t: '마지막 확인', r: stepReview, v: () => true },
 ];
@@ -298,10 +303,9 @@ function bind() {
     g.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
     g.classList.remove('bad'); setErr(k, '');
     if (k === 'arrive' || k === 'move') {
-      if (k === 'arrive') { F.nights = isVisit() ? [] : (isMain() ? T.nights.slice() : F.nights); if (!leadOk()) F.leadHope = false; if (!isMain() && F.move === '버스') F.move = ''; }
+      if (k === 'arrive') { if (isMain()) { F.move = ''; F.ride = ''; F.carpool = ''; } }
       const y = window.scrollY; go(1); window.scrollTo(0, y);
     }
-    if (k === 'hope') { const y = window.scrollY; go(2); window.scrollTo(0, y); }
   });
   $$('.multi[data-m] button').forEach(b => b.onclick = () => {
     const v = b.dataset.v, i = F.nights.indexOf(v);
@@ -342,48 +346,41 @@ function vBasic() {
 }
 
 function stepTrip() {
-  let h = '<h2>언제, 어떻게 오시나요?</h2><p class="lead">차량과 숙소, 조 편성을 미리 준비하는 데 꼭 필요해요.</p>' +
-    group('arrive', '출발', T.arrive, null, 'col') +
-    (F.arrive && !isMain() ? '<p class="hint" style="margin:-8px 0 18px">후발로 오시는 선생님은 교회 버스를 함께 타지 않아요.</p>' : '');
+  let h = '<h2>언제부터 참석하시나요?</h2><p class="lead">차량과 숙소, 조 편성을 미리 준비하는 데 꼭 필요해요.</p>' +
+    group('arrive', '참석 일정', T.arrive, null, 'col');
   if (F.arrive) {
-    h += isMain() ? group('move', '이동 방법', ['버스', '자차'], ['교회 버스', '자차로 이동'])
-      : group('move', '이동 방법', ['자차', '기타'], ['자차로 이동', '대중교통·다른 차 동승']);
-    if (F.move === '자차') h += group('carpool', '다른 선생님을 태울 수 있나요?', ['0', '1', '2', '3', '4'], ['못 태워요', '1명', '2명', '3명', '4명 이상']) +
-      '<p class="hint" style="margin:-8px 0 18px">짐 운반이나 늦게 오는 선생님 이동을 연결할 때 참고해요.</p>';
-    if (!isVisit()) h += '<div class="field"><span class="label">숙소가 필요한 밤</span><div class="choice multi" data-m="nights">' +
+    if (isMain()) h += '<p class="hint" style="margin:-8px 0 18px">전체 참석하시는 선생님은 교회 버스로 함께 출발해요.</p>';
+    else {
+      h += group('move', '어떻게 오시나요?', ['자차', '카풀', '대중교통'], ['자차', '카풀', '대중교통']);
+      if (F.move === '자차') h += group('carpool', '다른 선생님을 태울 수 있나요?', ['0', '1', '2', '3', '4'], ['못 태워요', '1명', '2명', '3명', '4명 이상']);
+      if (F.move === '카풀') h += input('ride', '누구 차를 타고 오시나요?', { ph: '예: 김OO 선생님 차', max: 40 });
+    }
+    h += '<div class="field"><span class="label">숙소 신청 <span class="tag opt">필요한 날만</span></span><div class="choice multi" data-m="nights">' +
       T.nights.map(n => '<button type="button" data-v="' + esc(n) + '" aria-pressed="' + (F.nights.indexOf(n) >= 0) + '">' + esc(n) + '</button>').join('') + '</div>' +
-      '<small>여러 개 고를 수 있어요. 숙소가 필요 없으면 모두 꺼 두세요.</small><div class="err" data-e="nights"></div></div>';
+      '<small>숙소가 필요한 밤을 눌러 신청해 주세요. 여러 날 고를 수 있고, 필요 없으면 고르지 않아도 돼요.</small><div class="err" data-e="nights"></div></div>';
   }
+  h += '<div class="cons lead-box' + (F.leadHope ? ' on' : '') + '">' +
+    '<div class="top" style="cursor:default"><span class="t">조장 지원</span><span class="tag opt">선택</span></div>' +
+    '<div class="doc"><p><b>조장 선생님은 이런 분이면 좋아요</b></p><ul><li>모든 프로그램에 조원들과 함께 앉아 참여할 수 있는 분</li><li>평일 온라인 조장 교육에 참여할 수 있는 분</li><li>조원들을 위해 작정기도로 자신을 준비할 수 있는 분</li></ul>' +
+    '<p style="margin-top:8px">후발로 오셔도 지원할 수 있어요. 지원하지 않으셔도 필요할 때 조를 부탁드릴 수 있어요.</p></div>' +
+    '<label class="ft"><input type="checkbox" data-cb="leadHope"' + (F.leadHope ? ' checked' : '') + '>조장을 희망합니다</label></div>';
   return h;
 }
 function vTrip() {
-  let ok = pick('arrive', '출발 시점을 골라 주세요.');
-  if (ok) ok = pick('move', '이동 방법을 골라 주세요.') && ok;
-  if (ok && F.move === '자차' && F.carpool === '') ok = pick('carpool', '하나를 골라 주세요.');
+  let ok = pick('arrive', '참석 일정을 골라 주세요.');
+  if (ok && !isMain()) {
+    ok = pick('move', '어떻게 오시는지 골라 주세요.');
+    if (ok && F.move === '자차' && F.carpool === '') ok = pick('carpool', '하나를 골라 주세요.');
+    if (ok && F.move === '카풀') ok = need('ride', '누구 차를 타고 오시는지 적어 주세요.');
+  }
   return ok;
 }
-
-function stepServe() {
-  const teams = T.teams.concat(['어디든 괜찮아요']);
-  return '<h2>어떤 팀으로 섬기고 싶으세요?</h2><p class="lead">희망을 바탕으로 디렉터와 부감이 팀을 정해요. 필요에 따라 다른 팀으로 부탁드릴 수 있어요.</p>' +
-    '<div class="field"><span class="label">희망 팀</span><div class="teams" role="group" data-k="hope">' + teams.map(t =>
-      '<button type="button" class="team" data-v="' + esc(t) + '" aria-pressed="' + (F.hope === t) + '"><b>' + esc(t) + '</b><span>' + esc(TEAM_INFO[t] || '') + '</span></button>').join('') +
-    '</div><div class="err" data-e="hope"></div></div>' +
-    '<label class="cons toggle' + (F.praise ? ' on' : '') + '"><span class="top"><input type="checkbox" data-cb="praise"' + (F.praise ? ' checked' : '') + '><span class="t">찬양팀으로 섬길 수 있어요<small>찬양 인도, 악기, 싱어 등 (진행팀 소속)</small></span></span></label>' +
-    '<div class="cons lead-box' + (F.leadHope ? ' on' : '') + (leadOk() ? '' : ' dim') + '">' +
-    '<div class="top" style="cursor:default"><span class="t">조 담당 선생님 지원</span><span class="tag opt">선택</span></div>' +
-    '<div class="doc"><p><b>조 담당 선생님의 자격</b></p><ul><li>첫날 저녁 집회가 끝나기 전(대략 8시 반)까지 도착할 수 있는 분</li><li>모든 프로그램에 조원들과 함께 앉아 참여할 수 있는 분</li><li>평일 온라인 조장 교육에 참여할 수 있는 분</li><li>조원들을 위해 작정기도로 자신을 준비할 수 있는 분</li></ul>' +
-    '<p style="margin-top:8px">지원하지 않으셔도 필요할 때 조를 부탁드릴 수 있어요.</p></div>' +
-    (leadOk() ? '<label class="ft"><input type="checkbox" data-cb="leadHope"' + (F.leadHope ? ' checked' : '') + '>조 담당을 희망합니다</label>'
-      : '<p class="hint" style="padding:10px 14px 14px">고르신 출발 시간으로는 조 담당이 어려워요.</p>') + '</div>';
-}
-function vServe() { return pick('hope', '희망 팀을 골라 주세요.'); }
 
 function consentList() {
   const keep = C.keep || '수련회 종료 후 1개월 이내 파기';
   const L = [{ k: 'c1', must: 1, t: '개인정보 수집·이용 동의', d: [
-    ['수집·이용 목적', '수련회 교사 참석 확인, 팀·조 편성, 차량·숙소 준비, 수련회 중 비상 연락, 회비 입금 확인'],
-    ['수집 항목', '이름·성별·섬기는 예배 부서·휴대폰 번호, 출발 시점·이동 방법·숙박·섬김 희망'],
+    ['수집·이용 목적', '수련회 교사 참석 확인, 조·팀 편성, 차량·숙소 준비, 수련회 중 비상 연락, 회비 입금 확인'],
+    ['수집 항목', '이름·성별·섬기는 예배 부서·휴대폰 번호, 참석 일정·이동 방법·숙박·조장 희망'],
     ['보유·이용 기간', keep],
     ['동의를 거부할 권리', '동의를 거부할 권리가 있습니다. 다만 동의하지 않으면 수련회 교사 참석 신청이 제한됩니다.']] }];
   if (T.ins) L.push(
@@ -432,9 +429,8 @@ function stepReview() {
     rows.filter(r => r).map(r => '<dt>' + r[0] + '</dt><dd>' + esc(r[1] || '—') + '</dd>').join('') + '</dl></div>';
   return '<h2>이대로 신청할까요?</h2><p class="lead">보내기 전에 한 번 더 확인해 주세요.</p>' +
     sec('기본 정보', 0, [['이름', F.name.replace(/\s+/g, '')], ['성별', F.gender === '남' ? '남자' : '여자'], ['예배 부서', F.dept], ['휴대폰', F.phone]]) +
-    sec('참석 일정과 이동', 1, [['출발', F.arrive], ['이동', F.move === '버스' ? '교회 버스' : F.move === '자차' ? '자차' + (+F.carpool ? ' (' + F.carpool + '명 더 태울 수 있음)' : '') : '대중교통·동승'], isVisit() ? null : ['숙박', F.nights.length ? T.nights.filter(n => F.nights.indexOf(n) >= 0).join(', ') : '숙소 필요 없음']]) +
-    sec('섬길 팀', 2, [['희망 팀', F.hope], ['찬양', F.praise ? '섬길 수 있어요' : '—'], ['조 담당', F.leadHope ? '희망해요' : '—']]) +
-    sec('동의·특이사항', 3, [['개인정보', '동의'], T.ins ? ['주민등록번호', F.rrn1 + '-' + (F.rrn2[0] || '') + '●●●●●●'] : null, ['건강·식사', F.health.trim() || '없음'], F.note.trim() ? ['하고 싶은 말', F.note.trim()] : null]);
+    sec('참석 일정', 1, [['참석', F.arrive], ['이동', isMain() ? '교회 버스' : F.move === '자차' ? '자차' + (+F.carpool ? ' (' + F.carpool + '명 더 태울 수 있음)' : '') : F.move === '카풀' ? '카풀 (' + F.ride.trim() + ')' : F.move], ['숙소 신청', F.nights.length ? T.nights.filter(n => F.nights.indexOf(n) >= 0).join(', ') : '신청 안 함'], ['조장', F.leadHope ? '희망해요' : '—']]) +
+    sec('동의·특이사항', 2, [['개인정보', '동의'], T.ins ? ['주민등록번호', F.rrn1 + '-' + (F.rrn2[0] || '') + '●●●●●●'] : null, ['건강·식사', F.health.trim() || '없음'], F.note.trim() ? ['하고 싶은 말', F.note.trim()] : null]);
 }
 document.addEventListener('click', e => {
   const ed = e.target.closest('[data-edit]'); if (ed) go(+ed.dataset.edit);
@@ -448,8 +444,8 @@ async function submit() {
   const btn = $('#next'); btn.disabled = true; btn.textContent = '보내는 중…';
   try {
     const r = await api('tapply', {
-      name: F.name, gender: F.gender, dept: F.dept, phone: F.phone, arrive: F.arrive, move: F.move, carpool: F.carpool,
-      nights: isVisit() ? [] : F.nights, hope: F.hope, praise: F.praise, leadHope: F.leadHope && leadOk(), health: F.health, note: F.note,
+      name: F.name, gender: F.gender, dept: F.dept, phone: F.phone, arrive: F.arrive, move: isMain() ? '' : F.move, carpool: F.carpool, ride: F.move === '카풀' ? F.ride : '',
+      nights: F.nights, leadHope: F.leadHope, health: F.health, note: F.note,
       consent: { c1: F.c1, c2: F.c2, c3: F.c3, c4: F.c4 }, rrn: T.ins ? F.rrn1 + F.rrn2 : '', hp: F.hp,
     });
     clearDraft();
@@ -469,10 +465,10 @@ function done(r) {
   $('#main').innerHTML = '<div class="ticket staff" role="group" aria-label="교사 참석 접수증">' +
     '<div class="head"><small>교사 참석 접수증</small><h2>' + esc(r.title || C.title) + '</h2>' + (r.dates || r.place ? '<p>' + esc([r.dates, r.place].filter(Boolean).join(', ')) + '</p>' : '') + '</div>' +
     '<div class="cut"></div><div class="body"><div class="no"><span>선생님</span><b class="nm">' + esc(r.name) + '</b></div>' +
-    '<dl><dt>출발</dt><dd>' + esc(r.arrive) + '</dd><dt>이동</dt><dd>' + esc(r.move === '버스' ? '교회 버스' : r.move === '자차' ? '자차' : '대중교통·동승') + '</dd><dt>희망 팀</dt><dd>' + esc(r.hope) + '</dd><dt>접수 시각</dt><dd>' + esc(when) + '</dd></dl>' +
-    (r.fee || r.account ? '<div class="pay">' + (r.fee ? '교사 회비 <b>' + esc(r.fee) + '</b>' : '') + (r.account ? '<br>' + esc(r.account) : '') + '<br>입금하실 때 선생님 이름으로 보내 주세요.</div>' : '') +
+    '<dl><dt>참석</dt><dd>' + esc(r.arrive) + '</dd><dt>이동</dt><dd>' + esc(r.move === '버스' ? '교회 버스' : r.move === '카풀' ? '카풀 (' + r.ride + ')' : r.move) + '</dd>' + (r.leadHope ? '<dt>조장</dt><dd>희망</dd>' : '') + '<dt>접수 시각</dt><dd>' + esc(when) + '</dd></dl>' +
+    (r.account ? '<div class="pay">회비 입금 계좌<br><b>' + esc(r.account) + '</b><br>입금하실 때 선생님 이름으로 보내 주세요.</div>' : '') +
     '</div></div>' +
-    '<div class="after"><p>' + (r.updated ? '이미 접수된 신청서를 새 내용으로 바꿨어요.' : '신청이 접수되었어요.') + ' 팀과 조는 정해지면 따로 안내드려요.</p>' +
+    '<div class="after"><p>' + (r.updated ? '이미 접수된 신청서를 새 내용으로 바꿨어요.' : '신청이 접수되었어요.') + ' 조와 차량은 정해지면 따로 안내드려요.</p>' +
     '<button class="btn light" id="again">다른 선생님 신청하기</button></div>';
   $('#again').onclick = () => { Object.assign(F, F0()); renderIntro(); window.scrollTo(0, 0); };
   window.scrollTo(0, 0);

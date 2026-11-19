@@ -26,7 +26,11 @@ body.home main { padding-bottom: 32px; }
 .state::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--night); box-shadow: 0 0 0 3px #17214A33; }
 .state.closed { background: #ffffff22; color: #fff; }
 .state.closed::before { background: #ffffff88; box-shadow: none; }
-h1.title { font-family: var(--display); font-weight: 400; font-size: clamp(42px, 12.5vw, 72px); line-height: 1.04; letter-spacing: -.01em; margin-top: 14px; }
+h1.title { font-family: var(--display); font-weight: 400; font-size: clamp(36px, 9.6vw, 64px); line-height: 1.12; letter-spacing: -.01em; margin-top: 14px; }
+h1.title span { display: block; }
+h1.title em { font-style: normal; color: var(--lantern); }
+.org img { height: 26px; width: auto; display: block; }
+.org { display: flex; align-items: center; gap: 10px; }
 .theme { margin-top: 14px; color: #ffffffdd; }
 .theme span { display: block; }
 .theme .t1 { font-size: 22px; font-weight: 800; color: var(--lantern); letter-spacing: .01em; }
@@ -37,6 +41,8 @@ h1.title { font-family: var(--display); font-weight: 400; font-size: clamp(42px,
 .facts dd { margin: 0; font-weight: 600; }
 .sky.compact .in { padding-top: calc(14px + env(safe-area-inset-top)); padding-bottom: 46px; }
 .sky.compact h1.title { font-size: 26px; margin-top: 6px; }
+.sky.compact h1.title .t2 { display: none; }
+.sky.compact .org img { height: 20px; }
 .sky.compact .state, .sky.compact .theme, .sky.compact .facts { display: none; }
 .sky.compact .ridge { height: 30px; }
 
@@ -130,9 +136,9 @@ main { max-width: 620px; margin: 0 auto; padding: 4px 16px calc(120px + env(safe
 <div id="busy"></div>
 <header class="sky" id="sky">
   <div class="in">
-    <div class="org">새중앙교회 중등부 수련회 신청서</div>
+    <div class="org"><img src="sja-white.png" alt="새중앙교회" onerror="this.remove()"><span>새중앙교회 중등부</span></div>
     <span class="state" id="state" hidden></span>
-    <h1 class="title" id="title">수련회 신청</h1>
+    <h1 class="title" id="title"><span class="t1">수련회</span><span class="t2">참가신청서</span></h1>
     <p class="theme" id="theme" hidden></p>
     <dl class="facts" id="facts"></dl>
   </div>
@@ -188,8 +194,8 @@ const okPhone = v => /^0\d{1,2}-\d{3,4}-\d{4}$/.test(v);
 
 // ── 머리 부분 ──
 function renderHead() {
-  $('#title').textContent = C.title || '수련회 신청';
-  document.title = (C.title || '수련회') + ' 신청';
+  $('#title .t1').textContent = C.title || '수련회';
+  document.title = (C.title || '수련회') + ' 참가신청서';
   const th = $('#theme');
   th.hidden = !C.theme; th.innerHTML = String(C.theme || '').split(/\n|\\n/).map(x => x.trim()).filter(Boolean).map((x, i) => '<span class="t' + (i ? 2 : 1) + '">' + esc(x) + '</span>').join('');
   const st = $('#state');
