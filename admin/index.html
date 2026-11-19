@@ -442,7 +442,7 @@ V.home = () => {
     '<div class="box"><div class="k">조 배정</div><div class="v">' + placed + '<small>/' + a.length + '</small></div><div class="bar"><i style="width:' + (a.length ? placed / a.length * 100 : 0) + '%"></i></div></div>' +
     '<div class="box"><div class="k">희망 친구와 같은 조</div><div class="v">' + rep.happy + '<small>/' + rep.wishers + '</small></div><div class="muted">희망을 적은 학생 기준</div></div>' +
     '</div>' +
-    '<div class="sec"><h2>부서·학년</h2><div class="mix"><div class="box">' + cnt('dept', [['1부', '1부'], ['2부', '2부'], ['3부(열린예배)', '3부 열린예배']]) + '</div><div class="box">' + cnt('grade', [['1학년', '중1'], ['2학년', '중2'], ['3학년', '중3']]) + '</div></div></div>' +
+    '<div class="sec"><h2>부서·학년</h2><div class="mix"><div class="box">' + cnt('dept', [['1부', '1부'], ['2부', '2부'], ['열린예배', '열린예배'], ['타교회', '타교회']]) + '</div><div class="box">' + cnt('grade', [['1학년', '중1'], ['2학년', '중2'], ['3학년', '중3']]) + '</div></div></div>' +
     '<div class="sec"><h2>확인할 일 <small>' + iss.length + '건</small></h2><div class="box">' +
     (iss.length ? '<ul class="issues">' + iss.slice(0, sub.allIss ? 999 : 6).map(x => '<li class="' + (hard[x.t] ? 'hard' : '') + '" data-id="' + esc(x.id || '') + '" data-room="' + esc(x.room || '') + '" data-t="' + x.t + '">' + esc(x.text) + '</li>').join('') + '</ul>' +
       (iss.length > 6 && !sub.allIss ? '<button class="link" id="moreIss" style="margin-top:8px">' + (iss.length - 6) + '건 더 보기</button>' : '')
@@ -481,7 +481,7 @@ V.list = () => {
     if (fl === 'health') return !!p.health;
     return true;
   });
-  if (q) L = L.filter(p => [p.name, p.school, p.gname, p.phone, p.gphone, p.dept, p.grade].join(' ').indexOf(q) >= 0 || digits(p.gphone + p.phone).indexOf(digits(q) || '@') >= 0);
+  if (q) L = L.filter(p => [p.name, p.school, p.gname, p.phone, p.gphone, p.dept, p.church, p.grade].join(' ').indexOf(q) >= 0 || digits(p.gphone + p.phone).indexOf(digits(q) || '@') >= 0);
   L.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
   return '<div class="search">' + ic('search') + '<input class="inp" id="q" type="search" placeholder="이름, 학교, 전화번호로 찾기" value="' + esc(q) + '"></div>' +
     '<div class="chips" role="group">' + FILTERS.map(f => '<button data-f="' + f[0] + '" aria-pressed="' + (fl === f[0]) + '">' + f[1] + '</button>').join('') + '</div>' +
@@ -492,7 +492,7 @@ function prow(p) {
   const r = p.room && D.rmap[p.room];
   return '<button class="prow' + (p.join !== '예' ? ' off' : '') + '" data-id="' + p.id + '">' +
     '<span class="av ' + gcls(p.gender) + '">' + esc(p.name.slice(-2)) + '</span>' +
-    '<span class="mid"><span class="nm">' + esc(p.name) + '</span><br><span class="ds">' + esc([p.dept.replace('(열린예배)', ''), p.grade.replace('학년', '') ? '중' + p.grade.replace('학년', '') : '', p.school].filter(Boolean).join(' ')) + '</span></span>' +
+    '<span class="mid"><span class="nm">' + esc(p.name) + '</span><br><span class="ds">' + esc([p.dept === '타교회' ? (p.church || '타교회') : p.dept.replace(/^3부\s*\(?열린예배\)?$/, '열린예배'), p.grade.replace('학년', '') ? '중' + p.grade.replace('학년', '') : '', p.school].filter(Boolean).join(' ')) + '</span></span>' +
     '<span class="end">' + (p.health ? '<span class="tag lamp">건강</span>' : '') + (p.join !== '예' ? '<span class="tag dim">취소</span>' : r ? '<span class="tag ' + gcls(p.gender) + '">' + esc(r.no) + '조</span>' : '<span class="tag dim">미배정</span>') +
     '<span class="dot ' + (p.paid === '예' ? 'paid' : 'unpaid') + '" title="' + (p.paid === '예' ? '회비 입금' : '회비 미납') + '"></span></span></button>';
 }
@@ -545,10 +545,11 @@ B.rooms = () => {
 // 버스
 V.bus = () => {
   const rep = D.rep;
-  if (!rep.buses.length) return '<div class="box empty"><b>아직 버스 배차가 없어요</b>조 배정을 마치면 조별로 ' + (D.cfg.seats || 45) + '인승 버스에 자동으로 나눠 태워요.</div>';
+  const seatLink = isAdmin() ? ' <button class="link" id="toBusSet">좌석 수 바꾸기</button>' : '';
+  if (!rep.buses.length) return '<div class="box empty"><b>아직 버스 배차가 없어요</b>조 배정을 마치면 조별로 ' + (D.cfg.seats || 45) + '인승 버스에 자동으로 나눠 태워요.' + seatLink + '</div>';
   const mem = {}; D.act.forEach(p => { if (p.room) (mem[p.room] = mem[p.room] || []).push(p); });
   const open = sub.busOpen || {};
-  return '<p class="muted sec">조 단위로 같은 버스에 타요. 좌석 ' + rep.seat + '석 기준' + (rep.ride ? ', 담당 선생님 포함' : '') + '. 탑승 체크는 이 휴대폰에만 저장돼요.</p>' +
+  return '<p class="muted sec">조 단위로 같은 버스에 타요. 좌석 ' + rep.seat + '석 기준' + (rep.ride ? ', 담당 선생님 포함' : '') + '. 탑승 체크는 이 휴대폰에만 저장돼요.' + seatLink + '</p>' +
     rep.buses.map(b => {
       const ck = store.get('rt-board-' + b.no) || {};
       const ppl = [];
@@ -570,6 +571,7 @@ V.bus = () => {
     }).join('');
 };
 B.bus = () => {
+  const tb = $('#toBusSet'); if (tb) tb.onclick = () => { show('settings'); setTimeout(() => { const e = $('#busBox'); if (e) e.scrollIntoView(); }, 50); };
   $$('.bus .hd').forEach(h => h.onclick = () => { sub.busOpen = sub.busOpen || {}; sub.busOpen[h.dataset.b] = !sub.busOpen[h.dataset.b]; show('bus', true); });
   $$('.brow input').forEach(c => c.onchange = () => { const k = 'rt-board-' + c.dataset.bus; const o = store.get(k) || {}; if (c.checked) o[c.dataset.k] = 1; else delete o[c.dataset.k]; store.set(k, o); show('bus', true); });
   $$('.brow [data-id]').forEach(b => b.onclick = () => person(b.dataset.id));
@@ -701,15 +703,15 @@ function person(id) {
   const wk = p.wk || [];
   const friendLine = raw => {
     const hit = wk.map(k => D.byId[k]).filter(Boolean).find(q => raw.replace(/\s/g, '').indexOf(q.name) === 0);
-    if (!hit) return '<li><span class="tag dim">확인 필요</span>' + esc(raw) + '</li>';
+    if (!hit) return '<li><span class="tag dim">확인 필요</span>' + esc(raw.split(' / ').join(' · ')) + '</li>';
     const same = hit.room && hit.room === p.room;
-    return '<li><span class="tag ' + (same ? 'ok' : 'lamp') + '">' + (same ? '같은 조' : (hit.room ? hit.room + '조' : '미배정')) + '</span><button class="link" data-go="' + hit.id + '">' + esc(raw) + '</button></li>';
+    return '<li><span class="tag ' + (same ? 'ok' : 'lamp') + '">' + (same ? '같은 조' : (hit.room ? hit.room + '조' : '미배정')) + '</span><button class="link" data-go="' + hit.id + '">' + esc(raw.split(' / ').join(' · ')) + '</button></li>';
   };
   const rooms = D.rooms.filter(x => x.gender === p.gender);
   const cntOf = no => D.act.filter(q => q.room === no).length;
   const html = '<div class="grab"><h2>' + esc(p.name) + ' <span class="tag ' + gcls(p.gender) + '">' + esc(p.gender) + '</span>' + (p.join !== '예' ? '<span class="tag dim">참가 취소</span>' : r ? '<span class="tag ' + gcls(p.gender) + '">' + esc(r.no) + '조</span>' : '<span class="tag dim">미배정</span>') + '</h2><button class="x" aria-label="닫기">×</button></div>' +
     (isAdmin() && p.join === '예' ? '<div class="box"><label class="field" style="margin:0"><span>조(숙소)</span><select class="inp" id="mv"><option value="">미배정</option>' + rooms.map(x => '<option value="' + esc(x.no) + '"' + (x.no === p.room ? ' selected' : '') + '>' + esc(x.no) + '조 ' + esc(x.name || '') + ' (' + cntOf(x.no) + '/' + x.cap + ')' + '</option>').join('') + '</select></label></div>' : '') +
-    '<h3>학생</h3><div class="box"><dl class="kv"><dt>부서·학년</dt><dd>' + esc(p.dept + ' ' + p.grade) + '</dd><dt>학교</dt><dd>' + esc(p.school || '—') + '</dd><dt>학생 휴대폰</dt><dd>' + tel(p.phone) + '</dd>' +
+    '<h3>학생</h3><div class="box"><dl class="kv"><dt>예배 부서</dt><dd>' + esc(p.dept === '타교회' ? '타교회 (' + (p.church || '—') + ')' : p.dept) + '</dd><dt>학년</dt><dd>' + esc(p.grade || '—') + '</dd><dt>학교</dt><dd>' + esc(p.school || '—') + '</dd><dt>학생 휴대폰</dt><dd>' + tel(p.phone) + '</dd>' +
     (r ? '<dt>숙소</dt><dd>' + esc(r.name || '—') + '</dd><dt>담당 선생님</dt><dd>' + esc(r.teacher || '미정') + '</dd>' : '') + '</dl></div>' +
     '<h3>보호자</h3><div class="box"><div class="crow" style="padding:0;border:0"><div class="mid"><div class="nm">' + esc(p.gname) + (p.grel ? ' <span class="muted" style="font-weight:500">' + esc(p.grel) + '</span>' : '') + '</div><div class="ds">' + esc(p.gphone) + '</div></div>' + smsBtn(p.gphone, '보호자') + callBtn(p.gphone, '보호자') + '</div></div>' +
     '<h3>같은 조 희망 친구</h3><div class="box">' + (fr.length ? '<ul class="wl">' + fr.map(friendLine).join('') + '</ul>' : '<p class="muted">적지 않았어요.</p>') + '</div>' +
@@ -747,15 +749,15 @@ function person(id) {
 }
 
 function editPerson(id) {
-  const p = id ? D.byId[id] : { name: '', gender: '', dept: '', grade: '', school: '', phone: '', gname: '', grel: '', gphone: '', w1: '', w2: '', w3: '', health: '', memo: '', paynote: '', writer: '관리자 입력' };
+  const p = id ? D.byId[id] : { name: '', gender: '', dept: '', church: '', grade: '', school: '', phone: '', gname: '', grel: '', gphone: '', w1: '', w2: '', w3: '', health: '', memo: '', paynote: '', writer: '관리자 입력' };
   openId = id;
   const sel = (k, list) => '<select class="inp" data-f="' + k + '"><option value="">고르기</option>' + list.map(v => '<option' + (p[k] === v ? ' selected' : '') + '>' + v + '</option>').join('') + '</select>';
   const inp = (k, ph, im) => '<input class="inp" data-f="' + k + '" value="' + esc(p[k]) + '"' + (ph ? ' placeholder="' + ph + '"' : '') + (im ? ' inputmode="' + im + '"' : '') + '>';
   const f = (label, html) => '<label class="field"><span>' + label + '</span>' + html + '</label>';
   openSheet('<div class="grab"><h2>' + (id ? esc(p.name) + ' 정보 고치기' : '학생 직접 추가') + '</h2><button class="x" aria-label="닫기">×</button></div><div class="box">' +
-    f('이름', inp('name')) + f('성별', sel('gender', ['남', '여'])) + f('부서', sel('dept', ['1부', '2부', '3부(열린예배)'])) + f('학년', sel('grade', ['1학년', '2학년', '3학년'])) +
-    f('학교', inp('school', '예: 백운중')) + f('학생 휴대폰', inp('phone', '', 'tel')) + f('보호자', inp('gname')) + f('관계', inp('grel', '아버지 / 어머니')) + f('보호자 휴대폰', inp('gphone', '', 'tel')) +
-    f('희망 친구 1', inp('w1')) + f('희망 친구 2', inp('w2')) + f('희망 친구 3', inp('w3')) +
+    f('이름', inp('name')) + f('성별', sel('gender', ['남', '여'])) + f('예배 부서', sel('dept', ['1부', '2부', '열린예배', '타교회'])) + f('교회 (타교회일 때)', inp('church')) + f('학년', sel('grade', ['1학년', '2학년', '3학년'])) +
+    f('학교', inp('school', '예: 평촌중')) + f('학생 휴대폰', inp('phone', '', 'tel')) + f('보호자', inp('gname')) + f('관계', inp('grel', '아버지 / 어머니')) + f('보호자 휴대폰', inp('gphone', '', 'tel')) +
+    f('희망 친구 1', inp('w1', '이름 / 학교 / 학년 / 휴대폰')) + f('희망 친구 2', inp('w2', '이름 / 학교 / 학년 / 휴대폰')) + f('희망 친구 3', inp('w3', '이름 / 학교 / 학년 / 휴대폰')) +
     f('건강 특이사항', '<textarea class="inp" data-f="health">' + esc(p.health) + '</textarea>') +
     f('메모', '<textarea class="inp" data-f="memo">' + esc(p.memo) + '</textarea>') + f('입금 메모', inp('paynote')) +
     f('주민등록번호 ' + (id ? '(바꿀 때만)' : '(보험용)'), '<input class="inp" data-f="rrn" inputmode="numeric" placeholder="000000-0000000" autocomplete="off">') +
@@ -774,7 +776,7 @@ function editPerson(id) {
 
 // ───── 설정 (관리자) ─────
 const CFG_FORM = [
-  ['title', '수련회 이름'], ['theme', '주제·표어'], ['dates', '일정 (신청 페이지 표시용)', '예: 2027년 1월 14일(목) ~ 16일(토)'], ['start', '시작일', '', 'date'], ['days', '일수', '', 'number'],
+  ['title', '수련회 이름'], ['theme', '주제·표어'], ['dates', '일정 (신청 페이지 표시용)', '예: 2027년 1월 14일(목) ~ 16일(토)'], ['start', '수련회 첫날 (일정표 기준)', '', 'date'], ['days', '수련회 일수', '', 'number'],
   ['place', '장소'], ['fee', '회비', '예: 120,000원'], ['account', '입금 계좌', '예: 국민 000-00-0000 새중앙교회'], ['deadline', '신청 마감일', '', 'date'],
   ['notice', '신청 안내 (신청 페이지 첫 화면)', '', 'area'], ['insurer', '보험사'], ['keep', '개인정보 보유기간'],
 ];
@@ -786,7 +788,7 @@ V.settings = () => {
     '<div class="sec"><h2>신청 받기</h2><div class="box"><div class="choice" id="openSel"><button data-v="예" aria-pressed="' + (c.open === '예') + '">신청 받기</button><button data-v="아니오" aria-pressed="' + (c.open !== '예') + '">신청 닫기</button></div>' +
     '<p class="muted" style="margin-top:10px">' + (D.open ? '지금 신청 페이지에서 신청할 수 있어요.' : '지금은 신청 페이지가 닫혀 있어요.' + (c.open === '예' && c.deadline ? ' (마감일이 지났어요)' : '')) + '</p></div></div>' +
     '<div class="sec"><h2>수련회 정보</h2><div class="box">' + CFG_FORM.map(fld).join('') + '<button class="btn block" id="cfgSave">수련회 정보 저장</button></div></div>' +
-    '<div class="sec"><h2>버스</h2><div class="box">' + fld(['seats', '버스 좌석 수', '', 'number']) + fld(['staff', '버스마다 비워 둘 좌석 (스태프용)', '', 'number']) +
+    '<div class="sec" id="busBox"><h2>버스</h2><div class="box">' + fld(['seats', '버스 좌석 수', '', 'number']) + fld(['staff', '버스마다 비워 둘 좌석 (스태프용)', '', 'number']) +
     '<div class="field"><span class="label">담당 선생님도 조와 같은 버스에 타나요?</span><div class="choice" id="rideSel"><button data-v="예" aria-pressed="' + (c.ride !== '아니오') + '">네</button><button data-v="아니오" aria-pressed="' + (c.ride === '아니오') + '">아니요</button></div></div>' +
     '<button class="btn block" id="busSave">버스 설정 저장</button></div></div>' +
     '<div class="sec" id="roomsBox"><h2>조(숙소) <small>숙소 = 조</small></h2><p class="muted" style="margin:-4px 2px 10px">정원은 학생 수 기준이에요. 남녀는 같은 조가 될 수 없어요. 특정 조를 정한 버스에 태우려면 버스 칸에 호차 번호를 적어 주세요.</p>' +

@@ -60,15 +60,21 @@ main { max-width: 620px; margin: 0 auto; padding: 4px 16px calc(120px + env(safe
 .cons .top { display: flex; align-items: center; gap: 12px; padding: 14px 14px; cursor: pointer; }
 .cons .top input { width: 24px; height: 24px; accent-color: var(--night); flex: none; margin: 0; }
 .cons .top .t { flex: 1; font-weight: 600; font-size: 16px; line-height: 1.4; }
-.cons details { border-top: 1px solid var(--line); background: #FAFBFD; }
-.cons summary { padding: 10px 14px; font-size: 14px; color: var(--sub); cursor: pointer; list-style: none; }
-.cons summary::-webkit-details-marker { display: none; }
-.cons summary::after { content: ' 펼치기'; }
-.cons details[open] summary::after { content: ' 접기'; }
-.cons dl { margin: 0; padding: 0 14px 14px; font-size: 14px; color: var(--ink); display: grid; grid-template-columns: 76px 1fr; gap: 6px 10px; }
-.cons dt { color: var(--sub); }
-.cons dd { margin: 0; }
-.cons .choice { padding: 0 14px 14px; }
+.cons .hd { display: flex; align-items: flex-start; gap: 10px; padding: 14px 14px 10px; }
+.cons .hd .t { flex: 1; font-weight: 700; font-size: 16px; line-height: 1.4; }
+.cons .doc { margin: 0 14px; padding: 12px 14px; background: #FAFBFD; border: 1px solid var(--line); border-radius: 10px; font-size: 14px; line-height: 1.6; color: var(--ink); }
+.cons .doc p + p { margin-top: 8px; }
+.cons .doc b { display: block; font-weight: 700; color: var(--night); }
+.cons .doc b::before { content: '■ '; font-size: 11px; vertical-align: 1px; }
+.cons .ft { display: flex; align-items: center; gap: 12px; padding: 12px 14px 14px; cursor: pointer; font-weight: 600; font-size: 16px; }
+.cons .ft input { width: 24px; height: 24px; accent-color: var(--night); flex: none; margin: 0; }
+.cons .choice { padding: 12px 14px 14px; }
+.fcard { border: 1.5px solid var(--line); border-radius: var(--r-m); padding: 14px 14px 0; margin-bottom: 12px; }
+.fcard.bad { border-color: var(--alert); }
+.fcard .fh { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: 700; }
+.fcard .field { margin-bottom: 14px; }
+.fcard .two { display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px; }
+.addf { margin: 2px 0 20px; }
 .allbtn { margin-bottom: 14px; }
 .cons.bad { border-color: var(--alert); }
 
@@ -138,9 +144,11 @@ main { max-width: 620px; margin: 0 auto; padding: 4px 16px calc(120px + env(safe
 const $ = s => document.querySelector(s);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 let C = null, step = -1, sending = false;
-const F = { writer: '', name: '', gender: '', dept: '', grade: '', school: '', phone: '', gname: '', grel: '', grelEtc: '', gphone: '',
-  w1: '', w2: '', w3: '', c1: false, c2: false, c3: false, c4: null, c5: false, rrn1: '', rrn2: '', health: '', hp: '' };
-const KEEP = ['writer', 'name', 'gender', 'dept', 'grade', 'school', 'phone', 'gname', 'grel', 'grelEtc', 'gphone', 'w1', 'w2', 'w3'];
+const F0 = () => ({ writer: '', name: '', gender: '', dept: '', church: '', grade: '', school: '', phone: '', gname: '', grel: '', grelEtc: '', gphone: '',
+  fr: [], fc: 1, c1: false, c2: false, c3: false, c4: null, c5: false, rrn1: '', rrn2: '', health: '', hp: '' });
+const F = F0();
+const KEEP = ['writer', 'name', 'gender', 'dept', 'church', 'grade', 'school', 'phone', 'gname', 'grel', 'grelEtc', 'gphone', 'fr', 'fc'];
+const GR = ['1학년', '2학년', '3학년'];
 const DRAFT = 'rt-apply-draft';
 
 function toast(m) { const t = $('#toast'); t.textContent = m; t.className = 'on'; clearTimeout(toast.t); toast.t = setTimeout(() => t.className = '', 2600); }
@@ -206,16 +214,16 @@ function renderIntro() {
     '<button class="btn lamp block" id="go">신청서 쓰기</button>' +
     (d && d.name ? '<p class="draft">' + esc(d.name) + ' 학생 신청서를 쓰던 중이에요. 이어서 쓸 수 있어요.</p>' : '') +
     '</section>';
-  $('#go').onclick = () => { if (d) Object.assign(F, d); go(0); };
+  $('#go').onclick = () => { if (d) Object.assign(F, d); if (!Array.isArray(F.fr)) F.fr = []; F.fc = Math.min(3, Math.max(1, +F.fc || 1)); go(0); };
 }
 
 // ── 단계 ──
 const STEPS = [
   { t: '학생 정보', r: stepStudent, v: vStudent },
-  { t: '보호자', r: stepGuardian, v: vGuardian },
-  { t: '같은 조 친구', r: stepFriends, v: () => true },
-  { t: '개인정보 동의', r: stepConsent, v: vConsent },
-  { t: '보험·건강', r: stepInsure, v: vInsure },
+  { t: '보호자 정보', r: stepGuardian, v: vGuardian },
+  { t: '같은 방/같은 조 친구 신청', r: stepFriends, v: vFriends },
+  { t: '개인정보 제공동의', r: stepConsent, v: vConsent },
+  { t: '보험가입정보·건강 특이사항', r: stepInsure, v: vInsure },
   { t: '마지막 확인', r: stepReview, v: () => true },
 ];
 function go(i) {
@@ -232,7 +240,7 @@ function go(i) {
   $('#actions .in').innerHTML = '<button class="btn light" id="prev">이전</button><button class="btn' + (last ? ' lamp' : '') + '" id="next">' + (last ? '신청서 보내기' : '다음') + '</button>';
   $('#prev').onclick = () => { saveDraft(); i === 0 ? renderIntro() : go(i - 1); window.scrollTo(0, 0); };
   $('#next').onclick = () => {
-    if (!STEPS[i].v()) { const b = document.querySelector('.bad, .err'); if (b) b.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
+    if (!STEPS[i].v()) { const b = document.querySelector('.bad') || [...document.querySelectorAll('.err')].find(e => e.textContent); if (b) b.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
     saveDraft();
     if (last) submit(); else { go(i + 1); window.scrollTo(0, 0); }
   };
@@ -262,6 +270,18 @@ function bind() {
     g.classList.remove('bad'); setErr(k, '');
     if (k === 'grel') { const e2 = $('#grelEtc'); if (e2) e2.hidden = F.grel !== '기타'; }
     if (k === 'c4') { F.c4 = b.dataset.v === 'y'; }
+    if (k === 'dept') { const c = $('#churchBox'); if (c) c.hidden = F.dept !== '타교회'; }
+  });
+  document.querySelectorAll('.choice[data-fg]').forEach(g => g.onclick = e => {
+    const b = e.target.closest('button'); if (!b) return;
+    const i = +g.dataset.fg; fr(i).g = b.dataset.v;
+    g.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
+    g.classList.remove('bad'); clearFriend(i);
+  });
+  document.querySelectorAll('input[data-f]').forEach(el => el.oninput = () => {
+    const [i, f] = el.dataset.f.split(':');
+    if (f === 'p') el.value = fmtPhone(el.value);
+    fr(+i)[f] = el.value; el.classList.remove('bad'); clearFriend(+i);
   });
   document.querySelectorAll('input.inp[data-k], textarea.inp[data-k]').forEach(el => el.oninput = () => {
     const k = el.dataset.k;
@@ -279,17 +299,20 @@ function stepStudent() {
     group('writer', '누가 작성하나요?', ['학생 본인', '보호자']) +
     input('name', '학생 이름', { ac: 'off', max: 20 }) +
     group('gender', '성별', ['남', '여'], ['남학생', '여학생']) +
-    group('dept', '예배 부서', ['1부', '2부', '3부(열린예배)'], ['1부', '2부', '3부 열린예배']) +
-    group('grade', '학년', ['1학년', '2학년', '3학년'], ['중1', '중2', '중3']) +
-    input('school', '학교', { ph: '예: 백운중', max: 30 }) +
-    input('phone', '학생 휴대폰', { opt: 1, im: 'tel', ph: '010-0000-0000', hint: '휴대폰이 없으면 비워 두세요.', max: 13 });
+    '<div class="field"><span class="label">예배 부서</span>' + choice('dept', ['1부', '2부', '열린예배', '타교회']) +
+    '<div id="churchBox"' + (F.dept === '타교회' ? '' : ' hidden') + ' style="margin-top:8px"><input class="inp" data-k="church" placeholder="다니는 교회 이름 (예: 평촌○○교회)" value="' + esc(F.church) + '" maxlength="30" autocomplete="off" aria-label="다니는 교회"></div>' +
+    '<div class="err" data-e="dept"></div><div class="err" data-e="church"></div></div>' +
+    group('grade', '학년', GR, ['중1', '중2', '중3']) +
+    input('school', '학교', { ph: '예: 평촌중', max: 30 }) +
+    input('phone', '학생 휴대폰', { im: 'tel', ph: '010-0000-0000', hint: '휴대폰이 없으면 보호자 번호를 적어 주세요.', max: 13 });
 }
 function vStudent() {
   let ok = true;
   ['writer', 'gender', 'dept', 'grade'].forEach(k => { if (!F[k]) { setErr(k, '하나를 골라 주세요.'); document.querySelector('.choice[data-k=' + k + ']').classList.add('bad'); ok = false; } });
   ok = need('name', '학생 이름을 적어 주세요.') && ok;
   ok = need('school', '다니는 학교를 적어 주세요.') && ok;
-  if (F.phone && !okPhone(F.phone)) { setErr('phone', '전화번호를 끝까지 적어 주세요.'); ok = false; }
+  if (F.dept === '타교회' && !F.church.trim()) { setErr('church', '다니는 교회 이름을 적어 주세요.'); ok = false; }
+  if (!okPhone(F.phone)) { setErr('phone', F.phone ? '전화번호를 끝까지 적어 주세요.' : '학생 휴대폰 번호를 적어 주세요.'); ok = false; }
   return ok;
 }
 function stepGuardian() {
@@ -307,32 +330,82 @@ function vGuardian() {
   if (!okPhone(F.gphone)) { setErr('gphone', '보호자 휴대폰 번호를 끝까지 적어 주세요.'); ok = false; }
   return ok;
 }
+const fr = i => (F.fr[i] = F.fr[i] || { n: '', s: '', g: '', p: '' });
+const frFilled = x => !!(x && (x.n.trim() || x.s.trim() || x.g || digits(x.p)));
+function clearFriend(i) { const c = document.querySelector('[data-fc="' + i + '"]'); if (c) c.classList.remove('bad'); setErr('f' + i, ''); }
 function stepFriends() {
-  return '<h2>같은 방을 쓰고 싶은 친구가 있나요?</h2><p class="lead">수련회에서는 숙소가 곧 조예요. 3명까지 적을 수 있어요.</p>' +
-    '<ul class="notes"><li>친구도 수련회를 신청해야 같은 조가 될 수 있어요.</li><li>남학생과 여학생은 같은 조가 될 수 없어요.</li><li>방 정원 때문에 모두 반영되지 않을 수 있지만, 최대한 함께할 수 있게 짤게요.</li></ul>' +
-    [1, 2, 3].map(n => input('w' + n, '친구 ' + n, { opt: 1, ph: n === 1 ? '이름 (같은 이름이 있으면 학교도)' : '', max: 20 })).join('');
+  let h = '<h2>같은 방을 쓰고 싶은 친구가 있나요?</h2><p class="lead">수련회에서는 숙소가 곧 조예요. 3명까지 신청할 수 있고, 없으면 비워 두고 넘어가도 돼요.</p>' +
+    '<ul class="notes"><li>같은 이름의 친구가 많아서 <b>이름을 적으면 학교·학년·휴대폰도 꼭 적어야 해요.</b></li><li>친구도 수련회를 신청해야 같은 조가 될 수 있어요. 남학생과 여학생은 같은 조가 될 수 없어요.</li><li>방 정원 때문에 모두 반영되지 않을 수 있지만, 최대한 함께할 수 있게 짤게요.</li></ul>';
+  for (let i = 0; i < F.fc; i++) {
+    const x = fr(i);
+    h += '<div class="fcard" data-fc="' + i + '"><div class="fh">친구 ' + (i + 1) + (F.fc > 1 ? '<button type="button" class="link" data-rmf="' + i + '">빼기</button>' : '') + '</div>' +
+      '<div class="two"><label class="field"><span>이름</span><input class="inp" data-f="' + i + ':n" value="' + esc(x.n) + '" maxlength="20" autocomplete="off"></label>' +
+      '<label class="field"><span>학교</span><input class="inp" data-f="' + i + ':s" value="' + esc(x.s) + '" maxlength="30" placeholder="예: 평촌중" autocomplete="off"></label></div>' +
+      '<div class="field"><span class="label">학년</span><div class="choice" data-fg="' + i + '">' + GR.map((g, j) => '<button type="button" data-v="' + g + '" aria-pressed="' + (x.g === g) + '">중' + (j + 1) + '</button>').join('') + '</div></div>' +
+      '<label class="field"><span>친구 휴대폰</span><input class="inp" data-f="' + i + ':p" value="' + esc(x.p) + '" inputmode="tel" maxlength="13" placeholder="010-0000-0000" autocomplete="off"></label>' +
+      '<div class="err" data-e="f' + i + '" style="margin:-6px 0 12px"></div></div>';
+  }
+  if (F.fc < 3) h += '<button type="button" class="btn light block addf" id="addf">친구 더 적기</button>';
+  return h;
 }
+function vFriends() {
+  let ok = true;
+  for (let i = 0; i < F.fc; i++) {
+    const x = fr(i);
+    if (!frFilled(x)) continue;
+    const miss = [];
+    if (!x.n.trim()) miss.push('이름'); if (!x.s.trim()) miss.push('학교'); if (!x.g) miss.push('학년'); if (!okPhone(x.p)) miss.push('휴대폰');
+    if (miss.length) {
+      ok = false; document.querySelector('[data-fc="' + i + '"]').classList.add('bad');
+      setErr('f' + i, miss.join('·') + '을(를) 적어 주세요. 친구를 적지 않으려면 칸을 모두 비우거나 빼 주세요.');
+      const fk = { 이름: 'n', 학교: 's', 휴대폰: 'p' }[miss[0]];
+      if (fk) document.querySelector('[data-f="' + i + ':' + fk + '"]').classList.add('bad');
+      else document.querySelector('[data-fg="' + i + '"]').classList.add('bad');
+    }
+  }
+  return ok;
+}
+function friendList() { return F.fr.slice(0, F.fc).filter(frFilled).map(x => ({ name: x.n.trim(), school: x.s.trim(), grade: x.g, phone: x.p })); }
 
 // 동의
 function consentList() {
   const keep = C.keep || '수련회 종료 후 1개월 이내 파기';
+  const no = '위 개인정보 수집·이용에 대한 동의를 거부할 권리가 있습니다. 다만 동의하지 않으면 ';
   return [
-    { k: 'c1', must: 1, t: '개인정보 수집·이용 동의', d: [['목적', '수련회 참가 접수, 조(숙소)·차량 배정, 비상 연락과 안전 관리'], ['항목', '학생 이름·성별·부서·학년·학교·연락처, 보호자 이름·관계·연락처, 같은 조 희망 친구'], ['보유 기간', keep], ['안내', '동의하지 않을 수 있지만, 이 경우 수련회에 신청할 수 없어요.']] },
-    { k: 'c2', must: 1, t: '고유식별정보(주민등록번호) 수집·이용 동의', d: [['목적', '수련회 기간 여행자보험 가입'], ['항목', '학생 주민등록번호'], ['보유 기간', '보험 가입을 마치면 바로 파기'], ['안내', '동의하지 않을 수 있지만, 보험에 가입할 수 없어 수련회에 참가하기 어려워요.']] },
-    { k: 'c3', must: 1, t: '개인정보 제3자(보험사) 제공 동의', d: [['받는 곳', C.insurer || '여행자보험 보험사'], ['목적', '여행자보험 가입과 보험금 청구 처리'], ['항목', '학생 이름·성별·생년월일·주민등록번호'], ['보유 기간', '보험 계약 관련 법령에서 정한 기간'], ['안내', '동의하지 않을 수 있지만, 보험에 가입할 수 없어 수련회에 참가하기 어려워요.']] },
-    { k: 'c4', must: 0, t: '민감정보(건강정보) 수집·이용 동의', d: [['목적', '수련회 중 건강·안전 관리 (담당 선생님과 공유)'], ['항목', '건강 상태, 알레르기, 먹는 약 등 특이사항'], ['보유 기간', keep], ['안내', '동의하지 않아도 신청할 수 있어요. 이 경우 건강 특이사항을 받지 않아요.']] },
-    { k: 'c5', must: 1, t: '보호자(법정대리인) 확인', d: [['안내', '만 14세 미만 학생의 개인정보를 처리하려면 보호자 동의가 필요해요. 학생이 직접 작성하는 경우에도 보호자께서 위 내용을 확인하신 뒤 체크해 주세요.']] },
+    { k: 'c1', must: 1, t: '개인정보 수집·이용 동의', d: [
+      ['수집·이용 목적', '수련회 참가 신청 접수와 참가자 관리, 조(숙소)·차량 배정, 수련회 중 비상 연락과 안전 관리, 회비 입금 확인'],
+      ['수집 항목', '학생 이름·성별·예배 부서(타교회는 교회 이름)·학년·학교·휴대폰 번호, 보호자 이름·관계·휴대폰 번호, 같은 조 희망 친구의 이름·학교·학년·휴대폰 번호'],
+      ['보유·이용 기간', keep],
+      ['동의를 거부할 권리', no + '수련회 참가 신청이 제한됩니다.']] },
+    { k: 'c2', must: 1, t: '고유식별정보(주민등록번호) 수집·이용 동의', d: [
+      ['수집·이용 목적', '수련회 기간 여행자보험 가입'],
+      ['수집 항목', '학생 주민등록번호'],
+      ['보유·이용 기간', '보험 가입 완료 후 즉시 파기'],
+      ['동의를 거부할 권리', no + '여행자보험에 가입할 수 없어 수련회 참가가 제한됩니다.']] },
+    { k: 'c3', must: 1, t: '개인정보 제3자 제공 동의', d: [
+      ['제공받는 자', C.insurer || '여행자보험 보험사'],
+      ['제공 목적', '수련회 기간 여행자보험 가입 및 보험금 청구 처리'],
+      ['제공 항목', '학생 이름·성별·생년월일·주민등록번호'],
+      ['제공받는 자의 보유·이용 기간', '보험 계약 관련 법령에서 정한 기간'],
+      ['동의를 거부할 권리', '제3자 제공에 대한 동의를 거부할 권리가 있습니다. 다만 동의하지 않으면 여행자보험에 가입할 수 없어 수련회 참가가 제한됩니다.']] },
+    { k: 'c4', must: 0, t: '민감정보(건강정보) 수집·이용 동의', d: [
+      ['수집·이용 목적', '수련회 중 참가자 건강 관리 및 응급 상황 대응'],
+      ['수집 항목', '건강 상태, 알레르기, 복용 중인 약 등 건강 특이사항'],
+      ['보유·이용 기간', keep],
+      ['동의를 거부할 권리', '민감정보 수집·이용에 대한 동의를 거부할 권리가 있으며, 동의하지 않아도 수련회에 신청할 수 있습니다. 이 경우 건강 특이사항은 받지 않습니다.']] },
+    { k: 'c5', must: 1, t: '법정대리인(보호자) 동의', d: [
+      ['안내', '「개인정보 보호법」에 따라 만 14세 미만 아동의 개인정보를 처리하려면 법정대리인의 동의가 필요합니다. 학생이 직접 작성하는 경우에도 보호자께서 위 1~4번 내용을 확인하신 뒤 아래에 체크해 주세요.']] },
   ];
 }
 function stepConsent() { return render3(true); }
 function render3(ret) {
-  const html = '<h2>개인정보 수집에 동의해 주세요</h2><p class="lead">수련회 운영과 여행자보험 가입에 꼭 필요한 정보만 받아요. 항목마다 내용을 펼쳐 볼 수 있어요.</p>' +
+  const html = '<h2>개인정보 제공에 동의해 주세요</h2><p class="lead">새중앙교회 드림공동체 중등부는 수련회 운영과 여행자보험 가입을 위해 아래와 같이 개인정보를 수집·이용합니다. 내용을 읽고 항목마다 동의해 주세요.</p>' +
     '<button type="button" class="btn light block allbtn" id="all">필수 항목 모두 동의</button>' +
-    consentList().map(c => '<div class="cons' + (c.k === 'c4' ? (F.c4 !== null ? ' on' : '') : (F[c.k] ? ' on' : '')) + '" data-c="' + c.k + '">' +
-      (c.k === 'c4'
-        ? '<div class="top" style="cursor:default"><span class="t">' + c.t + '</span><span class="tag opt">선택</span></div>' + choice('c4', ['y', 'n'], ['동의해요', '동의하지 않아요'])
-        : '<label class="top"><input type="checkbox" data-cb="' + c.k + '"' + (F[c.k] ? ' checked' : '') + '><span class="t">' + (c.k === 'c5' ? '보호자가 위 내용을 확인하고 동의했어요' : c.t) + '</span><span class="tag must">필수</span></label>') +
-      '<details><summary>' + (c.k === 'c5' ? '보호자 확인 안내' : '내용') + '</summary><dl>' + c.d.map(x => '<dt>' + x[0] + '</dt><dd>' + esc(x[1]) + '</dd>').join('') + '</dl></details>' +
+    consentList().map((c, n) => '<div class="cons' + (c.k === 'c4' ? (F.c4 !== null ? ' on' : '') : (F[c.k] ? ' on' : '')) + '" data-c="' + c.k + '">' +
+      '<div class="hd"><span class="t">' + (n + 1) + '. ' + c.t + '</span><span class="tag ' + (c.must ? 'must">필수' : 'opt">선택') + '</span></div>' +
+      '<div class="doc">' + c.d.map(x => '<p><b>' + x[0] + '</b>' + esc(x[1]) + '</p>').join('') + '</div>' +
+      (c.k === 'c4' ? choice('c4', ['y', 'n'], ['동의합니다', '동의하지 않습니다'])
+        : '<label class="ft"><input type="checkbox" data-cb="' + c.k + '"' + (F[c.k] ? ' checked' : '') + '>' + (c.k === 'c5' ? '보호자가 위 내용을 확인하고 동의합니다' : '위 내용에 동의합니다') + '</label>') +
       '</div>').join('') + '<div class="err" data-e="consent"></div>';
   // c4 버튼 표시값
   const html2 = html.replace('data-v="y" aria-pressed="false"', 'data-v="y" aria-pressed="' + (F.c4 === true) + '"').replace('data-v="n" aria-pressed="false"', 'data-v="n" aria-pressed="' + (F.c4 === false) + '"');
@@ -361,7 +434,7 @@ function vConsent() {
 
 // 보험·건강
 function stepInsure() {
-  return '<h2>여행자보험 가입 정보</h2><p class="lead">수련회 기간 동안 ' + esc(C.insurer || '여행자보험') + ' 보험에 가입해요.</p>' +
+  return '<h2>보험 가입 정보와 건강 특이사항</h2><p class="lead">수련회 기간 동안 ' + esc(C.insurer || '여행자보험') + ' 보험에 가입해요.</p>' +
     '<div class="field"><span class="label">학생 주민등록번호</span><div class="rrn">' +
     '<input class="inp" data-k="rrn1" inputmode="numeric" maxlength="6" placeholder="앞 6자리" value="' + esc(F.rrn1) + '" autocomplete="off" aria-label="주민등록번호 앞자리">' +
     '<span class="dash">-</span><input class="inp" data-k="rrn2" type="password" inputmode="numeric" maxlength="7" placeholder="뒤 7자리" value="' + esc(F.rrn2) + '" autocomplete="off" aria-label="주민등록번호 뒷자리"></div>' +
@@ -384,6 +457,9 @@ function vInsure() {
 }
 document.addEventListener('click', e => {
   if (e.target.id === 'eye') { const i = $('[data-k=rrn2]'); const show = i.type === 'password'; i.type = show ? 'text' : 'password'; e.target.textContent = show ? '뒷자리 가리기' : '뒷자리 보기'; }
+  if (e.target.id === 'addf') { F.fc = Math.min(3, F.fc + 1); saveDraft(); go(2); setTimeout(() => { const c = document.querySelector('[data-fc="' + (F.fc - 1) + '"]'); if (c) { c.scrollIntoView({ block: 'center' }); c.querySelector('input').focus(); } }, 30); }
+  const rm = e.target.closest('[data-rmf]');
+  if (rm) { const i = +rm.dataset.rmf; F.fr.splice(i, 1); F.fc = Math.max(1, F.fc - 1); saveDraft(); go(2); }
   if (e.target.id === 'toC4') { go(3); setTimeout(() => document.querySelector('[data-c=c4]').scrollIntoView({ block: 'center' }), 50); }
   const ed = e.target.closest('[data-edit]'); if (ed) go(+ed.dataset.edit);
 });
@@ -392,11 +468,11 @@ function stepReview() {
   const rel = F.grel === '기타' ? F.grelEtc : F.grel;
   const sec = (t, i, rows) => '<div class="review"><h3>' + t + '<button type="button" class="link" data-edit="' + i + '">고치기</button></h3><dl>' +
     rows.filter(r => r).map(r => '<dt>' + r[0] + '</dt><dd>' + esc(r[1] || '—') + '</dd>').join('') + '</dl></div>';
-  const fr = [F.w1, F.w2, F.w3].filter(x => x.trim()).join(', ');
+  const fl = friendList();
   return '<h2>이대로 신청할까요?</h2><p class="lead">보내기 전에 한 번 더 확인해 주세요.</p>' +
-    sec('학생', 0, [['이름', F.name.replace(/\s+/g, '')], ['성별', F.gender + '학생'], ['부서·학년', F.dept + ' ' + F.grade], ['학교', F.school], ['휴대폰', F.phone], ['작성자', F.writer]]) +
+    sec('학생', 0, [['이름', F.name.replace(/\s+/g, '')], ['성별', F.gender + '학생'], ['예배 부서', F.dept === '타교회' ? '타교회 (' + F.church.trim() + ')' : F.dept], ['학년·학교', F.grade + ' · ' + F.school], ['휴대폰', F.phone], ['작성자', F.writer]]) +
     sec('보호자', 1, [['이름', F.gname.replace(/\s+/g, '') + ' (' + rel + ')'], ['휴대폰', F.gphone]]) +
-    sec('같은 조 친구', 2, [['희망', fr || '없음']]) +
+    sec('같은 방/같은 조 친구', 2, fl.length ? fl.map((x, j) => ['친구 ' + (j + 1), x.name + ' · ' + x.school + ' ' + x.grade + ' · ' + x.phone]) : [['희망', '없음']]) +
     sec('동의·보험', 3, [['필수 동의', '모두 동의'], ['건강정보', F.c4 ? '동의' : '동의하지 않음'], ['주민등록번호', F.rrn1 + '-' + F.rrn2[0] + '●●●●●●'], F.c4 && F.health ? ['건강 특이사항', F.health] : null]);
 }
 
@@ -406,8 +482,8 @@ async function submit() {
   const btn = $('#next'); btn.disabled = true; btn.textContent = '보내는 중…';
   try {
     const r = await api('apply', {
-      writer: F.writer, name: F.name, gender: F.gender, dept: F.dept, grade: F.grade, school: F.school, phone: F.phone,
-      gname: F.gname, grel: F.grel === '기타' ? F.grelEtc : F.grel, gphone: F.gphone, w1: F.w1, w2: F.w2, w3: F.w3,
+      writer: F.writer, name: F.name, gender: F.gender, dept: F.dept, church: F.dept === '타교회' ? F.church : '', grade: F.grade, school: F.school, phone: F.phone,
+      gname: F.gname, grel: F.grel === '기타' ? F.grelEtc : F.grel, gphone: F.gphone, friends: friendList(),
       consent: { c1: F.c1, c2: F.c2, c3: F.c3, c4: F.c4 === true, c5: F.c5 }, rrn: F.rrn1 + F.rrn2, health: F.c4 ? F.health : '', hp: F.hp,
     });
     clearDraft();
@@ -432,7 +508,7 @@ function done(r) {
     '</div></div>' +
     '<div class="after"><p>' + (r.updated ? '이미 접수된 신청서를 새 내용으로 바꿨어요.' : '신청이 접수되었어요.') + ' 조와 버스는 수련회 전에 따로 안내드려요.</p>' +
     '<button class="btn light" id="again">다른 학생 신청하기</button></div>';
-  $('#again').onclick = () => { Object.keys(F).forEach(k => F[k] = k.startsWith('c') ? false : ''); F.c4 = null; renderIntro(); window.scrollTo(0, 0); };
+  $('#again').onclick = () => { Object.assign(F, F0()); renderIntro(); window.scrollTo(0, 0); };
   window.scrollTo(0, 0);
 }
 
