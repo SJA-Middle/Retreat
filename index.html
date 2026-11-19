@@ -18,14 +18,20 @@
 <link rel="stylesheet" href="style.css">
 <style>
 .sky .in { max-width: 620px; margin: 0 auto; padding: calc(28px + env(safe-area-inset-top)) 20px 84px; }
-.org { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #ffffffcc; font-weight: 600; }
-.org img { height: 30px; width: auto; background: #fff; border-radius: 8px; padding: 3px 7px; }
+.org { font-size: 19px; color: #ffffffe6; font-weight: 700; letter-spacing: -.01em; line-height: 1.35; }
+body { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
+#main { width: 100%; }
+body.home main { padding-bottom: 32px; }
 .state { display: inline-flex; align-items: center; gap: 7px; margin-top: 30px; padding: 5px 12px 5px 10px; border-radius: 999px; font-size: 14px; font-weight: 700; background: var(--lantern); color: var(--night); }
 .state::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--night); box-shadow: 0 0 0 3px #17214A33; }
 .state.closed { background: #ffffff22; color: #fff; }
 .state.closed::before { background: #ffffff88; box-shadow: none; }
 h1.title { font-family: var(--display); font-weight: 400; font-size: clamp(42px, 12.5vw, 72px); line-height: 1.04; letter-spacing: -.01em; margin-top: 14px; }
-.theme { margin-top: 12px; font-size: 18px; color: #ffffffdd; font-weight: 500; }
+.theme { margin-top: 14px; color: #ffffffdd; }
+.theme span { display: block; }
+.theme .t1 { font-size: 22px; font-weight: 800; color: var(--lantern); letter-spacing: .01em; }
+.theme .t2 { font-size: 16px; font-weight: 500; margin-top: 2px; }
+.sky.compact .org { font-size: 14px; }
 .facts { display: grid; grid-template-columns: auto 1fr; gap: 8px 18px; margin: 28px 0 0; font-size: 16px; }
 .facts dt { color: #ffffff99; font-size: 14px; padding-top: 1px; }
 .facts dd { margin: 0; font-weight: 600; }
@@ -124,7 +130,7 @@ main { max-width: 620px; margin: 0 auto; padding: 4px 16px calc(120px + env(safe
 <div id="busy"></div>
 <header class="sky" id="sky">
   <div class="in">
-    <div class="org"><img src="jungdeung.png" alt="드림공동체 중등부" onerror="this.remove()">새중앙교회</div>
+    <div class="org">새중앙교회 중등부 수련회 신청서</div>
     <span class="state" id="state" hidden></span>
     <h1 class="title" id="title">수련회 신청</h1>
     <p class="theme" id="theme" hidden></p>
@@ -136,6 +142,7 @@ main { max-width: 620px; margin: 0 auto; padding: 4px 16px calc(120px + env(safe
   </svg>
 </header>
 <main id="main"></main>
+<footer class="brand" id="brand"><img src="church.png" alt="새중앙교회" onerror="this.remove()"><img class="jd" src="jungdeung.png" alt="드림공동체 중등부" onerror="this.remove()"></footer>
 <div class="actions" id="actions" hidden><div class="in"></div></div>
 <div id="toast" role="status" aria-live="polite"></div>
 
@@ -184,7 +191,7 @@ function renderHead() {
   $('#title').textContent = C.title || '수련회 신청';
   document.title = (C.title || '수련회') + ' 신청';
   const th = $('#theme');
-  th.hidden = !C.theme; th.textContent = C.theme || '';
+  th.hidden = !C.theme; th.innerHTML = String(C.theme || '').split(/\n|\\n/).map(x => x.trim()).filter(Boolean).map((x, i) => '<span class="t' + (i ? 2 : 1) + '">' + esc(x) + '</span>').join('');
   const st = $('#state');
   st.hidden = false;
   st.textContent = C.open ? '신청 받는 중' : '신청 기간이 아니에요';
@@ -199,8 +206,9 @@ function fmtDate(s) {
 }
 
 // ── 첫 화면 ──
+function brand(on) { $('#brand').hidden = !on; document.body.classList.toggle('home', on); }
 function renderIntro() {
-  step = -1;
+  step = -1; brand(true);
   $('#sky').classList.remove('compact');
   $('#actions').hidden = true;
   if (!C.open) {
@@ -227,7 +235,7 @@ const STEPS = [
   { t: '마지막 확인', r: stepReview, v: () => true },
 ];
 function go(i) {
-  step = i;
+  step = i; brand(false);
   $('#toast').className = '';
   $('#sky').classList.add('compact');
   const s = STEPS[i];
@@ -488,7 +496,7 @@ async function submit() {
   } finally { sending = false; }
 }
 function done(r) {
-  step = 99;
+  step = 99; brand(true);
   $('#actions').hidden = true;
   $('#sky').classList.add('compact');
   const m = String(r.ts || '').match(/^\d{4}-(\d{2})-(\d{2}) (\d{2}:\d{2})/);

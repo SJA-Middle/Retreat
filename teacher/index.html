@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#17214A">
+<title>수련회 교사 신청</title>
+<meta name="description" content="새중앙교회 드림공동체 중등부 수련회 교사 참석 신청">
+<meta property="og:title" content="중등부 수련회 교사 신청">
+<meta property="og:description" content="수련회를 함께 섬길 선생님들의 참석 신청서">
+<link rel="icon" href="../logo.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap">
+<link rel="stylesheet" href="../style.css">
+<style>
+.sky .in { max-width: 620px; margin: 0 auto; padding: calc(28px + env(safe-area-inset-top)) 20px 84px; }
+.org { font-size: 19px; color: #ffffffe6; font-weight: 700; letter-spacing: -.01em; line-height: 1.35; }
+body { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
+#main { width: 100%; }
+body.home main { padding-bottom: 32px; }
+.state { display: inline-flex; align-items: center; gap: 7px; margin-top: 30px; padding: 5px 12px 5px 10px; border-radius: 999px; font-size: 14px; font-weight: 700; background: var(--lantern); color: var(--night); }
+.state::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--night); box-shadow: 0 0 0 3px #17214A33; }
+.state.closed { background: #ffffff22; color: #fff; }
+.state.closed::before { background: #ffffff88; box-shadow: none; }
+h1.title { font-family: var(--display); font-weight: 400; font-size: clamp(42px, 12.5vw, 72px); line-height: 1.04; letter-spacing: -.01em; margin-top: 14px; }
+.theme { margin-top: 14px; color: #ffffffdd; }
+.theme span { display: block; }
+.theme .t1 { font-size: 22px; font-weight: 800; color: var(--lantern); letter-spacing: .01em; }
+.theme .t2 { font-size: 16px; font-weight: 500; margin-top: 2px; }
+.sky.compact .org { font-size: 14px; }
+.facts { display: grid; grid-template-columns: auto 1fr; gap: 8px 18px; margin: 28px 0 0; font-size: 16px; }
+.facts dt { color: #ffffff99; font-size: 14px; padding-top: 1px; }
+.facts dd { margin: 0; font-weight: 600; }
+.sky.compact .in { padding-top: calc(14px + env(safe-area-inset-top)); padding-bottom: 46px; }
+.sky.compact h1.title { font-size: 26px; margin-top: 6px; }
+.sky.compact .state, .sky.compact .theme, .sky.compact .facts { display: none; }
+.sky.compact .ridge { height: 30px; }
+
+main { max-width: 620px; margin: 0 auto; padding: 4px 16px calc(120px + env(safe-area-inset-bottom)); }
+.intro { background: var(--paper); border-radius: var(--r-l); padding: 22px 20px; margin-top: -10px; position: relative; box-shadow: 0 10px 30px -18px #17214A55; }
+.intro p + p { margin-top: 10px; }
+.intro .notice { white-space: pre-line; }
+.intro .muted { color: var(--sub); font-size: 15px; }
+.intro .btn { margin-top: 22px; }
+.draft { margin-top: 12px; font-size: 14px; color: var(--sub); text-align: center; }
+
+.prog { position: sticky; top: 0; z-index: 5; background: var(--snow); padding: 14px 0 12px; margin: 0 0 6px; }
+.prog .row { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; color: var(--sub); }
+.prog b { font-size: 18px; color: var(--ink); }
+.prog .bar { height: 6px; background: var(--line); border-radius: 3px; margin-top: 10px; overflow: hidden; }
+.prog .bar i { display: block; height: 100%; background: var(--night); border-radius: 3px; transition: width .3s; }
+
+.panel { background: var(--paper); border-radius: var(--r-l); padding: 22px 18px 6px; }
+.panel h2 { font-size: 22px; line-height: 1.35; margin-bottom: 6px; }
+.panel .lead { color: var(--sub); font-size: 15px; margin-bottom: 22px; }
+.notes { margin: 4px 0 20px; padding: 14px 16px 14px 34px; background: var(--snow); border-radius: var(--r-m); font-size: 14px; color: var(--sub); }
+.notes li + li { margin-top: 4px; }
+.etc { margin-top: 8px; }
+
+.cons { border: 1.5px solid var(--line); border-radius: var(--r-m); margin-bottom: 12px; overflow: hidden; }
+.cons.on { border-color: var(--night-2); }
+.cons .top { display: flex; align-items: center; gap: 12px; padding: 14px 14px; cursor: pointer; }
+.cons .top input { width: 24px; height: 24px; accent-color: var(--night); flex: none; margin: 0; }
+.cons .top .t { flex: 1; font-weight: 600; font-size: 16px; line-height: 1.4; }
+.cons details { border-top: 1px solid var(--line); background: #FAFBFD; }
+.cons summary { padding: 10px 14px; font-size: 14px; color: var(--sub); cursor: pointer; list-style: none; }
+.cons summary::-webkit-details-marker { display: none; }
+.cons summary::after { content: ' ▾'; }
+.cons details[open] summary::after { content: ' ▴'; }
+.cons .doc { padding: 0 14px 14px; font-size: 14px; line-height: 1.6; color: var(--ink); }
+.cons .doc p + p { margin-top: 8px; }
+.cons .doc b { display: block; font-weight: 700; color: var(--night); }
+.cons .doc b::before { content: '■ '; font-size: 11px; vertical-align: 1px; }
+.fcard { border: 1.5px solid var(--line); border-radius: var(--r-m); padding: 14px 14px 0; margin-bottom: 12px; }
+.fcard.bad { border-color: var(--alert); }
+.fcard .fh { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: 700; }
+.fcard .field { margin-bottom: 14px; }
+.fcard .two { display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px; }
+.addf { margin: 2px 0 20px; }
+.allbtn { margin-bottom: 14px; }
+.cons.bad { border-color: var(--alert); }
+
+.rrn { display: flex; align-items: center; gap: 8px; }
+.rrn .inp { text-align: center; letter-spacing: .12em; font-variant-numeric: tabular-nums; }
+.rrn .inp:first-child { flex: 6; } .rrn .inp:last-of-type { flex: 7; }
+.rrn .dash { color: var(--mist); font-size: 20px; }
+.eye { margin-top: 6px; }
+.lock { display: flex; gap: 10px; align-items: flex-start; background: var(--snow); border-radius: var(--r-m); padding: 12px 14px; font-size: 14px; color: var(--sub); margin: -4px 0 20px; }
+.lock svg { flex: none; margin-top: 2px; }
+
+.review { margin: 0 0 18px; }
+.review h3 { display: flex; justify-content: space-between; align-items: center; font-size: 16px; padding: 12px 0 8px; border-bottom: 1px solid var(--line); }
+.review dl { display: grid; grid-template-columns: 110px 1fr; gap: 8px 12px; margin: 10px 0 0; font-size: 15px; }
+.review dt { color: var(--sub); }
+.review dd { margin: 0; font-weight: 600; }
+
+.actions { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; background: linear-gradient(transparent, var(--snow) 22%); padding: 22px 16px calc(14px + env(safe-area-inset-bottom)); }
+.actions .in { max-width: 620px; margin: 0 auto; display: flex; gap: 10px; }
+.actions .btn.light { flex: 0 0 104px; }
+.actions .btn:last-child { flex: 1; }
+
+/* 접수증 */
+.ticket { margin: 18px auto 0; max-width: 420px; filter: drop-shadow(0 18px 30px #17214A30); }
+.ticket .head { background: var(--night); color: #fff; border-radius: 22px 22px 0 0; padding: 22px 22px 26px; position: relative; overflow: hidden; }
+.ticket .head small { color: #ffffffaa; font-size: 13px; }
+.ticket .head h2 { font-family: var(--display); font-weight: 400; font-size: 30px; line-height: 1.15; margin-top: 4px; }
+.ticket .head p { color: #ffffffcc; font-size: 14px; margin-top: 8px; }
+.ticket .cut { height: 22px; background:
+  radial-gradient(circle at 0 50%, transparent 11px, var(--paper) 11.5px) left / 51% 100% no-repeat,
+  radial-gradient(circle at 100% 50%, transparent 11px, var(--paper) 11.5px) right / 51% 100% no-repeat; position: relative; }
+.ticket .cut::after { content: ''; position: absolute; left: 18px; right: 18px; top: 50%; border-top: 2px dashed var(--line); }
+.ticket .body { background: var(--paper); border-radius: 0 0 22px 22px; padding: 6px 22px 22px; }
+.ticket .no { display: flex; align-items: baseline; justify-content: space-between; }
+.ticket .no span { color: var(--sub); font-size: 14px; }
+.ticket .no b { font-family: var(--display); font-weight: 400; font-size: 52px; line-height: 1; color: var(--night); letter-spacing: .02em; }
+.ticket dl { display: grid; grid-template-columns: 86px 1fr; gap: 8px 12px; margin: 16px 0 0; font-size: 15px; }
+.ticket dt { color: var(--sub); }
+.ticket dd { margin: 0; font-weight: 600; }
+.ticket .pay { margin-top: 18px; padding: 12px 14px; border-radius: 12px; background: #FDF6E3; font-size: 14px; color: #6B4B00; }
+.after { text-align: center; color: var(--sub); font-size: 14px; margin-top: 22px; }
+.after .btn { margin-top: 14px; }
+.fail { background: var(--paper); border-radius: var(--r-l); padding: 22px 20px; margin-top: -10px; position: relative; }
+.who { display: inline-block; margin-top: 10px; padding: 4px 12px; border-radius: 8px; background: #ffffff1f; color: #fff; font-weight: 700; font-size: 15px; }
+.sky.compact .who { margin-top: 4px; font-size: 13px; padding: 2px 10px; }
+.choice.col { flex-direction: column; }
+.choice.col button { text-align: left; flex: none; }
+.teams { display: grid; gap: 8px; }
+.teams .team { display: block; text-align: left; padding: 12px 14px; border-radius: var(--r-m); border: 1.5px solid var(--line); background: var(--paper); cursor: pointer; }
+.teams .team b { display: block; font-size: 16px; color: var(--ink); }
+.teams .team span { display: block; font-size: 13px; color: var(--sub); margin-top: 2px; line-height: 1.45; }
+.teams .team[aria-pressed="true"] { border-color: var(--night); background: var(--night); }
+.teams .team[aria-pressed="true"] b, .teams .team[aria-pressed="true"] span { color: #fff; }
+.cons .t small { display: block; font-weight: 500; font-size: 13px; color: var(--sub); }
+.cons.toggle { display: block; }
+.lead-box .doc ul { margin: 6px 0 0; padding-left: 18px; }
+.lead-box .doc li + li { margin-top: 2px; }
+.lead-box.dim .doc { opacity: .6; }
+.cons .ft { display: flex; align-items: center; gap: 12px; padding: 12px 14px 14px; cursor: pointer; font-weight: 600; font-size: 16px; border-top: 1px solid var(--line); }
+.cons .ft input { width: 24px; height: 24px; accent-color: var(--night); flex: none; margin: 0; }
+.ticket.staff .head { background: var(--pine); }
+.ticket .no b.nm { font-size: 40px; }
+</style>
+</head>
+<body>
+<div id="busy"></div>
+<header class="sky" id="sky">
+  <div class="in">
+    <div class="org">새중앙교회 중등부 수련회 교사 신청서</div>
+    <span class="state" id="state" hidden></span>
+    <h1 class="title" id="title">수련회</h1>
+    <p class="theme" id="theme" hidden></p>
+    <dl class="facts" id="facts"></dl>
+  </div>
+  <svg class="ridge" viewBox="0 0 400 56" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 56 L0 38 L38 22 L70 34 L112 8 L150 30 L188 18 L224 36 L262 14 L300 32 L338 20 L372 34 L400 26 L400 56 Z" fill="#24336E" opacity=".9"/>
+    <path d="M0 56 L0 46 L48 34 L92 44 L140 30 L186 46 L236 34 L284 46 L330 36 L372 46 L400 40 L400 56 Z" fill="var(--snow)"/>
+  </svg>
+</header>
+<main id="main"></main>
+<footer class="brand" id="brand"><img src="../church.png" alt="새중앙교회" onerror="this.remove()"><img class="jd" src="../jungdeung.png" alt="드림공동체 중등부" onerror="this.remove()"></footer>
+<div class="actions" id="actions" hidden><div class="in"></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="../config.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+let C = null, T = null, step = -1, sending = false;
+const F0 = () => ({ name: '', gender: '', dept: '', phone: '', arrive: '', move: '', carpool: '', nights: [], hope: '', praise: false, leadHope: false,
+  health: '', note: '', c1: false, c2: false, c3: false, c4: false, rrn1: '', rrn2: '', hp: '' });
+const F = F0();
+const KEEP = ['name', 'gender', 'dept', 'phone', 'arrive', 'move', 'carpool', 'nights', 'hope', 'praise', 'leadHope', 'note'];
+const DRAFT = 'rt-teacher-draft';
+const TEAM_INFO = {
+  진행팀: '프로그램 준비와 진행을 맡아요. 찬양팀도 진행팀에 속해요.',
+  조장팀: '조를 맡아 아이들과 함께 지내며 돌봐요.',
+  지원팀: '간식, 안전 관리, 이동 동선 통제를 맡아요.',
+  중보팀: '수련회를 위해 기도로 섬겨요. 잠깐 방문하시는 분도 함께해요.',
+  '어디든 괜찮아요': '필요한 곳에 배치해 드릴게요.',
+};
+
+function toast(m) { const t = $('#toast'); t.textContent = m; t.className = 'on'; clearTimeout(toast.t); toast.t = setTimeout(() => t.className = '', 2600); }
+function busy(on) { $('#busy').className = on ? 'on' : ''; }
+async function api(a, params) {
+  busy(true);
+  try {
+    let r;
+    try { r = await fetch(window.RT_API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ a, params: params || {} }) }); }
+    catch (e) { throw new Error('인터넷 연결을 확인하고 다시 시도해 주세요.'); }
+    let j;
+    try { j = await r.json(); } catch (e) { throw new Error('서버가 응답하지 않아요. 잠시 후 다시 시도해 주세요.'); }
+    if (!j.ok) throw new Error(j.error || '처리하지 못했어요.');
+    return j.data;
+  } finally { busy(false); }
+}
+function saveDraft() { try { const o = {}; KEEP.forEach(k => o[k] = F[k]); localStorage.setItem(DRAFT, JSON.stringify(o)); } catch (e) { } }
+function loadDraft() { try { return JSON.parse(localStorage.getItem(DRAFT) || 'null'); } catch (e) { return null; } }
+function clearDraft() { try { localStorage.removeItem(DRAFT); } catch (e) { } }
+const digits = s => String(s || '').replace(/\D/g, '');
+function fmtPhone(v) {
+  const d = digits(v).slice(0, 11);
+  if (d.startsWith('02')) return d.length > 9 ? d.slice(0, 2) + '-' + d.slice(2, 6) + '-' + d.slice(6) : d.length > 5 ? d.slice(0, 2) + '-' + d.slice(2, 5) + '-' + d.slice(5) : d.length > 2 ? d.slice(0, 2) + '-' + d.slice(2) : d;
+  if (d.length > 10) return d.slice(0, 3) + '-' + d.slice(3, 7) + '-' + d.slice(7);
+  if (d.length > 6) return d.slice(0, 3) + '-' + d.slice(3, 6) + '-' + d.slice(6);
+  if (d.length > 3) return d.slice(0, 3) + '-' + d.slice(3);
+  return d;
+}
+const okPhone = v => /^0\d{1,2}-\d{3,4}-\d{4}$/.test(v);
+const isMain = () => T && F.arrive === T.arrive[0];
+const isVisit = () => /방문|숙박 안 함/.test(F.arrive);
+const leadOk = () => T && T.arrive.indexOf(F.arrive) >= 0 && T.arrive.indexOf(F.arrive) <= 1 && !isVisit();
+
+// ── 머리 ──
+function renderHead() {
+  $('#title').textContent = C.title || '수련회';
+  document.title = (C.title || '수련회') + ' 교사 신청';
+  const th = $('#theme'); th.hidden = !C.theme; th.innerHTML = String(C.theme || '').split(/\n|\\n/).map(x => x.trim()).filter(Boolean).map((x, i) => '<span class="t' + (i ? 2 : 1) + '">' + esc(x) + '</span>').join('');
+  const st = $('#state'); st.hidden = false;
+  st.textContent = T.open ? '교사 신청 받는 중' : '교사 신청 기간이 아니에요';
+  st.className = 'state' + (T.open ? '' : ' closed');
+  const rows = [['일정', C.dates], ['장소', C.place], ['교사 회비', T.fee], ['신청 마감', T.deadline ? fmtDate(T.deadline) + '까지' : '']].filter(r => r[1]);
+  $('#facts').innerHTML = rows.map(r => '<dt>' + r[0] + '</dt><dd>' + esc(r[1]) + '</dd>').join('');
+}
+function fmtDate(s) {
+  const d = new Date(s + 'T00:00:00+09:00');
+  if (isNaN(d)) return s;
+  return (d.getMonth() + 1) + '월 ' + d.getDate() + '일(' + '일월화수목금토'[d.getDay()] + ')';
+}
+function brand(on) { $('#brand').hidden = !on; document.body.classList.toggle('home', on); }
+function renderIntro() {
+  step = -1; brand(true);
+  $('#sky').classList.remove('compact');
+  $('#actions').hidden = true;
+  if (!T.open) {
+    $('#main').innerHTML = '<section class="intro"><p><b>지금은 교사 신청을 받지 않아요.</b></p><p class="muted">신청 기간이 아니거나 마감되었어요. 수련회 담당 교역자에게 문의해 주세요.</p></section>';
+    return;
+  }
+  const d = loadDraft();
+  $('#main').innerHTML = '<section class="intro">' +
+    (T.notice ? '<p class="notice">' + esc(T.notice) + '</p>' : '<p>수련회를 함께 섬겨 주시는 선생님들의 참석 신청서예요. 출발 시간과 이동 방법, 섬기고 싶은 팀을 알려 주시면 팀과 조, 차량 편성에 반영할게요.</p>') +
+    '<p class="muted">작성에는 3분 정도 걸려요.' + (T.ins ? ' 여행자보험 가입을 위해 주민등록번호가 필요해요.' : '') + '</p>' +
+    '<button class="btn lamp block" id="go">교사 신청서 쓰기</button>' +
+    (d && d.name ? '<p class="draft">' + esc(d.name) + ' 선생님 신청서를 쓰던 중이에요. 이어서 쓸 수 있어요.</p>' : '') + '</section>';
+  $('#go').onclick = () => { if (d) Object.assign(F, d); if (!Array.isArray(F.nights)) F.nights = []; go(0); };
+}
+
+// ── 단계 ──
+const STEPS = [
+  { t: '기본 정보', r: stepBasic, v: vBasic },
+  { t: '참석 일정과 이동', r: stepTrip, v: vTrip },
+  { t: '섬길 팀', r: stepServe, v: vServe },
+  { t: '개인정보 제공동의', r: stepConsent, v: vConsent },
+  { t: '마지막 확인', r: stepReview, v: () => true },
+];
+function go(i) {
+  step = i; brand(false);
+  $('#toast').className = '';
+  $('#sky').classList.add('compact');
+  const s = STEPS[i];
+  $('#main').innerHTML = '<div class="prog"><div class="row"><b>' + s.t + '</b><span>' + (i + 1) + ' / ' + STEPS.length + '</span></div>' +
+    '<div class="bar"><i style="width:' + ((i + 1) / STEPS.length * 100) + '%"></i></div></div><section class="panel" id="panel"></section>';
+  $('#panel').innerHTML = s.r();
+  bind();
+  const last = i === STEPS.length - 1;
+  $('#actions').hidden = false;
+  $('#actions .in').innerHTML = '<button class="btn light" id="prev">이전</button><button class="btn' + (last ? ' lamp' : '') + '" id="next">' + (last ? '신청서 보내기' : '다음') + '</button>';
+  $('#prev').onclick = () => { saveDraft(); i === 0 ? renderIntro() : go(i - 1); window.scrollTo(0, 0); };
+  $('#next').onclick = () => {
+    if (!STEPS[i].v()) { const b = document.querySelector('.bad') || $$('.err').find(e => e.textContent); if (b) b.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
+    saveDraft();
+    if (last) submit(); else { go(i + 1); window.scrollTo(0, 0); }
+  };
+  window.scrollTo(0, 0);
+}
+function choice(key, list, labels, cls) {
+  return '<div class="choice' + (cls ? ' ' + cls : '') + '" role="group" data-k="' + key + '">' + list.map((v, j) =>
+    '<button type="button" data-v="' + esc(v) + '" aria-pressed="' + (String(F[key]) === String(v)) + '">' + (labels ? labels[j] : esc(v)) + '</button>').join('') + '</div>';
+}
+function input(key, label, o) {
+  o = o || {};
+  return '<label class="field"><span>' + label + (o.opt ? ' <span class="tag opt">선택</span>' : '') + '</span>' +
+    '<input class="inp" data-k="' + key + '" value="' + esc(F[key]) + '"' + (o.im ? ' inputmode="' + o.im + '"' : '') + (o.ph ? ' placeholder="' + esc(o.ph) + '"' : '') +
+    (o.ac ? ' autocomplete="' + o.ac + '"' : ' autocomplete="off"') + (o.max ? ' maxlength="' + o.max + '"' : '') + '>' + (o.hint ? '<small>' + o.hint + '</small>' : '') + '<div class="err" data-e="' + key + '"></div></label>';
+}
+function group(key, label, list, labels, cls) {
+  return '<div class="field"><span class="label">' + label + '</span>' + choice(key, list, labels, cls) + '<div class="err" data-e="' + key + '"></div></div>';
+}
+function bind() {
+  $$('.choice[data-k]').forEach(g => g.onclick = e => {
+    const b = e.target.closest('button'); if (!b) return;
+    const k = g.dataset.k;
+    F[k] = b.dataset.v;
+    g.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
+    g.classList.remove('bad'); setErr(k, '');
+    if (k === 'arrive' || k === 'move') {
+      if (k === 'arrive') { F.nights = isVisit() ? [] : (isMain() ? T.nights.slice() : F.nights); if (!leadOk()) F.leadHope = false; if (!isMain() && F.move === '버스') F.move = ''; }
+      const y = window.scrollY; go(1); window.scrollTo(0, y);
+    }
+    if (k === 'hope') { const y = window.scrollY; go(2); window.scrollTo(0, y); }
+  });
+  $$('.multi[data-m] button').forEach(b => b.onclick = () => {
+    const v = b.dataset.v, i = F.nights.indexOf(v);
+    if (i >= 0) F.nights.splice(i, 1); else F.nights.push(v);
+    b.setAttribute('aria-pressed', i < 0);
+  });
+  $$('input.inp[data-k], textarea.inp[data-k]').forEach(el => el.oninput = () => {
+    const k = el.dataset.k;
+    if (k === 'phone') el.value = fmtPhone(el.value);
+    if (k === 'rrn1' || k === 'rrn2') { el.value = digits(el.value); if (k === 'rrn1' && el.value.length === 6) $('[data-k=rrn2]').focus(); }
+    F[k] = el.value;
+    el.classList.remove('bad'); setErr(k, '');
+    if (k === 'health') { const box = $('#c4box'); if (box) box.hidden = !el.value.trim(); }
+  });
+  $$('input[type=checkbox][data-cb]').forEach(cb => cb.onchange = () => {
+    F[cb.dataset.cb] = cb.checked;
+    const c = cb.closest('.cons'); if (c) { c.classList.toggle('on', cb.checked); c.classList.remove('bad'); }
+    setErr(cb.dataset.cb, ''); setErr('consent', '');
+  });
+}
+function setErr(k, m) { const e = document.querySelector('[data-e="' + k + '"]'); if (e) e.textContent = m; const el = document.querySelector('[data-k="' + k + '"]'); if (el) el.classList.toggle('bad', !!m); }
+function need(k, m) { if (!String(F[k] || '').trim()) { setErr(k, m); return false; } return true; }
+function pick(k, m) { if (!F[k]) { setErr(k, m); const g = document.querySelector('.choice[data-k=' + k + ']'); if (g) g.classList.add('bad'); return false; } return true; }
+
+function stepBasic() {
+  return '<h2>선생님을 알려 주세요</h2><p class="lead">수련회 중 연락과 팀·숙소 편성에 사용해요.</p>' +
+    input('name', '이름', { max: 20, ac: 'name' }) +
+    group('gender', '성별', ['남', '여'], ['남자', '여자']) +
+    group('dept', '섬기는 예배 부서', ['1부', '2부', '열린예배', '기타']) +
+    input('phone', '휴대폰', { im: 'tel', ph: '010-0000-0000', ac: 'tel', max: 13 });
+}
+function vBasic() {
+  let ok = need('name', '이름을 적어 주세요.');
+  ok = pick('gender', '하나를 골라 주세요.') && ok;
+  ok = pick('dept', '하나를 골라 주세요.') && ok;
+  if (!okPhone(F.phone)) { setErr('phone', F.phone ? '전화번호를 끝까지 적어 주세요.' : '휴대폰 번호를 적어 주세요.'); ok = false; }
+  return ok;
+}
+
+function stepTrip() {
+  let h = '<h2>언제, 어떻게 오시나요?</h2><p class="lead">차량과 숙소, 조 편성을 미리 준비하는 데 꼭 필요해요.</p>' +
+    group('arrive', '출발', T.arrive, null, 'col') +
+    (F.arrive && !isMain() ? '<p class="hint" style="margin:-8px 0 18px">후발로 오시는 선생님은 교회 버스를 함께 타지 않아요.</p>' : '');
+  if (F.arrive) {
+    h += isMain() ? group('move', '이동 방법', ['버스', '자차'], ['교회 버스', '자차로 이동'])
+      : group('move', '이동 방법', ['자차', '기타'], ['자차로 이동', '대중교통·다른 차 동승']);
+    if (F.move === '자차') h += group('carpool', '다른 선생님을 태울 수 있나요?', ['0', '1', '2', '3', '4'], ['못 태워요', '1명', '2명', '3명', '4명 이상']) +
+      '<p class="hint" style="margin:-8px 0 18px">짐 운반이나 늦게 오는 선생님 이동을 연결할 때 참고해요.</p>';
+    if (!isVisit()) h += '<div class="field"><span class="label">숙소가 필요한 밤</span><div class="choice multi" data-m="nights">' +
+      T.nights.map(n => '<button type="button" data-v="' + esc(n) + '" aria-pressed="' + (F.nights.indexOf(n) >= 0) + '">' + esc(n) + '</button>').join('') + '</div>' +
+      '<small>여러 개 고를 수 있어요. 숙소가 필요 없으면 모두 꺼 두세요.</small><div class="err" data-e="nights"></div></div>';
+  }
+  return h;
+}
+function vTrip() {
+  let ok = pick('arrive', '출발 시점을 골라 주세요.');
+  if (ok) ok = pick('move', '이동 방법을 골라 주세요.') && ok;
+  if (ok && F.move === '자차' && F.carpool === '') ok = pick('carpool', '하나를 골라 주세요.');
+  return ok;
+}
+
+function stepServe() {
+  const teams = T.teams.concat(['어디든 괜찮아요']);
+  return '<h2>어떤 팀으로 섬기고 싶으세요?</h2><p class="lead">희망을 바탕으로 디렉터와 부감이 팀을 정해요. 필요에 따라 다른 팀으로 부탁드릴 수 있어요.</p>' +
+    '<div class="field"><span class="label">희망 팀</span><div class="teams" role="group" data-k="hope">' + teams.map(t =>
+      '<button type="button" class="team" data-v="' + esc(t) + '" aria-pressed="' + (F.hope === t) + '"><b>' + esc(t) + '</b><span>' + esc(TEAM_INFO[t] || '') + '</span></button>').join('') +
+    '</div><div class="err" data-e="hope"></div></div>' +
+    '<label class="cons toggle' + (F.praise ? ' on' : '') + '"><span class="top"><input type="checkbox" data-cb="praise"' + (F.praise ? ' checked' : '') + '><span class="t">찬양팀으로 섬길 수 있어요<small>찬양 인도, 악기, 싱어 등 (진행팀 소속)</small></span></span></label>' +
+    '<div class="cons lead-box' + (F.leadHope ? ' on' : '') + (leadOk() ? '' : ' dim') + '">' +
+    '<div class="top" style="cursor:default"><span class="t">조 담당 선생님 지원</span><span class="tag opt">선택</span></div>' +
+    '<div class="doc"><p><b>조 담당 선생님의 자격</b></p><ul><li>첫날 저녁 집회가 끝나기 전(대략 8시 반)까지 도착할 수 있는 분</li><li>모든 프로그램에 조원들과 함께 앉아 참여할 수 있는 분</li><li>평일 온라인 조장 교육에 참여할 수 있는 분</li><li>조원들을 위해 작정기도로 자신을 준비할 수 있는 분</li></ul>' +
+    '<p style="margin-top:8px">지원하지 않으셔도 필요할 때 조를 부탁드릴 수 있어요.</p></div>' +
+    (leadOk() ? '<label class="ft"><input type="checkbox" data-cb="leadHope"' + (F.leadHope ? ' checked' : '') + '>조 담당을 희망합니다</label>'
+      : '<p class="hint" style="padding:10px 14px 14px">고르신 출발 시간으로는 조 담당이 어려워요.</p>') + '</div>';
+}
+function vServe() { return pick('hope', '희망 팀을 골라 주세요.'); }
+
+function consentList() {
+  const keep = C.keep || '수련회 종료 후 1개월 이내 파기';
+  const L = [{ k: 'c1', must: 1, t: '개인정보 수집·이용 동의', d: [
+    ['수집·이용 목적', '수련회 교사 참석 확인, 팀·조 편성, 차량·숙소 준비, 수련회 중 비상 연락, 회비 입금 확인'],
+    ['수집 항목', '이름·성별·섬기는 예배 부서·휴대폰 번호, 출발 시점·이동 방법·숙박·섬김 희망'],
+    ['보유·이용 기간', keep],
+    ['동의를 거부할 권리', '동의를 거부할 권리가 있습니다. 다만 동의하지 않으면 수련회 교사 참석 신청이 제한됩니다.']] }];
+  if (T.ins) L.push(
+    { k: 'c2', must: 1, t: '고유식별정보(주민등록번호) 수집·이용 동의', d: [['수집·이용 목적', '수련회 기간 여행자보험 가입'], ['수집 항목', '주민등록번호'], ['보유·이용 기간', '보험 가입 완료 후 즉시 파기'], ['동의를 거부할 권리', '동의를 거부할 권리가 있습니다. 다만 동의하지 않으면 여행자보험에 가입할 수 없어 참석이 제한됩니다.']] },
+    { k: 'c3', must: 1, t: '개인정보 제3자 제공 동의', d: [['제공받는 자', C.insurer || '여행자보험 보험사'], ['제공 목적', '여행자보험 가입 및 보험금 청구 처리'], ['제공 항목', '이름·성별·생년월일·주민등록번호'], ['제공받는 자의 보유·이용 기간', '보험 계약 관련 법령에서 정한 기간'], ['동의를 거부할 권리', '동의를 거부할 권리가 있습니다. 다만 동의하지 않으면 여행자보험에 가입할 수 없어 참석이 제한됩니다.']] });
+  return L;
+}
+function consentCard(c, n) {
+  return '<div class="cons' + (F[c.k] ? ' on' : '') + '" data-c="' + c.k + '"><label class="top"><input type="checkbox" data-cb="' + c.k + '"' + (F[c.k] ? ' checked' : '') + '><span class="t">' + n + '. ' + c.t + '</span><span class="tag ' + (c.must ? 'must">필수' : 'opt">선택') + '</span></label>' +
+    '<details><summary>상세보기</summary><div class="doc">' + c.d.map(x => '<p><b>' + x[0] + '</b>' + esc(x[1]) + '</p>').join('') + '</div></details></div>';
+}
+function stepConsent() {
+  const L = consentList();
+  let h = '<h2>개인정보 제공에 동의해 주세요</h2><p class="lead">새중앙교회 드림공동체 중등부는 수련회 운영을 위해 아래와 같이 개인정보를 수집·이용합니다. 항목을 눌러 자세한 내용을 볼 수 있어요.</p>' +
+    (L.length > 1 ? '<button type="button" class="btn light block allbtn" id="all">모두 동의</button>' : '') +
+    L.map((c, i) => consentCard(c, i + 1)).join('') + '<div class="err" data-e="consent"></div>';
+  if (T.ins) h += '<div class="field" style="margin-top:22px"><span class="label">주민등록번호 (여행자보험용)</span><div class="rrn">' +
+    '<input class="inp" data-k="rrn1" inputmode="numeric" maxlength="6" placeholder="앞 6자리" value="' + esc(F.rrn1) + '" autocomplete="off" aria-label="주민등록번호 앞자리">' +
+    '<span class="dash">-</span><input class="inp" data-k="rrn2" type="password" inputmode="numeric" maxlength="7" placeholder="뒤 7자리" value="' + esc(F.rrn2) + '" autocomplete="off" aria-label="주민등록번호 뒷자리"></div>' +
+    '<small>암호화해서 보관하고, 보험 가입을 마치면 바로 지워요.</small><div class="err" data-e="rrn1"></div><div class="err" data-e="rrn2"></div></div>';
+  h += '<label class="field" style="margin-top:22px"><span>건강·식사 특이사항 <span class="tag opt">선택</span></span><textarea class="inp" data-k="health" maxlength="300" placeholder="예: 갑각류 알레르기, 허리가 불편해요">' + esc(F.health) + '</textarea>' +
+    '<small>식사 준비와 안전 관리에 참고해요. 없으면 비워 두세요.</small></label>' +
+    '<div id="c4box"' + (F.health.trim() ? '' : ' hidden') + '>' + consentCard({ k: 'c4', must: 1, t: '건강정보(민감정보) 수집·이용 동의', d: [
+      ['수집·이용 목적', '수련회 중 식사 준비와 건강·안전 관리'], ['수집 항목', '건강 상태, 알레르기 등 특이사항'], ['보유·이용 기간', C.keep || '수련회 종료 후 1개월 이내 파기'],
+      ['동의를 거부할 권리', '동의를 거부할 권리가 있으며, 동의하지 않으시면 특이사항 칸을 비워 주세요.']] }, L.length + 1) + '<div class="err" data-e="c4"></div></div>' +
+    '<label class="field"><span>하고 싶은 말 <span class="tag opt">선택</span></span><textarea class="inp" data-k="note" maxlength="300" placeholder="예: 토요일 오후에 잠깐 자리를 비워요">' + esc(F.note) + '</textarea></label>';
+  setTimeout(() => { const a = $('#all'); if (a) a.onclick = () => { L.forEach(c => { F[c.k] = true; const cb = $('[data-cb=' + c.k + ']'); cb.checked = true; cb.closest('.cons').classList.add('on'); cb.closest('.cons').classList.remove('bad'); }); setErr('consent', ''); }; });
+  return h;
+}
+function vConsent() {
+  let ok = true;
+  consentList().forEach(c => { if (!F[c.k]) { $('[data-c=' + c.k + ']').classList.add('bad'); ok = false; } });
+  if (!ok) setErr('consent', '필수 항목에 동의해야 신청할 수 있어요.');
+  if (F.health.trim() && !F.c4) { $('[data-c=c4]').classList.add('bad'); setErr('c4', '특이사항을 적으셨다면 건강정보 수집에 동의해 주세요.'); ok = false; }
+  if (T.ins) {
+    const a = F.rrn1, b = F.rrn2, mm = +a.slice(2, 4), dd = +a.slice(4, 6), g = +b[0];
+    if (a.length !== 6 || mm < 1 || mm > 12 || dd < 1 || dd > 31) { setErr('rrn1', '앞 6자리(생년월일)를 확인해 주세요.'); ok = false; }
+    else if (b.length !== 7 || g < 1 || g > 4) { setErr('rrn2', '뒤 7자리를 확인해 주세요.'); ok = false; }
+    else if ((g % 2 ? '남' : '여') !== F.gender) { setErr('rrn2', '기본 정보에서 고른 성별과 주민등록번호가 맞지 않아요.'); ok = false; }
+  }
+  return ok;
+}
+
+function stepReview() {
+  const sec = (t, i, rows) => '<div class="review"><h3>' + t + '<button type="button" class="link" data-edit="' + i + '">고치기</button></h3><dl>' +
+    rows.filter(r => r).map(r => '<dt>' + r[0] + '</dt><dd>' + esc(r[1] || '—') + '</dd>').join('') + '</dl></div>';
+  return '<h2>이대로 신청할까요?</h2><p class="lead">보내기 전에 한 번 더 확인해 주세요.</p>' +
+    sec('기본 정보', 0, [['이름', F.name.replace(/\s+/g, '')], ['성별', F.gender === '남' ? '남자' : '여자'], ['예배 부서', F.dept], ['휴대폰', F.phone]]) +
+    sec('참석 일정과 이동', 1, [['출발', F.arrive], ['이동', F.move === '버스' ? '교회 버스' : F.move === '자차' ? '자차' + (+F.carpool ? ' (' + F.carpool + '명 더 태울 수 있음)' : '') : '대중교통·동승'], isVisit() ? null : ['숙박', F.nights.length ? T.nights.filter(n => F.nights.indexOf(n) >= 0).join(', ') : '숙소 필요 없음']]) +
+    sec('섬길 팀', 2, [['희망 팀', F.hope], ['찬양', F.praise ? '섬길 수 있어요' : '—'], ['조 담당', F.leadHope ? '희망해요' : '—']]) +
+    sec('동의·특이사항', 3, [['개인정보', '동의'], T.ins ? ['주민등록번호', F.rrn1 + '-' + (F.rrn2[0] || '') + '●●●●●●'] : null, ['건강·식사', F.health.trim() || '없음'], F.note.trim() ? ['하고 싶은 말', F.note.trim()] : null]);
+}
+document.addEventListener('click', e => {
+  const ed = e.target.closest('[data-edit]'); if (ed) go(+ed.dataset.edit);
+  const tm = e.target.closest('.teams .team');
+  if (tm) { F.hope = tm.dataset.v; $$('.teams .team').forEach(x => x.setAttribute('aria-pressed', x === tm)); setErr('hope', ''); }
+});
+
+async function submit() {
+  if (sending) return;
+  sending = true;
+  const btn = $('#next'); btn.disabled = true; btn.textContent = '보내는 중…';
+  try {
+    const r = await api('tapply', {
+      name: F.name, gender: F.gender, dept: F.dept, phone: F.phone, arrive: F.arrive, move: F.move, carpool: F.carpool,
+      nights: isVisit() ? [] : F.nights, hope: F.hope, praise: F.praise, leadHope: F.leadHope && leadOk(), health: F.health, note: F.note,
+      consent: { c1: F.c1, c2: F.c2, c3: F.c3, c4: F.c4 }, rrn: T.ins ? F.rrn1 + F.rrn2 : '', hp: F.hp,
+    });
+    clearDraft();
+    F.rrn1 = F.rrn2 = F.health = '';
+    done(r);
+  } catch (e) {
+    toast(e.message);
+    btn.disabled = false; btn.textContent = '신청서 보내기';
+  } finally { sending = false; }
+}
+function done(r) {
+  step = 99; brand(true);
+  $('#actions').hidden = true;
+  $('#sky').classList.add('compact');
+  const m = String(r.ts || '').match(/^\d{4}-(\d{2})-(\d{2}) (\d{2}:\d{2})/);
+  const when = m ? (+m[1]) + '월 ' + (+m[2]) + '일 ' + m[3] : '';
+  $('#main').innerHTML = '<div class="ticket staff" role="group" aria-label="교사 참석 접수증">' +
+    '<div class="head"><small>교사 참석 접수증</small><h2>' + esc(r.title || C.title) + '</h2>' + (r.dates || r.place ? '<p>' + esc([r.dates, r.place].filter(Boolean).join(', ')) + '</p>' : '') + '</div>' +
+    '<div class="cut"></div><div class="body"><div class="no"><span>선생님</span><b class="nm">' + esc(r.name) + '</b></div>' +
+    '<dl><dt>출발</dt><dd>' + esc(r.arrive) + '</dd><dt>이동</dt><dd>' + esc(r.move === '버스' ? '교회 버스' : r.move === '자차' ? '자차' : '대중교통·동승') + '</dd><dt>희망 팀</dt><dd>' + esc(r.hope) + '</dd><dt>접수 시각</dt><dd>' + esc(when) + '</dd></dl>' +
+    (r.fee || r.account ? '<div class="pay">' + (r.fee ? '교사 회비 <b>' + esc(r.fee) + '</b>' : '') + (r.account ? '<br>' + esc(r.account) : '') + '<br>입금하실 때 선생님 이름으로 보내 주세요.</div>' : '') +
+    '</div></div>' +
+    '<div class="after"><p>' + (r.updated ? '이미 접수된 신청서를 새 내용으로 바꿨어요.' : '신청이 접수되었어요.') + ' 팀과 조는 정해지면 따로 안내드려요.</p>' +
+    '<button class="btn light" id="again">다른 선생님 신청하기</button></div>';
+  $('#again').onclick = () => { Object.assign(F, F0()); renderIntro(); window.scrollTo(0, 0); };
+  window.scrollTo(0, 0);
+}
+
+(async function start() {
+  const use = c => { C = c; T = c.t; renderHead(); };
+  try { const c = JSON.parse(localStorage.getItem('rt-cfg') || 'null'); if (c && c.t) { use(c); renderIntro(); } } catch (e) { }
+  try {
+    const fresh = await api('cfg');
+    try { localStorage.setItem('rt-cfg', JSON.stringify(fresh)); } catch (e) { }
+    const first = !C;
+    use(fresh);
+    if (first || step === -1 || (!T.open && step < 99)) renderIntro();
+  } catch (e) {
+    if (C) return;
+    $('#main').innerHTML = '<section class="fail"><p><b>신청서를 불러오지 못했어요.</b></p><p style="color:var(--sub);margin-top:8px">' + esc(e.message) + '</p><button class="btn block" style="margin-top:18px" onclick="location.reload()">다시 불러오기</button></section>';
+  }
+})();
+</script>
+</body>
+</html>

@@ -24,6 +24,8 @@ body { min-height: 100vh; }
 #login .sky .in { max-width: 420px; margin: 0 auto; }
 #login h1 { font-family: var(--display); font-weight: 400; font-size: 44px; line-height: 1.05; margin-top: 18px; }
 #login .sky p { color: #ffffffbb; margin-top: 10px; font-size: 15px; }
+#login .org { font-size: 17px; font-weight: 700; }
+#login form { margin-bottom: 28px !important; }
 #login form { max-width: 420px; width: calc(100% - 32px); margin: -36px auto 0; background: var(--paper); border-radius: var(--r-l); padding: 24px 20px; position: relative; box-shadow: 0 14px 30px -20px #17214A66; }
 #login .pin { letter-spacing: .5em; text-align: center; font-size: 22px; font-variant-numeric: tabular-nums; }
 .org { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #ffffffcc; font-weight: 600; }
@@ -83,7 +85,7 @@ nav.tabs button[aria-current="page"] svg { stroke: var(--night); }
 .mix { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .mix table { width: 100%; border-collapse: collapse; font-size: 14px; }
 .mix td { padding: 5px 0; border-bottom: 1px solid var(--line); }
-.mix td:last-child { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+.mix td:first-child { font-weight: 600; }
 .mix tr:last-child td { border-bottom: 0; }
 .issues { list-style: none; margin: 0; padding: 0; }
 .issues li { display: flex; gap: 10px; align-items: flex-start; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 15px; cursor: pointer; }
@@ -228,6 +230,28 @@ nav.tabs button[aria-current="page"] svg { stroke: var(--night); }
   .stat { grid-template-columns: repeat(4, 1fr); }
   .mem { grid-template-columns: 1fr 1fr 1fr; }
 }
+.seg { display: flex; background: #E6E9F2; border-radius: 12px; padding: 3px; margin-bottom: 12px; }
+.seg button { flex: 1; border: 0; background: none; padding: 9px 8px; border-radius: 10px; font-weight: 700; font-size: 15px; color: var(--sub); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--paper); color: var(--ink); box-shadow: 0 1px 3px #17214A22; }
+.tsum { display: grid; gap: 8px; }
+.tsum > div { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.tsum .k { font-size: 13px; color: var(--sub); width: 34px; flex: none; }
+.rchips button { flex: 0 0 auto; min-width: 64px; min-height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2; }
+.rchips button small { font-size: 11px; font-weight: 500; opacity: .8; }
+.dep { margin-bottom: 10px; padding: 12px 14px; }
+.dep .dh { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.dep .dg { font-size: 13px; font-weight: 700; color: var(--sub); margin: 10px 0 4px; }
+.drow { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-top: 1px solid var(--line); font-size: 15px; }
+.drow .muted { flex: 1; font-size: 13px; }
+.drow .link { font-weight: 700; color: var(--ink); text-decoration: none; }
+.mix td.n { text-align: right; width: 34px; font-variant-numeric: tabular-nums; font-weight: 600; }
+.mix td.cm { color: #5B8DEF; }
+.mix td.cf { color: #E5717C; }
+.mix td.ct { color: var(--ink); font-weight: 800; width: 40px; }
+.mix tr.h td { font-size: 12px; font-weight: 600; padding-bottom: 3px; }
+.mix tr.h td.ct { font-weight: 700; }
+.mix tr.sum td { border-top: 1.5px solid var(--ink); border-bottom: 0; font-weight: 700; }
+@media (max-width: 480px) { .mix { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -235,13 +259,14 @@ nav.tabs button[aria-current="page"] svg { stroke: var(--night); }
 
 <section id="login" hidden>
   <div class="sky"><div class="in">
-    <div class="org"><img src="../jungdeung.png" alt="드림공동체 중등부" onerror="this.remove()">새중앙교회</div>
+    <div class="org">새중앙교회 중등부 수련회</div>
     <h1>수련회 운영</h1>
     <p>관리자와 조 담당 선생님이 쓰는 화면이에요.</p>
   </div>
   <svg class="ridge" viewBox="0 0 400 56" preserveAspectRatio="none" aria-hidden="true"><path d="M0 56 L0 38 L38 22 L70 34 L112 8 L150 30 L188 18 L224 36 L262 14 L300 32 L338 20 L372 34 L400 26 L400 56 Z" fill="#24336E" opacity=".9"/><path d="M0 56 L0 46 L48 34 L92 44 L140 30 L186 46 L236 34 L284 46 L330 36 L372 46 L400 40 L400 56 Z" fill="var(--snow)"/></svg>
   </div>
   <form id="lf" autocomplete="on"></form>
+  <footer class="brand" style="margin-top:auto"><img src="../church.png" alt="새중앙교회" onerror="this.remove()"><img class="jd" src="../jungdeung.png" alt="드림공동체 중등부" onerror="this.remove()"></footer>
 </section>
 
 <div id="app" hidden>
@@ -264,6 +289,7 @@ const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const APPLY_URL = new URL('../', location.href).href;
+const TEACHER_URL = new URL('../teacher/', location.href).href;
 const KEY = 'rt-admin';
 let U = null, D = null, tab = 'home', sub = {}, openId = null;
 
@@ -398,8 +424,11 @@ function set(r) {
   D.byId = {}; D.people.forEach(p => D.byId[p.id] = p);
   D.act = D.people.filter(p => p.join === '예');
   D.rmap = {}; D.rooms.forEach(r => D.rmap[r.no] = r);
+  D.teachers = D.teachers || []; D.arrives = D.arrives || []; D.nights = D.nights || [];
+  D.tById = {}; D.teachers.forEach(t => D.tById[t.id] = t);
+  D.tAct = D.teachers.filter(t => t.join === '예');
   show(tab, true);
-  if (openId) { D.byId[openId] ? person(openId) : closeSheet(); }
+  if (openId) { D.byId[openId] ? person(openId) : D.tById[openId] ? teacher(openId) : closeSheet(); }
 }
 function show(t, keep) {
   if (t === 'settings' && !isAdmin()) t = 'home';
@@ -435,7 +464,11 @@ V.home = () => {
   const paid = a.filter(p => p.paid === '예').length;
   const placed = a.filter(p => p.room && D.rmap[p.room]).length;
   const dd = dday();
-  const cnt = (k, list) => '<table>' + list.map(v => '<tr><td>' + v[1] + '</td><td>' + a.filter(p => p[k] === v[0]).length + '</td></tr>').join('') + '</table>';
+  const cnt = (k, list) => {
+    const row = (label, L, cls) => '<tr' + (cls ? ' class="' + cls + '"' : '') + '><td>' + label + '</td><td class="n cm">' + L.filter(p => p.gender === '남').length + '</td><td class="n cf">' + L.filter(p => p.gender === '여').length + '</td><td class="n ct">' + L.length + '</td></tr>';
+    return '<table><tr class="h"><td></td><td class="n cm">남</td><td class="n cf">여</td><td class="n ct">합계</td></tr>' +
+      list.map(v => row(v[1], a.filter(p => p[k] === v[0]))).join('') + row('전체', a, 'sum') + '</table>';
+  };
   const hard = { gender: 1, cap: 1, room: 1, bus: 1 };
   const iss = rep.issues.filter(x => x.t !== 'miss');
   return '<div class="hero"><div class="t">' + esc(U.name) + ' 선생님 <span class="tag ' + (isAdmin() ? 'lamp' : 'dim') + '" style="margin-left:4px">' + (isAdmin() ? '관리자' : '조 담당') + '</span></div>' +
@@ -447,6 +480,8 @@ V.home = () => {
     '<div class="box" id="toPay" role="button" style="cursor:pointer"><div class="k">회비 입금</div><div class="v">' + paid + '<small>/' + a.length + '</small></div><div class="bar ok"><i style="width:' + (a.length ? paid / a.length * 100 : 0) + '%"></i></div></div>' +
     '<div class="box"><div class="k">조 배정</div><div class="v">' + placed + '<small>/' + a.length + '</small></div><div class="bar"><i style="width:' + (a.length ? placed / a.length * 100 : 0) + '%"></i></div></div>' +
     '<div class="box"><div class="k">희망 친구와 같은 조</div><div class="v">' + rep.happy + '<small>/' + rep.wishers + '</small></div><div class="muted">희망을 적은 학생 기준</div></div>' +
+    '<div class="box" id="toT" role="button" style="cursor:pointer"><div class="k">선생님 참석</div><div class="v">' + D.tAct.length + '<small>명</small></div><div class="split"><span class="tag dim">본발 ' + D.tAct.filter(isMainT).length + '</span><span class="tag dim">후발 ' + D.tAct.filter(t => !isMainT(t)).length + '</span></div></div>' +
+    '<div class="box" id="toTPay" role="button" style="cursor:pointer"><div class="k">선생님 회비</div><div class="v">' + D.tAct.filter(t => t.paid === '예').length + '<small>/' + D.tAct.length + '</small></div><div class="bar ok"><i style="width:' + (D.tAct.length ? D.tAct.filter(t => t.paid === '예').length / D.tAct.length * 100 : 0) + '%"></i></div></div>' +
     '</div>' +
     '<div class="sec"><h2>부서·학년</h2><div class="mix"><div class="box">' + cnt('dept', [['1부', '1부'], ['2부', '2부'], ['열린예배', '열린예배'], ['타교회', '타교회']]) + '</div><div class="box">' + cnt('grade', [['1학년', '중1'], ['2학년', '중2'], ['3학년', '중3']]) + '</div></div></div>' +
     '<div class="sec"><h2>확인할 일 <small>' + iss.length + '건</small></h2><div class="box">' +
@@ -456,6 +491,9 @@ V.home = () => {
     '<div class="sec"><h2>신청 페이지 <small>' + (D.open ? '신청 받는 중' : '닫혀 있음') + '</small></h2><div class="box linkbox">' +
     '<img alt="신청 페이지 QR 코드" src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&data=' + encodeURIComponent(APPLY_URL) + '">' +
     '<div><b>학부모·학생 공지용 링크</b><div class="u">' + esc(APPLY_URL) + '</div><button class="btn small light" id="copyApply">링크 복사</button></div></div></div>' +
+    '<div class="sec"><h2>교사 신청 페이지 <small>' + (D.topen ? '신청 받는 중' : '닫혀 있음') + '</small></h2><div class="box linkbox">' +
+    '<img alt="교사 신청 페이지 QR 코드" src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&data=' + encodeURIComponent(TEACHER_URL) + '">' +
+    '<div><b>선생님 공지용 링크</b><div class="u">' + esc(TEACHER_URL) + '</div><button class="btn small light" id="copyT">링크 복사</button></div></div></div>' +
     (isAdmin() ? '<button class="btn light block" id="toSet">설정 · 계정 · 보험명단</button>' : '') +
     '<p class="muted" style="text-align:center;margin-top:16px">' + esc(D.at.slice(5, 16)) + ' 기준</p>';
 };
@@ -463,12 +501,16 @@ B.home = () => {
   $$('.issues li').forEach(li => li.onclick = () => {
     if (li.dataset.id) person(li.dataset.id);
     else if (li.dataset.t === 'bus') show('bus');
+    else if (li.dataset.t === 'tteam') { sub.who = 'tch'; sub.tflt = 'none'; show('list'); }
     else if (li.dataset.room) { sub.roomG = D.rmap[li.dataset.room] ? D.rmap[li.dataset.room].gender : ''; show('rooms'); }
   });
   const mi = $('#moreIss'); if (mi) mi.onclick = () => { sub.allIss = 1; show('home', true); };
   $('#copyApply').onclick = () => copy(APPLY_URL);
   const ts = $('#toSet'); if (ts) ts.onclick = () => show('settings');
-  $('#toPay').onclick = () => { sub.flt = 'pay'; sub.q = ''; show('list'); };
+  $('#toPay').onclick = () => { sub.who = 'stu'; sub.flt = 'pay'; sub.q = ''; show('list'); };
+  $('#toT').onclick = () => { sub.who = 'tch'; sub.tflt = 'all'; sub.tq = ''; show('list'); };
+  $('#toTPay').onclick = () => { sub.who = 'tch'; sub.tflt = 'pay'; sub.tq = ''; show('list'); };
+  $('#copyT').onclick = () => copy(TEACHER_URL);
 };
 function copy(t) {
   (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => toast('링크를 복사했어요'), () => { prompt('아래 링크를 복사해 주세요', t); });
@@ -477,6 +519,7 @@ function copy(t) {
 // 명단
 const FILTERS = [['all', '전체'], ['m', '남'], ['f', '여'], ['none', '미배정'], ['pay', '회비 체크'], ['health', '건강 특이사항'], ['off', '취소']];
 V.list = () => {
+  if (sub.who === 'tch') return tlist();
   const fl = sub.flt || 'all', q = (sub.q || '').trim();
   let L = D.people.filter(p => {
     if (fl === 'off') return p.join !== '예';
@@ -490,12 +533,12 @@ V.list = () => {
   });
   if (q) L = L.filter(p => [p.name, p.school, p.gname, p.phone, p.gphone, p.dept, p.church, p.grade].join(' ').indexOf(q) >= 0 || digits(p.gphone + p.phone).indexOf(digits(q) || '@') >= 0);
   L.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
-  const head = '<div class="search">' + ic('search') + '<input class="inp" id="q" type="search" placeholder="' + (fl === 'pay' ? '입금자 이름(학생·보호자)이나 전화번호로 찾기' : '이름, 학교, 전화번호로 찾기') + '" value="' + esc(q) + '"></div>' +
+  const head = seg() + '<div class="search">' + ic('search') + '<input class="inp" id="q" type="search" placeholder="' + (fl === 'pay' ? '입금자 이름(학생·보호자)이나 전화번호로 찾기' : '이름, 학교, 전화번호로 찾기') + '" value="' + esc(q) + '"></div>' +
     '<div class="chips" role="group">' + FILTERS.map(f => '<button data-f="' + f[0] + '" aria-pressed="' + (fl === f[0]) + '">' + f[1] + '</button>').join('') + '</div>';
   if (fl === 'pay') {
     const all = D.act.filter(p => p.paid === '예').length;
     return head + '<div class="paysum"><span>입금 확인 <b>' + all + '</b> / ' + D.act.length + '명 · 미납 ' + (D.act.length - all) + '명</span><span>' + (isAdmin() ? '계좌 확인 후 누르세요' : '관리자만 바꿀 수 있어요') + '</span></div>' +
-      (L.length ? '<div class="plist">' + L.map(payrow).join('') + '</div>'
+      (L.length ? '<div class="plist">' + L.map(p => payrow(p)).join('') + '</div>'
         : '<div class="empty box"><b>찾는 학생이 없어요</b>입금자 이름이 보호자 이름일 수도 있어요.</div>');
   }
   return head +
@@ -510,33 +553,35 @@ function prow(p) {
     '<span class="end">' + (p.health ? '<span class="tag lamp">건강</span>' : '') + (p.join !== '예' ? '<span class="tag dim">취소</span>' : r ? '<span class="tag ' + gcls(p.gender) + '">' + esc(r.no) + '조</span>' : '<span class="tag dim">미배정</span>') +
     '<span class="dot ' + (p.paid === '예' ? 'paid' : 'unpaid') + '" title="' + (p.paid === '예' ? '회비 입금' : '회비 미납') + '"></span></span></button>';
 }
-function payrow(p) {
+function payrow(p, isT) {
   const on = p.paid === '예';
-  return '<div class="prow pay" data-pid="' + p.id + '"><span class="av ' + gcls(p.gender) + '">' + esc(p.name.slice(-2)) + '</span>' +
-    '<span class="mid"><span class="nm">' + esc(p.name) + '</span><br><span class="ds">보호자 ' + esc(p.gname || '—') + (p.paynote ? ' · ' + esc(p.paynote) : '') + '</span></span>' +
-    (isAdmin() ? '<button class="paybtn" data-pay="' + p.id + '" aria-pressed="' + on + '">' + (on ? '입금' : '입금 확인') + '</button>'
+  return '<div class="prow pay" data-' + (isT ? 'ptid' : 'pid') + '="' + p.id + '"><span class="av ' + gcls(p.gender) + '">' + esc(p.name.slice(-2)) + '</span>' +
+    '<span class="mid"><span class="nm">' + esc(p.name) + '</span><br><span class="ds">' + (isT ? esc([p.dept, shortArr(p.arrive)].filter(Boolean).join(' · ')) : '보호자 ' + esc(p.gname || '—')) + (p.paynote ? ' · ' + esc(p.paynote) : '') + '</span></span>' +
+    (isAdmin() ? '<button class="paybtn" data-' + (isT ? 'tpay' : 'pay') + '="' + p.id + '" aria-pressed="' + on + '">' + (on ? '입금' : '입금 확인') + '</button>'
       : '<span class="tag ' + (on ? 'ok">입금' : 'dim">미납') + '</span>') + '</div>';
 }
 let payBusy = 0, payLast = null;
-async function togglePay(id) {
-  const p = D.byId[id]; if (!p) return;
+async function togglePay(id, isT, fromSheet) {
+  const p = isT ? D.tById[id] : D.byId[id]; if (!p) return;
   const on = p.paid !== '예', t = new Date();
-  if (!on && !(await ask(p.name + ' 학생을 회비 미납으로 되돌릴까요?', '미납으로'))) return;
+  if (!on && !(await ask(p.name + (isT ? ' 선생님' : ' 학생') + '을 회비 미납으로 되돌릴까요?', '미납으로'))) return;
   const note = on ? (t.getMonth() + 1) + '/' + t.getDate() + ' 확인 (' + U.name + ')' : '';
   p.paid = on ? '예' : ''; p.paynote = note;
-  const y = window.scrollY; show('list', true); window.scrollTo(0, y);
+  if (fromSheet) teacher(id); else show(tab, true);
   payBusy++;
   try {
-    payLast = await call('personSave', { id, fields: { paid: on, paynote: note } });
+    payLast = await call(isT ? 'teacherSave' : 'personSave', { id, fields: { paid: on, paynote: note } });
     toast(p.name + ' ' + (on ? '입금 확인했어요' : '미납으로 바꿨어요'));
   } catch (e) {
     p.paid = on ? '' : '예'; toast((e.message || '저장하지 못했어요') + ' 다시 눌러 주세요.');
-    const y2 = window.scrollY; show('list', true); window.scrollTo(0, y2);
+    show(tab, true);
   } finally {
-    if (--payBusy === 0 && payLast) { const y3 = window.scrollY; const r = payLast; payLast = null; set(r); window.scrollTo(0, y3); }
+    if (--payBusy === 0 && payLast) { const r = payLast; payLast = null; set(r); }
   }
 }
 B.list = () => {
+  $$('[data-who]').forEach(b => b.onclick = () => { sub.who = b.dataset.who; show('list'); });
+  if (sub.who === 'tch') return bindTlist();
   $$('[data-pay]').forEach(b => b.onclick = () => togglePay(b.dataset.pay));
   $$('.prow.pay').forEach(r => r.onclick = e => { if (!e.target.closest('[data-pay]')) person(r.dataset.pid); });
   const q = $('#q');
@@ -557,7 +602,7 @@ V.rooms = () => {
   const card = r => {
     const m = (mem[r.no] || []).slice().sort((a, b) => a.grade.localeCompare(b.grade) || a.name.localeCompare(b.name, 'ko'));
     const pct = Math.min(100, m.length / r.cap * 100);
-    return '<div class="room ' + gcls(r.gender) + '"><div class="hd"><div class="no">' + esc(r.no) + '<small>조</small></div><div class="meta"><b>' + esc(r.name || '숙소 미정') + '</b><br>담당 ' + esc(r.teacher || '미정') + (r.tphone ? ' ' + tel(r.tphone) : '') + '</div><div class="cnt">' + m.length + '/' + r.cap + '</div></div>' +
+    return '<div class="room ' + gcls(r.gender) + '"><div class="hd"><div class="no">' + esc(r.no) + '<small>조</small></div><div class="meta"><b>' + esc(r.name || '숙소 미정') + '</b><br>담당 ' + esc(r.teacher || '미정') + (r.tphone ? ' ' + tel(r.tphone) : '') + (r.cover ? '<br><span class="muted">먼저 맡음 ' + esc(r.cover) + '</span>' : '') + '</div><div class="cnt">' + m.length + '/' + r.cap + '</div></div>' +
       '<div class="bar' + (m.length > r.cap ? ' over' : '') + '"><i style="width:' + pct + '%"></i></div>' +
       (m.length ? '<div class="mem">' + m.map(memBtn).join('') + '</div>' : '<p class="muted">아직 아무도 없어요.</p>') + '</div>';
   };
@@ -588,7 +633,7 @@ B.rooms = () => {
 V.bus = () => {
   const rep = D.rep;
   const seatLink = isAdmin() ? ' <button class="link" id="toBusSet">좌석 수 바꾸기</button>' : '';
-  if (!rep.buses.length) return '<div class="box empty"><b>아직 버스 배차가 없어요</b>조 배정을 마치면 조별로 ' + (D.cfg.seats || 45) + '인승 버스에 자동으로 나눠 태워요.' + seatLink + '</div>';
+  if (!rep.buses.length) return '<div class="box empty"><b>아직 버스 배차가 없어요</b>조 배정을 마치면 조별로 ' + (D.cfg.seats || 45) + '인승 버스에 자동으로 나눠 태워요.' + seatLink + '</div>' + departures();
   const mem = {}; D.act.forEach(p => { if (p.room) (mem[p.room] = mem[p.room] || []).push(p); });
   const open = sub.busOpen || {};
   return '<p class="muted sec">조 단위로 같은 버스에 타요. 좌석 ' + rep.seat + '석 기준' + (rep.ride ? ', 담당 선생님 포함' : '') + '. 탑승 체크는 이 휴대폰에만 저장돼요.' + seatLink + '</p>' +
@@ -597,22 +642,29 @@ V.bus = () => {
       const ppl = [];
       b.rooms.forEach(no => {
         const r = D.rmap[no];
-        if (rep.ride && r && r.teacher) ppl.push({ key: 't' + no, room: no, name: r.teacher, t: 1, phone: r.tphone });
+        const rd = rep.ride && r && roomRider(r);
+        if (rd) ppl.push({ key: 't' + no, room: no, name: rd.name, t: 1, phone: rd.phone, tid: rd.id, cover: !!rd.id && rd.id === r.cid });
         (mem[no] || []).slice().sort((a, c) => a.name.localeCompare(c.name, 'ko')).forEach(p => ppl.push({ key: p.id, room: no, name: p.name, p }));
       });
+      (b.staff || []).forEach(id => { const t = D.tById[id]; if (t) ppl.push({ key: 's' + id, room: '_s', name: t.name, t: 2, phone: t.phone, tid: id, team: t.team }); });
       const done = ppl.filter(x => ck[x.key]).length;
       const isOpen = open[b.no];
       return '<div class="bus"><div class="hd" data-b="' + b.no + '" role="button" aria-expanded="' + !!isOpen + '"><div class="no">' + b.no + '<small style="font-family:var(--body);font-size:15px;font-weight:700">호차</small></div>' +
         '<div class="meta"><b>' + b.rooms.map(n => n + '조').join(', ') + '</b><div class="muted">' + b.used + '/' + rep.seat + '석</div><div class="bar' + (b.used > rep.seat ? ' over' : '') + '"><i style="width:' + Math.min(100, b.used / rep.seat * 100) + '%"></i></div></div>' +
         '<div class="chk">' + done + '/' + ppl.length + '<br><span class="muted" style="font-weight:500">탑승</span></div></div>' +
-        (isOpen ? '<div class="body">' + b.rooms.map(no => '<div class="grp">' + no + '조' + (D.rmap[no] ? ' · ' + esc(D.rmap[no].name || '') : '') + '</div>' +
-          ppl.filter(x => x.room === no).map(x => '<div class="brow"><input type="checkbox" id="bk' + esc(x.key) + '" data-bus="' + b.no + '" data-k="' + esc(x.key) + '"' + (ck[x.key] ? ' checked' : '') + '>' +
-            '<label for="bk' + esc(x.key) + '">' + esc(x.name) + (x.t ? ' <span class="tag dim">담당 선생님</span>' : (x.p.health ? ' <span class="tag lamp">건강</span>' : '')) + '</label>' +
-            (x.p ? '<button class="link tel" data-id="' + x.p.id + '">정보</button>' : (x.phone ? '<a class="tel" href="tel:' + digits(x.phone) + '">전화</a>' : '')) + '</div>').join('')).join('') +
+        (isOpen ? '<div class="body">' + b.rooms.concat((b.staff || []).length ? ['_s'] : []).map(no => no === '_s' ? '<div class="grp">선생님</div>' + ppl.filter(x => x.room === '_s').map(brow(b)).join('') : '<div class="grp">' + no + '조' + (D.rmap[no] ? ' · ' + esc(D.rmap[no].name || '') : '') + '</div>' +
+          ppl.filter(x => x.room === no).map(brow(b)).join('')).join('') +
           '<button class="link" data-reset="' + b.no + '" style="margin-top:10px">탑승 체크 모두 지우기</button></div>' : '') + '</div>';
-    }).join('');
+    }).join('') + departures();
+};
+const brow = b => x => {
+  const ck = store.get('rt-board-' + b.no) || {};
+  return '<div class="brow"><input type="checkbox" id="bk' + esc(x.key) + '" data-bus="' + b.no + '" data-k="' + esc(x.key) + '"' + (ck[x.key] ? ' checked' : '') + '>' +
+    '<label for="bk' + esc(x.key) + '">' + esc(x.name) + (x.t === 1 ? ' <span class="tag dim">' + (x.cover ? '먼저 맡는 선생님' : '담당 선생님') + '</span>' : x.t === 2 ? ' <span class="tag dim">' + esc(x.team || '선생님') + '</span>' : (x.p.health ? ' <span class="tag lamp">건강</span>' : '')) + '</label>' +
+    (x.p ? '<button class="link tel" data-id="' + x.p.id + '">정보</button>' : x.tid ? '<button class="link tel" data-tid="' + x.tid + '">정보</button>' : (x.phone ? '<a class="tel" href="tel:' + digits(x.phone) + '">전화</a>' : '')) + '</div>';
 };
 B.bus = () => {
+  $$('#v [data-tid]').forEach(b => b.onclick = () => teacher(b.dataset.tid));
   const tb = $('#toBusSet'); if (tb) tb.onclick = () => { show('settings'); setTimeout(() => { const e = $('#busBox'); if (e) e.scrollIntoView(); }, 50); };
   $$('.bus .hd').forEach(h => h.onclick = () => { sub.busOpen = sub.busOpen || {}; sub.busOpen[h.dataset.b] = !sub.busOpen[h.dataset.b]; show('bus', true); });
   $$('.brow input').forEach(c => c.onchange = () => { const k = 'rt-board-' + c.dataset.bus; const o = store.get(k) || {}; if (c.checked) o[c.dataset.k] = 1; else delete o[c.dataset.k]; store.set(k, o); show('bus', true); });
@@ -816,6 +868,182 @@ function editPerson(id) {
   };
 }
 
+// ───── 선생님 ─────
+const TEAMS = ['진행팀', '조장팀', '지원팀', '중보팀'];
+const ROLES = ['디렉터', '회계', '부감', '팀장'];
+const shortArr = a => String(a || '').replace(/\s*\(.*\)\s*$/, '');
+const isMainT = t => t && t.arrive === D.rep.main;
+const onBusT = t => isMainT(t) && t.move === '버스';
+const tRooms = t => String(t.rooms || '').split(/[,\s]+/).filter(Boolean);
+const tCover = t => String(t.cover || '').split(/[,\s]+/).filter(Boolean);
+const moveLabel = t => t.move === '버스' ? '교회 버스' : t.move === '자차' ? '자차' + (+t.carpool ? ' (+' + t.carpool + '명 가능)' : '') : t.move === '기타' ? '대중교통·동승' : '—';
+/** 조마다 실제로 버스에 함께 타는 선생님 */
+function roomRider(r) {
+  if (!D.teachers.length) return r.teacher ? { name: r.teacher, phone: r.tphone } : null;
+  const lead = D.tById[r.tid], cov = D.tById[r.cid];
+  if (onBusT(lead)) return lead;
+  if (onBusT(cov) && !tRooms(cov).length) return cov;
+  return null;
+}
+const TFILTERS = [['all', '전체'], ['진행팀', '진행팀'], ['조장팀', '조장팀'], ['지원팀', '지원팀'], ['중보팀', '중보팀'], ['none', '팀 미정'], ['late', '후발'], ['car', '자차'], ['pay', '회비 체크'], ['off', '취소']];
+function seg() {
+  const w = sub.who || 'stu';
+  return '<div class="seg" role="group"><button data-who="stu" aria-pressed="' + (w === 'stu') + '">학생 ' + D.act.length + '</button><button data-who="tch" aria-pressed="' + (w === 'tch') + '">선생님 ' + D.tAct.length + '</button></div>';
+}
+function tlist() {
+  const fl = sub.tflt || 'all', q = (sub.tq || '').trim();
+  let L = D.teachers.filter(t => {
+    if (fl === 'off') return t.join !== '예';
+    if (t.join !== '예') return false;
+    if (TEAMS.indexOf(fl) >= 0) return t.team === fl;
+    if (fl === 'none') return !t.team;
+    if (fl === 'late') return !isMainT(t);
+    if (fl === 'car') return t.move === '자차';
+    return true;
+  });
+  if (q) L = L.filter(t => [t.name, t.dept, t.phone, t.team, t.hope, t.role].join(' ').indexOf(q) >= 0 || digits(t.phone).indexOf(digits(q) || '@') >= 0);
+  L.sort((a, b) => (ROLES.indexOf(a.role) + 1 || 9) - (ROLES.indexOf(b.role) + 1 || 9) || a.name.localeCompare(b.name, 'ko'));
+  const A = D.tAct;
+  const byArr = D.arrives.map(x => [shortArr(x), A.filter(t => t.arrive === x).length]).filter(x => x[1]);
+  const byTeam = TEAMS.map(x => [x, A.filter(t => t.team === x).length]).concat([['미정', A.filter(t => !t.team).length]]).filter(x => x[1]);
+  const head = seg() + '<div class="search">' + ic('search') + '<input class="inp" id="tq" type="search" placeholder="이름, 팀, 전화번호로 찾기" value="' + esc(q) + '"></div>' +
+    '<div class="chips" role="group">' + TFILTERS.map(f => '<button data-tf="' + f[0] + '" aria-pressed="' + (fl === f[0]) + '">' + f[1] + '</button>').join('') + '</div>';
+  if (!D.teachers.length) return head + '<div class="empty box"><b>아직 신청한 선생님이 없어요</b>교사 신청 페이지 링크를 공지하면 여기에 바로 나타나요.' + (isAdmin() ? '<br><button class="btn" id="addT">직접 추가</button>' : '') + '</div>';
+  if (fl === 'pay') {
+    const all = A.filter(t => t.paid === '예').length;
+    return head + '<div class="paysum"><span>입금 확인 <b>' + all + '</b> / ' + A.length + '명 · 미납 ' + (A.length - all) + '명</span><span>' + (isAdmin() ? '계좌 확인 후 누르세요' : '관리자만 바꿀 수 있어요') + '</span></div>' +
+      (L.length ? '<div class="plist">' + L.map(t => payrow(t, 1)).join('') + '</div>' : '<div class="empty box"><b>찾는 선생님이 없어요</b></div>');
+  }
+  return head + (fl === 'all' && !q ? '<div class="box tsum sec"><div><span class="k">출발</span>' + byArr.map(x => '<span class="tag dim">' + esc(x[0]) + ' ' + x[1] + '</span>').join('') + '</div>' +
+      '<div><span class="k">팀</span>' + byTeam.map(x => '<span class="tag ' + (x[0] === '미정' ? 'must' : 'dim') + '">' + esc(x[0]) + ' ' + x[1] + '</span>').join('') + '</div>' +
+      '<div><span class="k">이동</span><span class="tag dim">버스 ' + A.filter(onBusT).length + '</span><span class="tag dim">자차 ' + A.filter(t => t.move === '자차').length + '</span>' + (A.filter(t => t.move === '기타').length ? '<span class="tag dim">기타 ' + A.filter(t => t.move === '기타').length + '</span>' : '') + '</div></div>' : '') +
+    '<div class="count"><span>' + L.length + '명</span>' + (isAdmin() ? '<button class="btn small light" id="addT">직접 추가</button>' : '') + '</div>' +
+    (L.length ? '<div class="plist">' + L.map(trow).join('') + '</div>' : '<div class="empty box"><b>찾는 선생님이 없어요</b>검색어나 필터를 바꿔 보세요.</div>');
+}
+function trow(t) {
+  const rs = tRooms(t), cv = tCover(t);
+  return '<button class="prow' + (t.join !== '예' ? ' off' : '') + '" data-tid="' + t.id + '">' +
+    '<span class="av ' + gcls(t.gender) + '">' + esc(t.name.slice(-2)) + '</span>' +
+    '<span class="mid"><span class="nm">' + esc(t.name) + (t.role ? ' <span class="tag lamp">' + esc(t.role) + '</span>' : '') + '</span><br><span class="ds">' +
+    esc([t.team || (t.hope ? '희망 ' + t.hope : ''), shortArr(t.arrive), t.move === '자차' ? '자차' : ''].filter(Boolean).join(' · ')) + '</span></span>' +
+    '<span class="end">' + (t.health ? '<span class="tag lamp">건강</span>' : '') + (rs.length ? '<span class="tag ' + gcls(t.gender) + '">' + rs.map(x => x + '조').join('·') + '</span>' : '') +
+    (cv.length ? '<span class="tag dim">' + cv.map(x => x + '조').join('·') + ' 대신</span>' : '') + (t.join !== '예' ? '<span class="tag dim">취소</span>' : '') +
+    '<span class="dot ' + (t.paid === '예' ? 'paid' : 'unpaid') + '"></span></span></button>';
+}
+function bindTlist() {
+  const q = $('#tq');
+  if (q) q.oninput = () => { sub.tq = q.value; const pos = q.selectionStart; show('list', true); const n = $('#tq'); n.focus(); n.setSelectionRange(pos, pos); };
+  $$('[data-tf]').forEach(b => b.onclick = () => { sub.tflt = b.dataset.tf; show('list', true); });
+  $$('[data-tid]').forEach(b => b.onclick = () => teacher(b.dataset.tid));
+  $$('[data-tpay]').forEach(b => b.onclick = () => togglePay(b.dataset.tpay, 1));
+  $$('.prow.pay[data-ptid]').forEach(r => r.onclick = e => { if (!e.target.closest('[data-tpay]')) teacher(r.dataset.ptid); });
+  const ad = $('#addT'); if (ad) ad.onclick = () => editTeacher(null);
+}
+
+function teacher(id) {
+  const t = D.tById[id]; if (!t) return;
+  openId = id;
+  const rs = tRooms(t), cv = tCover(t);
+  const rooms = D.rooms.filter(r => !t.gender || r.gender === t.gender);
+  const rchips = (key, sel) => '<div class="choice rchips" data-rk="' + key + '">' + (rooms.length ? rooms.map(r => {
+    const other = key === 'rooms' ? (r.tid && r.tid !== id ? r.teacher : '') : (r.cid && r.cid !== id ? r.cover : '');
+    return '<button type="button" data-v="' + esc(r.no) + '" aria-pressed="' + (sel.indexOf(r.no) >= 0) + '">' + esc(r.no) + '조' + (other ? '<small>' + esc(other) + '</small>' : '') + '</button>';
+  }).join('') : '<p class="muted">설정에서 조(숙소)를 먼저 만들어 주세요.</p>') + '</div>';
+  const roomLine = (list, pre) => list.map(no => { const r = D.rmap[no]; return no + '조' + (r && r.name ? ' ' + r.name : '') + (pre && r ? ' (담당 ' + (r.teacher || '미정') + ')' : ''); }).join(', ');
+  const html = '<div class="grab"><h2>' + esc(t.name) + ' <span class="tag ' + gcls(t.gender) + '">' + esc(t.gender || '—') + '</span>' + (t.role ? '<span class="tag lamp">' + esc(t.role) + '</span>' : '') +
+    (t.join !== '예' ? '<span class="tag dim">참석 취소</span>' : t.team ? '<span class="tag ok">' + esc(t.team) + '</span>' : '<span class="tag must">팀 미정</span>') + '</h2><button class="x" aria-label="닫기">×</button></div>' +
+    '<div class="box"><div class="crow" style="padding:0;border:0"><div class="mid"><div class="nm">' + esc(t.phone || '연락처 없음') + '</div><div class="ds">' + esc(t.dept || '') + '</div></div>' + smsBtn(t.phone, t.name) + callBtn(t.phone, t.name) + '</div></div>' +
+    (isAdmin() && t.join === '예' ? '<h3>팀·조 편성</h3><div class="box">' +
+      '<div style="display:flex;gap:8px"><label class="field" style="flex:1;margin-bottom:12px"><span>팀</span><select class="inp" id="tTeam"><option value="">미정</option>' + TEAMS.map(x => '<option' + (t.team === x ? ' selected' : '') + '>' + x + '</option>').join('') + '</select></label>' +
+      '<label class="field" style="flex:1;margin-bottom:12px"><span>직책</span><select class="inp" id="tRole"><option value="">없음</option>' + ROLES.map(x => '<option' + (t.role === x ? ' selected' : '') + '>' + x + '</option>').join('') + '</select></label></div>' +
+      '<div class="field"><span class="label">담당 조 <small class="muted">한 조에 담당은 한 명이에요</small></span>' + rchips('rooms', rs) + '</div>' +
+      '<div class="field"><span class="label">먼저 맡아 줄 조 <small class="muted">담당 선생님이 늦게 오는 조</small></span>' + rchips('cover', cv) + '</div>' +
+      (isMainT(t) ? '' : '<p class="hint" style="margin:-6px 0 12px">' + esc(shortArr(t.arrive)) + '에 오는 선생님이에요. 담당 조를 맡기면 그 조를 먼저 맡아 줄 선생님도 정해 주세요.</p>') +
+      '<button class="btn block" id="tSave">팀·조 저장</button></div>' : (rs.length || cv.length ? '<h3>맡은 조</h3><div class="box"><dl class="kv">' + (rs.length ? '<dt>담당</dt><dd>' + esc(roomLine(rs)) + '</dd>' : '') + (cv.length ? '<dt>먼저 맡음</dt><dd>' + esc(roomLine(cv, 1)) + '</dd>' : '') + '</dl></div>' : '')) +
+    '<h3>참석</h3><div class="box"><dl class="kv"><dt>출발</dt><dd>' + esc(t.arrive || '—') + '</dd><dt>이동</dt><dd>' + esc(moveLabel(t)) + (onBusT(t) ? busOf(t) : '') + '</dd><dt>숙박</dt><dd>' + esc(t.nights || '없음') + '</dd></dl></div>' +
+    '<h3>섬김 희망</h3><div class="box"><dl class="kv"><dt>희망 팀</dt><dd>' + esc(t.hope || '—') + '</dd><dt>찬양</dt><dd>' + (t.praise === '예' ? '섬길 수 있어요' : '—') + '</dd><dt>조 담당</dt><dd>' + (t.leadHope === '예' ? '<span class="tag ok">희망해요</span>' : '—') + '</dd>' +
+    (t.note ? '<dt>하고 싶은 말</dt><dd style="white-space:pre-line">' + esc(t.note) + '</dd>' : '') + '</dl></div>' +
+    '<h3>건강·회비</h3><div class="box"><dl class="kv"><dt>건강·식사</dt><dd>' + (t.health ? esc(t.health) : '<span class="muted">없음</span>') + '</dd>' +
+    (D.cfg.tins === '예' || t.hasRrn ? '<dt>주민번호</dt><dd>' + (t.hasRrn && t.birth ? esc(t.birth) + '●●●●●●' : '<span class="muted">없음</span>') + '</dd>' : '') +
+    '<dt>회비</dt><dd>' + (t.paid === '예' ? '<span class="tag ok">입금</span>' : '<span class="tag dim">미납</span>') + (t.paynote ? ' ' + esc(t.paynote) : '') + '</dd>' + (t.memo ? '<dt>메모</dt><dd style="white-space:pre-line">' + esc(t.memo) + '</dd>' : '') + '</dl></div>' +
+    '<h3>접수</h3><div class="box"><dl class="kv"><dt>접수</dt><dd>' + esc(String(t.ts).slice(0, 16)) + '</dd>' + (t.mt ? '<dt>수정</dt><dd>' + esc(String(t.mt).slice(0, 16)) + '</dd>' : '') + '<dt>동의</dt><dd style="font-weight:500;font-size:14px">' + esc(t.consent || '—') + '</dd></dl></div>' +
+    (isAdmin() ? '<h3>관리</h3><div class="acts">' +
+      '<button class="btn light" id="tPaid">' + (t.paid === '예' ? '회비 미납으로 바꾸기' : '회비 입금 확인') + '</button>' +
+      '<button class="btn light" id="tEdit">정보 고치기</button>' +
+      '<button class="btn light" id="tAcc">운영 앱 계정 만들기</button>' +
+      '<button class="btn light" id="tJoin">' + (t.join === '예' ? '참석 취소로 바꾸기' : '다시 참석으로 바꾸기') + '</button>' +
+      '<button class="btn light" id="tDel" style="color:var(--alert)">신청 삭제</button></div>' : '');
+  openSheet(html);
+  if (!isAdmin()) return;
+  $$('.rchips button').forEach(b => b.onclick = () => b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') !== 'true'));
+  const pick = k => $$('[data-rk=' + k + '] button[aria-pressed=true]').map(b => b.dataset.v);
+  const ts = $('#tSave');
+  if (ts) ts.onclick = async () => {
+    const fields = { team: $('#tTeam').value, role: $('#tRole').value, rooms: pick('rooms'), cover: pick('cover') };
+    const taken = fields.rooms.filter(no => { const r = D.rmap[no]; return r && r.tid && r.tid !== id; });
+    if (taken.length && !await ask(taken.map(no => no + '조 (지금 ' + D.rmap[no].teacher + ')').join(', ') + '\n담당 선생님을 ' + t.name + ' 선생님으로 바꿀까요?', '바꾸기')) return;
+    const r2 = await run(() => call('teacherSave', { id, fields }), '팀·조를 저장했어요');
+    if (r2) set(r2);
+  };
+  $('#tPaid').onclick = () => togglePay(id, 1, true);
+  $('#tEdit').onclick = () => editTeacher(id);
+  $('#tAcc').onclick = async () => {
+    if (!await ask(t.name + ' 선생님 운영 앱 계정을 만들까요?\n조 담당(열람만) 권한이고, 처음 PIN은 000000이에요.', '만들기')) return;
+    await run(() => call('accSave', { name: t.name, role: 'lead' }), t.name + ' 계정을 만들었어요. 첫 PIN은 000000이에요');
+  };
+  $('#tJoin').onclick = async () => {
+    if (t.join === '예' && !await ask(t.name + ' 선생님을 참석 취소로 바꿀까요?\n맡은 조에서도 빠져요.', '참석 취소')) return;
+    const r2 = await run(() => call('teacherSave', { id, fields: { join: t.join !== '예' } }), t.join === '예' ? '참석 취소로 바꿨어요' : '다시 참석으로 바꿨어요');
+    if (r2) set(r2);
+  };
+  $('#tDel').onclick = async () => {
+    if (!await ask(t.name + ' 선생님 신청서를 지울까요?\n지우면 되돌릴 수 없어요.', '삭제', true)) return;
+    const r2 = await run(() => call('teacherDel', { id }), '신청서를 지웠어요');
+    if (r2) { closeSheet(); set(r2); }
+  };
+}
+function busOf(t) {
+  const b = D.rep.buses.find(b => (b.staff || []).indexOf(t.id) >= 0 || b.rooms.some(no => { const r = D.rmap[no]; const x = r && roomRider(r); return x && x.id === t.id; }));
+  return b ? ' · ' + b.no + '호차' : '';
+}
+function editTeacher(id) {
+  const t = id ? D.tById[id] : { name: '', gender: '', dept: '', phone: '', arrive: D.arrives[0], move: '버스', carpool: '', nights: '', hope: '', health: '', note: '', memo: '', paynote: '' };
+  openId = id;
+  const sel = (k, list, labels) => '<select class="inp" data-f="' + k + '"><option value="">고르기</option>' + list.map((v, i) => '<option value="' + esc(v) + '"' + (t[k] === v ? ' selected' : '') + '>' + esc(labels ? labels[i] : v) + '</option>').join('') + '</select>';
+  const inp = (k, ph, im) => '<input class="inp" data-f="' + k + '" value="' + esc(t[k]) + '"' + (ph ? ' placeholder="' + ph + '"' : '') + (im ? ' inputmode="' + im + '"' : '') + '>';
+  const f = (label, html) => '<label class="field"><span>' + label + '</span>' + html + '</label>';
+  openSheet('<div class="grab"><h2>' + (id ? esc(t.name) + ' 정보 고치기' : '선생님 직접 추가') + '</h2><button class="x" aria-label="닫기">×</button></div><div class="box">' +
+    f('이름', inp('name')) + f('성별', sel('gender', ['남', '여'])) + f('예배 부서', sel('dept', ['1부', '2부', '열린예배', '기타'])) + f('휴대폰', inp('phone', '', 'tel')) +
+    f('출발', sel('arrive', D.arrives)) + f('이동', sel('move', ['버스', '자차', '기타'], ['교회 버스', '자차', '대중교통·동승'])) + f('자차로 더 태울 수 있는 인원', inp('carpool', '0', 'numeric')) +
+    f('숙박', inp('nights', D.nights.join(', '))) + f('희망 팀', sel('hope', TEAMS.concat(['어디든 괜찮아요']))) +
+    f('건강·식사 특이사항', '<textarea class="inp" data-f="health">' + esc(t.health) + '</textarea>') + f('하고 싶은 말', '<textarea class="inp" data-f="note">' + esc(t.note) + '</textarea>') +
+    f('메모 (관리자)', '<textarea class="inp" data-f="memo">' + esc(t.memo) + '</textarea>') + f('입금 메모', inp('paynote')) +
+    '</div><div class="acts" style="margin-top:14px"><button class="btn light" id="eCancel">취소</button><button class="btn" id="eSave">저장</button></div>');
+  $('#eCancel').onclick = () => id ? teacher(id) : closeSheet();
+  $('#eSave').onclick = async () => {
+    const fields = {};
+    $$('#sheetIn [data-f]').forEach(i => fields[i.dataset.f] = i.value.trim());
+    if (!fields.name) return toast('이름은 꼭 적어 주세요');
+    const r2 = await run(() => call('teacherSave', { id, fields }), '저장했어요');
+    if (r2) { if (!id) closeSheet(); set(r2); }
+  };
+}
+/** 버스 탭: 선생님 출발 명단 */
+function departures() {
+  if (!D.tAct.length) return '';
+  const one = t => '<div class="drow"><button class="link" data-tid="' + t.id + '">' + esc(t.name) + '</button><span class="muted">' + esc([t.team, tRooms(t).length ? tRooms(t).map(x => x + '조').join('·') + ' 담당' : '', t.move === '자차' ? '자차' + (+t.carpool ? ' +' + t.carpool + '석' : '') : t.move === '기타' ? '동승·대중교통' : ''].filter(Boolean).join(' · ')) + '</span>' + (t.phone ? '<a class="tel" href="tel:' + digits(t.phone) + '">전화</a>' : '') + '</div>';
+  return '<div class="sec"><h2>선생님 출발 <small>' + D.tAct.length + '명</small></h2>' + D.arrives.map(a => {
+    const L = D.tAct.filter(t => t.arrive === a).sort((x, y) => (x.move > y.move ? 1 : -1) || x.name.localeCompare(y.name, 'ko'));
+    if (!L.length) return '';
+    const bus = L.filter(t => t.move === '버스'), car = L.filter(t => t.move === '자차'), etc = L.filter(t => t.move !== '버스' && t.move !== '자차');
+    const seats = car.reduce((s, t) => s + (+t.carpool || 0), 0);
+    return '<div class="box dep"><div class="dh"><b>' + esc(a) + '</b><span class="muted">' + L.length + '명' + (car.length ? ' · 자차 ' + car.length + '대' + (seats ? ' (빈자리 ' + seats + ')' : '') : '') + '</span></div>' +
+      (bus.length ? '<div class="dg">교회 버스 ' + bus.length + '명</div>' + bus.map(one).join('') : '') +
+      (car.length ? '<div class="dg">자차 ' + car.length + '명</div>' + car.map(one).join('') : '') +
+      (etc.length ? '<div class="dg">대중교통·동승 ' + etc.length + '명</div>' + etc.map(one).join('') : '') + '</div>';
+  }).join('') + '</div>';
+}
+
 // ───── 설정 (관리자) ─────
 const CFG_FORM = [
   ['title', '수련회 이름'], ['theme', '주제·표어'], ['dates', '일정 (신청 페이지 표시용)', '예: 2027년 1월 14일(목) ~ 16일(토)'], ['start', '수련회 첫날 (일정표 기준)', '', 'date'], ['days', '수련회 일수', '', 'number'],
@@ -830,6 +1058,13 @@ V.settings = () => {
     '<div class="sec"><h2>신청 받기</h2><div class="box"><div class="choice" id="openSel"><button data-v="예" aria-pressed="' + (c.open === '예') + '">신청 받기</button><button data-v="아니오" aria-pressed="' + (c.open !== '예') + '">신청 닫기</button></div>' +
     '<p class="muted" style="margin-top:10px">' + (D.open ? '지금 신청 페이지에서 신청할 수 있어요.' : '지금은 신청 페이지가 닫혀 있어요.' + (c.open === '예' && c.deadline ? ' (마감일이 지났어요)' : '')) + '</p></div></div>' +
     '<div class="sec"><h2>수련회 정보</h2><div class="box">' + CFG_FORM.map(fld).join('') + '<button class="btn block" id="cfgSave">수련회 정보 저장</button></div></div>' +
+    '<div class="sec" id="tBox"><h2>교사 신청</h2><div class="box"><div class="choice" id="topenSel"><button data-v="예" aria-pressed="' + (c.topen === '예') + '">교사 신청 받기</button><button data-v="아니오" aria-pressed="' + (c.topen !== '예') + '">닫기</button></div>' +
+    '<p class="muted" style="margin:10px 0 16px">' + (D.topen ? '지금 교사 신청 페이지에서 신청할 수 있어요.' : '지금은 교사 신청 페이지가 닫혀 있어요.') + '</p>' +
+    fld(['tdeadline', '교사 신청 마감일', '', 'date']) + fld(['tfee', '교사 회비', '예: 전일 95,000원 / 부분 참석 45,000원']) +
+    fld(['tnotice', '교사 신청 안내 (첫 화면)', '', 'area']) +
+    '<label class="field"><span>출발 선택지 <small class="muted">한 줄에 하나, 첫 줄이 본발</small></span><textarea class="inp" data-c="tarrive" rows="4">' + esc(String(c.tarrive || '').replace(/\\n/g, '\n')) + '</textarea></label>' +
+    '<div class="field"><span class="label">선생님도 여행자보험에 가입하나요?</span><div class="choice" id="tinsSel"><button data-v="예" aria-pressed="' + (c.tins === '예') + '">네 (주민번호 받기)</button><button data-v="아니오" aria-pressed="' + (c.tins !== '예') + '">아니요</button></div></div>' +
+    '<button class="btn block" id="tcfgSave">교사 신청 설정 저장</button></div></div>' +
     '<div class="sec" id="busBox"><h2>버스</h2><div class="box">' + fld(['seats', '버스 좌석 수', '', 'number']) + fld(['staff', '버스마다 비워 둘 좌석 (스태프용)', '', 'number']) +
     '<div class="field"><span class="label">담당 선생님도 조와 같은 버스에 타나요?</span><div class="choice" id="rideSel"><button data-v="예" aria-pressed="' + (c.ride !== '아니오') + '">네</button><button data-v="아니오" aria-pressed="' + (c.ride === '아니오') + '">아니요</button></div></div>' +
     '<button class="btn block" id="busSave">버스 설정 저장</button></div></div>' +
@@ -839,13 +1074,13 @@ V.settings = () => {
     '<div class="sec"><h2>계정</h2><div class="box" style="padding:0" id="accBox"><p class="muted" style="padding:14px">불러오는 중…</p></div>' +
     '<div class="box" style="margin-top:10px"><p style="font-weight:700;margin-bottom:10px">계정 추가</p><div style="display:flex;gap:8px;flex-wrap:wrap"><input class="inp" id="aName" placeholder="이름" style="flex:1;min-width:120px"><select class="inp" id="aRole" style="flex:0 0 130px"><option value="lead">조 담당</option><option value="admin">관리자</option></select></div>' +
     '<p class="muted" style="margin:8px 0 12px">처음 PIN은 000000이고, 첫 로그인 때 본인이 새 PIN을 정해요. 조 담당은 모든 내용을 볼 수 있지만 고칠 수는 없어요.</p><button class="btn block" id="aAdd">계정 추가</button></div></div>' +
-    '<div class="sec"><h2>링크</h2><div class="box"><dl class="kv"><dt>신청 페이지</dt><dd><a href="' + APPLY_URL + '" target="_blank" rel="noopener">' + esc(APPLY_URL) + '</a></dd><dt>운영 앱</dt><dd>' + esc(location.href.split('#')[0]) + '</dd></dl>' +
-    '<div class="acts" style="margin-top:14px"><button class="btn light" id="cpA">신청 링크 복사</button><button class="btn light" id="cpB">운영 앱 링크 복사</button><a class="btn light" target="_blank" rel="noopener" href="https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&margin=40&data=' + encodeURIComponent(APPLY_URL) + '">신청 QR 크게 보기</a></div></div></div>' +
+    '<div class="sec"><h2>링크</h2><div class="box"><dl class="kv"><dt>신청 페이지</dt><dd><a href="' + APPLY_URL + '" target="_blank" rel="noopener">' + esc(APPLY_URL) + '</a></dd><dt>교사 신청</dt><dd><a href="' + TEACHER_URL + '" target="_blank" rel="noopener">' + esc(TEACHER_URL) + '</a></dd><dt>운영 앱</dt><dd>' + esc(location.href.split('#')[0]) + '</dd></dl>' +
+    '<div class="acts" style="margin-top:14px"><button class="btn light" id="cpA">신청 링크 복사</button><button class="btn light" id="cpT">교사 링크 복사</button><button class="btn light" id="cpB">운영 앱 링크 복사</button><a class="btn light" target="_blank" rel="noopener" href="https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&margin=40&data=' + encodeURIComponent(APPLY_URL) + '">신청 QR 크게 보기</a></div></div></div>' +
     '<div class="sec"><h2>여행자보험·개인정보</h2><div class="box danger">' +
     '<p>보험 가입할 때 <b>보험명단</b>을 내려받아 ' + esc(c.insurer || '보험사') + '에 보내 주세요. 가입을 마치면 주민등록번호를 파기해 주세요.</p>' +
-    '<p class="muted" style="margin-top:6px">' + (c.purged ? '주민등록번호를 ' + esc(c.purged.slice(0, 16)) + '에 파기했어요. 그 뒤에 들어온 신청 ' + D.people.filter(p => p.hasRrn).length + '건은 아직 남아 있어요.' : '주민등록번호가 있는 신청 ' + D.people.filter(p => p.hasRrn).length + '건') + '</p>' +
+    '<p class="muted" style="margin-top:6px">' + (c.purged ? '주민등록번호를 ' + esc(c.purged.slice(0, 16)) + '에 파기했어요. 그 뒤에 들어온 신청 ' + D.people.filter(p => p.hasRrn).length + '건은 아직 남아 있어요.' : '주민등록번호가 있는 신청 ' + D.people.filter(p => p.hasRrn).length + '건' + (D.teachers.some(t => t.hasRrn) ? ' (선생님 ' + D.teachers.filter(t => t.hasRrn).length + '건 별도)' : '')) + '</p>' +
     '<div class="acts" style="margin-top:14px"><button class="btn light" id="ins">보험명단 내려받기</button><button class="btn warn" id="purge">주민등록번호 파기</button></div></div></div>' +
-    '<div class="sec"><h2>테스트 정리</h2><div class="box"><p class="muted">테스트로 넣은 신청서를 모두 지울 때 써요. 실제 신청을 받기 시작한 뒤에는 누르지 마세요.</p><button class="btn light block" id="wipe" style="margin-top:12px;color:var(--alert)">신청서 모두 지우기</button></div></div>';
+    '<div class="sec"><h2>테스트 정리</h2><div class="box"><p class="muted">테스트로 넣은 신청서를 모두 지울 때 써요. 실제 신청을 받기 시작한 뒤에는 누르지 마세요.</p><button class="btn light block" id="wipe" style="margin-top:12px;color:var(--alert)">학생 신청서 모두 지우기</button><button class="btn light block" id="wipeT" style="margin-top:8px;color:var(--alert)">교사 신청서 모두 지우기</button></div></div>';
 };
 function roomEd(r) {
   r = r || {};
@@ -862,6 +1097,10 @@ B.settings = () => {
   choiceBind('rideSel', v => ride = v);
   const val = k => { const e = document.querySelector('[data-c="' + k + '"]'); return e ? e.value.trim() : ''; };
   $('#cfgSave').onclick = async () => { const cfg = {}; CFG_FORM.forEach(x => cfg[x[0]] = val(x[0])); const r = await run(() => call('cfgSave', { cfg }), '수련회 정보를 저장했어요'); if (r) set(r); };
+  let tins = D.cfg.tins === '예' ? '예' : '아니오';
+  choiceBind('tinsSel', v => tins = v);
+  choiceBind('topenSel', async v => { const r = await run(() => call('cfgSave', { cfg: { topen: v } }), v === '예' ? '교사 신청을 받기 시작했어요' : '교사 신청을 닫았어요'); if (r) set(r); });
+  $('#tcfgSave').onclick = async () => { const r = await run(() => call('cfgSave', { cfg: { tdeadline: val('tdeadline'), tfee: val('tfee'), tnotice: val('tnotice'), tarrive: val('tarrive'), tins } }), '교사 신청 설정을 저장했어요'); if (r) set(r); };
   $('#busSave').onclick = async () => { const r = await run(() => call('cfgSave', { cfg: { seats: val('seats'), staff: val('staff'), ride } }), '버스 설정을 저장했어요'); if (r) set(r); };
   const rbox = $('#rtBox');
   const bindDel = () => $$('[data-rdel]').forEach(b => b.onclick = () => b.closest('.rt').remove());
@@ -883,6 +1122,7 @@ B.settings = () => {
   };
   $('#cpA').onclick = () => copy(APPLY_URL);
   $('#cpB').onclick = () => copy(location.href.split('#')[0]);
+  $('#cpT').onclick = () => copy(TEACHER_URL);
   $('#ins').onclick = async () => {
     if (!await ask('주민등록번호가 들어 있는 보험명단을 이 기기에 내려받아요.\n보험사에 보낸 뒤에는 파일을 지워 주세요.', '내려받기')) return;
     const rows = await run(() => call('insurance'));
@@ -905,6 +1145,11 @@ B.settings = () => {
   $('#wipe').onclick = async () => {
     if (!await ask('신청서를 모두 지울까요? 되돌릴 수 없어요.\n\n확인하려면 아래에 모두 지우기 라고 적어 주세요.', '모두 지우기', true, '모두 지우기')) return;
     const r = await run(() => call('clearPeople'), '신청서를 모두 지웠어요');
+    if (r) set(r);
+  };
+  $('#wipeT').onclick = async () => {
+    if (!await ask('교사 신청서를 모두 지울까요? 되돌릴 수 없어요.\n\n확인하려면 아래에 모두 지우기 라고 적어 주세요.', '모두 지우기', true, '모두 지우기')) return;
+    const r = await run(() => call('clearTeachers'), '교사 신청서를 모두 지웠어요');
     if (r) set(r);
   };
   $('#aAdd').onclick = async () => {
