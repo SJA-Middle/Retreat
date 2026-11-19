@@ -40,13 +40,15 @@ async function drawTicket(t) {
   if (t.bigMode === 'name') {
     // 이름 바로 옆에 '선생님'
     font(400, 44, disp); const nw = x.measureText(t.big).width;
-    ops.push(['t', t.big, P, y + 44, '#17214A', 400, 44, disp]);
-    ops.push(['t', t.bigLabel, P + nw + 10, y + 42, '#586379', 400, 17]);
+    font(400, 17); const sw = x.measureText(t.bigLabel).width;
+    const nx = (W - nw - 10 - sw) / 2;
+    ops.push(['t', t.big, nx, y + 44, '#17214A', 400, 44, disp]);
+    ops.push(['t', t.bigLabel, nx + nw + 10, y + 42, '#586379', 400, 17]);
     y += 60;
   } else {
     // '접수 번호' 글자를 번호 바로 위에
-    ops.push(['t', t.bigLabel, P, y + 14, '#586379', 400, 14]);
-    ops.push(['t', t.big, P, y + 22 + 50, '#17214A', 400, 52, disp]);
+    ops.push(['tc', t.bigLabel, W / 2, y + 14, '#586379', 400, 14]);
+    ops.push(['tc', t.big, W / 2, y + 22 + 50, '#17214A', 400, 52, disp]);
     y += 94;
   }
   // 항목
@@ -85,8 +87,8 @@ async function drawTicket(t) {
   x.strokeStyle = '#E1E5EE'; x.lineWidth = 2; x.setLineDash([6, 5]);
   x.beginPath(); x.moveTo(18, cutY + 11); x.lineTo(W - 18, cutY + 11); x.stroke(); x.setLineDash([]);
   ops.forEach(o => {
-    if (o[0] !== 't' && o[0] !== 'tr') return;
-    font(o[5], o[6], o[7]); x.fillStyle = o[4]; x.textAlign = o[0] === 'tr' ? 'right' : 'left'; x.fillText(o[1], o[2], o[3]);
+    if (o[0] !== 't' && o[0] !== 'tr' && o[0] !== 'tc') return;
+    font(o[5], o[6], o[7]); x.fillStyle = o[4]; x.textAlign = o[0] === 'tr' ? 'right' : o[0] === 'tc' ? 'center' : 'left'; x.fillText(o[1], o[2], o[3]);
   });
   x.textAlign = 'left';
   // 로고 (가운데 정렬)

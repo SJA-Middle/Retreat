@@ -215,6 +215,7 @@ nav.tabs button[aria-current="page"] svg { stroke: var(--night); }
 .wl li { display: flex; align-items: center; gap: 8px; padding: 4px 0; }
 .ask { position: fixed; inset: 0; z-index: 45; display: flex; align-items: center; justify-content: center; padding: 20px; }
 .ask .card { background: var(--paper); border-radius: var(--r-l); padding: 22px 20px 18px; max-width: 380px; width: 100%; box-shadow: 0 20px 50px -20px #17214A99; }
+.ask .scrim { z-index: 0; }
 .ask p { white-space: pre-line; }
 .ask .acts { margin-top: 18px; }
 
@@ -341,7 +342,7 @@ function ask(msg, ok, danger, input) {
     const w = document.createElement('div');
     w.className = 'ask';
     w.innerHTML = '<div class="scrim on"></div><div class="card" role="alertdialog" aria-modal="true" style="position:relative;z-index:1"><p>' + esc(msg) + '</p>' +
-      (input ? '<input class="inp" style="margin-top:14px" placeholder="' + esc(input) + '">' : '') +
+      (input ? '<input class="inp" style="margin-top:14px" placeholder="여기에 ' + esc(input) + ' 입력" autocomplete="off">' : '') +
       '<div class="acts"><button class="btn light">취소</button><button class="btn' + (danger ? ' warn' : '') + '">' + esc(ok || '확인') + '</button></div></div>';
     document.body.appendChild(w);
     const [no, yes] = w.querySelectorAll('.acts .btn');
@@ -349,7 +350,7 @@ function ask(msg, ok, danger, input) {
     const close = v => { w.remove(); res(v); };
     no.onclick = () => close(false);
     w.querySelector('.scrim').onclick = () => close(false);
-    yes.onclick = () => { if (input && inp.value.trim() !== input) { inp.classList.add('bad'); inp.focus(); return; } close(true); };
+    yes.onclick = () => { if (input && inp.value.replace(/\s/g, '') !== input.replace(/\s/g, '')) { inp.classList.add('bad'); inp.focus(); return; } close(true); };
     (inp || yes).focus();
   });
 }

@@ -124,7 +124,7 @@ main { max-width: 620px; margin: 0 auto; padding: 4px 16px calc(120px + env(safe
   radial-gradient(circle at 100% 50%, transparent 11px, var(--paper) 11.5px) right / 51% 100% no-repeat; position: relative; }
 .ticket .cut::after { content: ''; position: absolute; left: 18px; right: 18px; top: 50%; border-top: 2px dashed var(--line); }
 .ticket .body { background: var(--paper); border-radius: 0 0 22px 22px; padding: 6px 22px 22px; }
-.ticket .no { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin-top: 8px; }
+.ticket .no { display: flex; flex-direction: column; align-items: center; gap: 6px; margin-top: 8px; }
 .ticket .no span { color: var(--sub); font-size: 14px; }
 .ticket .no b { font-family: var(--display); font-weight: 400; font-size: 52px; line-height: 1; color: var(--night); letter-spacing: .02em; }
 .ticket dl { display: grid; grid-template-columns: 92px 1fr; gap: 10px 12px; margin: 20px 0 0; font-size: 17px; }
@@ -164,7 +164,7 @@ main { max-width: 620px; margin: 0 auto; padding: 4px 16px calc(120px + env(safe
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script src="config.js"></script>
-<script src="ticket.js?v=4"></script>
+<script src="ticket.js?v=5"></script>
 <script>
 const $ = s => document.querySelector(s);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
