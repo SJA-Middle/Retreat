@@ -220,11 +220,22 @@ nav.tabs button[aria-current="page"] svg { stroke: var(--night); }
 .ask .acts { margin-top: 18px; }
 
 /* 설정 */
-.rt { display: grid; grid-template-columns: 56px 74px 1fr; gap: 6px; padding: 12px; border-bottom: 1px solid var(--line); }
+.rt { display: grid; grid-template-columns: 84px auto 92px 1fr; gap: 8px; align-items: center; padding: 14px; border-bottom: 1px solid var(--line); }
 .rt .inp { min-height: 42px; padding: 8px 10px; font-size: 15px; }
-.rt .wide { grid-column: span 2; }
-.rt .full { grid-column: 1 / -1; display: flex; gap: 6px; }
-.rt .full .inp { flex: 1; }
+.rt .pre { position: relative; display: block; }
+.rt .pre .inp { width: 100%; padding-right: 30px; font-weight: 700; }
+.rt .pre span { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--sub); font-size: 14px; font-weight: 600; pointer-events: none; }
+.gsel { display: inline-flex; border: 1.5px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--paper); }
+.gsel button { min-width: 46px; min-height: 40px; border: 0; background: none; font-weight: 800; font-size: 15px; color: var(--mist); cursor: pointer; }
+.gsel button + button { border-left: 1.5px solid var(--line); }
+.gsel button[data-g="남"][aria-pressed="true"] { background: var(--boy); color: #fff; }
+.gsel button[data-g="여"][aria-pressed="true"] { background: var(--girl); color: #fff; }
+.rt .rdel { justify-self: end; width: 38px; height: 38px; border-radius: 10px; border: 0; background: #FBEDEC; color: var(--alert); font-size: 22px; line-height: 1; cursor: pointer; }
+.rt .lab { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; }
+.rt .lab > span:first-child { width: 34px; flex: none; font-size: 13px; font-weight: 700; color: var(--sub); }
+.rt .lab .inp { flex: 1; min-width: 0; }
+.rt .tph { font-size: 13px; color: var(--sub); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.rt .full { grid-column: 1 / -1; margin: -2px 0 0 42px; }
 .acc { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
 .acc:last-child { border-bottom: 0; }
 .acc .nm { font-weight: 700; flex: 1; min-width: 120px; }
@@ -255,6 +266,59 @@ nav.tabs button[aria-current="page"] svg { stroke: var(--night); }
 .mix tr.h td.ct { font-weight: 700; }
 .mix tr.sum td { border-top: 1.5px solid var(--ink); border-bottom: 0; font-weight: 700; }
 @media (max-width: 480px) { .mix { grid-template-columns: 1fr; } }
+
+/* 명단: 조·팀 표시, 성별, 회비 */
+.rb { flex: none; min-width: 56px; height: 32px; padding: 0 8px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; letter-spacing: -.01em; white-space: nowrap; }
+.rb.m { background: var(--boy-soft); color: var(--boy); }
+.rb.f { background: var(--girl-soft); color: var(--girl); }
+.rb.none { background: #F1F2F6; color: var(--mist); font-size: 13px; font-weight: 700; }
+.rb.team { min-width: 60px; font-size: 13px; }
+.rb.t1 { background: #EEE8FA; color: #5B3FA8; }
+.rb.t2 { background: #FDF1D2; color: #8A5E00; }
+.rb.t3 { background: #E3F2EA; color: #2E6E5C; }
+.rb.t4 { background: #E6EEFB; color: #2F5DA8; }
+.rb.t5 { background: #FBE8EC; color: #A8324F; }
+.gx { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 6px; font-size: 12px; font-weight: 800; margin-left: 6px; vertical-align: 2px; }
+.gx.m { background: var(--boy-soft); color: var(--boy); }
+.gx.f { background: var(--girl-soft); color: var(--girl); }
+.fee { flex: none; display: inline-flex; align-items: center; gap: 4px; height: 28px; padding: 0 10px; border-radius: 999px; font-size: 12.5px; font-weight: 800; white-space: nowrap; letter-spacing: -.01em; }
+.fee.ok { background: var(--pine); color: #fff; }
+.fee.ok::before { content: ''; width: 9px; height: 5px; border: 2px solid #fff; border-top: 0; border-right: 0; transform: rotate(-45deg) translate(1px, -1px); }
+.fee.no { background: var(--ink); color: #fff; }
+.opts { display: flex; gap: 6px; margin-bottom: 8px; }
+.osel { flex: 1; min-width: 0; min-height: 40px; padding: 0 28px 0 12px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23586379' stroke-width='1.8'/%3E%3C/svg%3E") no-repeat right 10px center; -webkit-appearance: none; appearance: none; font-size: 14px; font-weight: 700; color: var(--ink); }
+.count .tools { display: flex; gap: 6px; flex: none; }
+.count .tools .btn[aria-pressed="true"] { background: var(--pine); border-color: var(--pine); color: #fff; }
+.count.team { gap: 8px; align-items: center; }
+.count.team .tchips { flex: 1; min-width: 0; padding: 0; }
+.tchips button { padding: 7px 12px; font-size: 13px; }
+.tchips button.zero { opacity: .55; }
+.prow .end.stack { flex-direction: column; align-items: flex-end; gap: 6px; }
+.prow .end.stack .tagline { display: flex; gap: 4px; }
+.prow .nm .tag { font-size: 12px; padding: 2px 7px; vertical-align: 2px; margin-left: 4px; }
+.busset .btn { flex: 1 1 100%; }
+.tchips button b { font-weight: 800; color: var(--ink); }
+.tchips button[aria-pressed="true"] b { color: #fff; }
+.tsel { flex: none; height: 30px; width: 96px; padding: 0 22px 0 8px; border-radius: 9px; border: 1.5px solid var(--line); background: var(--paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23586379' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right 7px center; -webkit-appearance: none; appearance: none; font-size: 13px; font-weight: 700; color: var(--ink); }
+.seg.small { margin-bottom: 10px; }
+.seg.small button { padding: 8px; font-size: 14px; }
+@media (max-width: 420px) { .prow { gap: 10px; padding: 12px; } .prow .end { gap: 5px; } .tsel { width: 88px; } }
+/* 버스 패널 */
+.buspanel { display: grid; gap: 12px; }
+.busset { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.busset label { display: flex; align-items: center; gap: 6px; font-weight: 700; }
+.busset label span { font-size: 13px; color: var(--sub); }
+.busset .inp { width: 70px; min-height: 44px; text-align: center; font-size: 18px; font-weight: 800; padding: 6px; }
+.busset .x { color: var(--mist); font-weight: 700; }
+.busset .btn { margin-left: auto; }
+.busnum { display: flex; gap: 8px; flex-wrap: wrap; }
+.busnum span { background: var(--snow); border-radius: 10px; padding: 7px 12px; font-size: 14px; color: var(--sub); }
+.busnum b { color: var(--ink); font-size: 16px; }
+.busnum .bad { background: #FBEDEC; color: var(--alert); } .busnum .bad b { color: var(--alert); }
+.busnum .good { background: var(--pine-soft); color: var(--pine); font-weight: 700; }
+.leftbox { border: 1.5px solid #F2C9C5; }
+.bus .no small { font-family: var(--body); font-size: 15px; font-weight: 700; }
+.bus b.over { color: var(--alert); }
 </style>
 </head>
 <body>
@@ -504,15 +568,15 @@ B.home = () => {
   $$('.issues li').forEach(li => li.onclick = () => {
     if (li.dataset.id) person(li.dataset.id);
     else if (li.dataset.t === 'bus') show('bus');
-    else if (li.dataset.t === 'tteam') { sub.who = 'tch'; sub.tflt = 'none'; show('list'); }
+    else if (li.dataset.t === 'tteam') { sub.who = 'tch'; sub.tflt = 'all'; sub.tpay = false; sub.tteam = 'none'; show('list'); }
     else if (li.dataset.room) { sub.roomG = D.rmap[li.dataset.room] ? D.rmap[li.dataset.room].gender : ''; show('rooms'); }
   });
   const mi = $('#moreIss'); if (mi) mi.onclick = () => { sub.allIss = 1; show('home', true); };
   $('#copyApply').onclick = () => copy(APPLY_URL);
   const ts = $('#toSet'); if (ts) ts.onclick = () => show('settings');
-  $('#toPay').onclick = () => { sub.who = 'stu'; sub.flt = 'pay'; sub.q = ''; show('list'); };
-  $('#toT').onclick = () => { sub.who = 'tch'; sub.tflt = 'all'; sub.tq = ''; show('list'); };
-  $('#toTPay').onclick = () => { sub.who = 'tch'; sub.tflt = 'pay'; sub.tq = ''; show('list'); };
+  $('#toPay').onclick = () => { sub.who = 'stu'; sub.pay = true; sub.payf = 'no'; sub.q = ''; show('list'); };
+  $('#toT').onclick = () => { sub.who = 'tch'; sub.tflt = 'all'; sub.tteam = ''; sub.tpay = false; sub.tq = ''; show('list'); };
+  $('#toTPay').onclick = () => { sub.who = 'tch'; sub.tpay = true; sub.tpayf = 'no'; sub.tq = ''; show('list'); };
   $('#copyT').onclick = () => copy(TEACHER_URL);
 };
 function copy(t) {
@@ -520,48 +584,66 @@ function copy(t) {
 }
 
 // 명단
-const FILTERS = [['all', '전체'], ['m', '남'], ['f', '여'], ['none', '미배정'], ['pay', '회비 체크'], ['health', '건강 특이사항'], ['off', '취소']];
+const FILTERS = [['all', '전체'], ['none', '미배정'], ['health', '건강 특이사항'], ['off', '취소']];
+const DEPT_OPTS = [['', '모든 부서'], ['1부', '1부'], ['2부', '2부'], ['열린예배', '열린예배'], ['타교회', '타교회']];
+const deptOf = p => String(p.dept || '').replace(/^3부\s*\(?열린예배\)?$/, '열린예배');
+const gmark = g => g === '남' || g === '여' ? '<span class="gx ' + gcls(g) + '">' + g + '</span>' : '';
+const feeTag = p => '<span class="fee ' + (p.paid === '예' ? 'ok">회비납부' : 'no">회비미납') + '</span>';
+const roomBadge = p => {
+  if (p.join !== '예') return '<span class="rb none">취소</span>';
+  const r = p.room && D.rmap[p.room];
+  return r ? '<span class="rb ' + gcls(p.gender) + '">' + esc(r.no) + '조</span>' : '<span class="rb none">미배정</span>';
+};
+const sel = (id, opts, v) => '<select class="osel" id="' + id + '">' + opts.map(o => '<option value="' + esc(o[0]) + '"' + (v === o[0] ? ' selected' : '') + '>' + esc(o[1]) + '</option>').join('') + '</select>';
+const byTs = (a, b) => String(a.ts).localeCompare(String(b.ts)) || a.name.localeCompare(b.name, 'ko');
+const byName = (a, b) => a.name.localeCompare(b.name, 'ko') || String(a.ts).localeCompare(String(b.ts));
+/** 회비 체크 화면 위 요약 + 전체/미납/납부 고르기 */
+function payHead(A, key) {
+  const paid = A.filter(p => p.paid === '예').length, f = sub[key] || 'no';
+  return '<div class="paysum"><span>입금 확인 <b>' + paid + '</b> / ' + A.length + '명</span><span>' + (isAdmin() ? '계좌 확인 후 누르세요' : '관리자만 바꿀 수 있어요') + '</span></div>' +
+    '<div class="seg small" role="group">' + [['no', '미납 ' + (A.length - paid)], ['yes', '납부 ' + paid], ['all', '전체 ' + A.length]].map(x => '<button data-pf="' + x[0] + '" aria-pressed="' + (f === x[0]) + '">' + x[1] + '</button>').join('') + '</div>';
+}
+const payPass = (p, key) => { const f = sub[key] || 'no'; return f === 'all' || (f === 'yes') === (p.paid === '예'); };
 V.list = () => {
   if (sub.who === 'tch') return tlist();
-  const fl = sub.flt || 'all', q = (sub.q || '').trim();
+  const fl = sub.flt || 'all', q = (sub.q || '').trim(), pay = !!sub.pay;
   let L = D.people.filter(p => {
-    if (fl === 'off') return p.join !== '예';
+    if (fl === 'off' && !pay) return p.join !== '예';
     if (p.join !== '예') return false;
-    if (fl === 'm') return p.gender === '남';
-    if (fl === 'f') return p.gender === '여';
+    if (sub.dept && deptOf(p) !== sub.dept) return false;
+    if (sub.sg && p.gender !== sub.sg) return false;
+    if (pay) return payPass(p, 'payf');
     if (fl === 'none') return !p.room || !D.rmap[p.room];
-    if (fl === 'pay') return true;
     if (fl === 'health') return !!p.health;
     return true;
   });
   if (q) L = L.filter(p => [p.name, p.school, p.gname, p.phone, p.gphone, p.dept, p.church, p.grade].join(' ').indexOf(q) >= 0 || digits(p.gphone + p.phone).indexOf(digits(q) || '@') >= 0);
-  L.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
-  const head = seg() + '<div class="search">' + ic('search') + '<input class="inp" id="q" type="search" placeholder="' + (fl === 'pay' ? '입금자 이름(학생·보호자)이나 전화번호로 찾기' : '이름, 학교, 전화번호로 찾기') + '" value="' + esc(q) + '"></div>' +
-    '<div class="chips" role="group">' + FILTERS.map(f => '<button data-f="' + f[0] + '" aria-pressed="' + (fl === f[0]) + '">' + f[1] + '</button>').join('') + '</div>';
-  if (fl === 'pay') {
-    const all = D.act.filter(p => p.paid === '예').length;
-    return head + '<div class="paysum"><span>입금 확인 <b>' + all + '</b> / ' + D.act.length + '명 · 미납 ' + (D.act.length - all) + '명</span><span>' + (isAdmin() ? '계좌 확인 후 누르세요' : '관리자만 바꿀 수 있어요') + '</span></div>' +
+  L.sort(sub.sort === 'name' ? byName : byTs);
+  const head = seg() + '<div class="search">' + ic('search') + '<input class="inp" id="q" type="search" placeholder="' + (pay ? '입금자 이름(학생·보호자)이나 전화번호로 찾기' : '이름, 학교, 전화번호로 찾기') + '" value="' + esc(q) + '"></div>' +
+    '<div class="opts">' + sel('oSort', [['ts', '신청순'], ['name', '이름순']], sub.sort || 'ts') + sel('oDept', DEPT_OPTS, sub.dept || '') + sel('oSg', [['', '남녀 전체'], ['남', '남학생'], ['여', '여학생']], sub.sg || '') + '</div>' +
+    (pay ? '' : '<div class="chips" role="group">' + FILTERS.map(f => '<button data-f="' + f[0] + '" aria-pressed="' + (fl === f[0]) + '">' + f[1] + '</button>').join('') + '</div>');
+  const tools = '<span class="tools"><button class="btn small ' + (pay ? '' : 'light') + '" id="payMode" aria-pressed="' + pay + '">' + (pay ? '회비 체크 끝' : '회비 체크') + '</button>' + (isAdmin() && !pay ? '<button class="btn small light" id="addP">직접 추가</button>' : '') + '</span>';
+  if (pay) {
+    const A = D.act.filter(p => (!sub.dept || deptOf(p) === sub.dept) && (!sub.sg || p.gender === sub.sg));
+    return head + '<div class="count"><span>회비 체크</span>' + tools + '</div>' + payHead(A, 'payf') +
       (L.length ? '<div class="plist">' + L.map(p => payrow(p)).join('') + '</div>'
-        : '<div class="empty box"><b>찾는 학생이 없어요</b>입금자 이름이 보호자 이름일 수도 있어요.</div>');
+        : '<div class="empty box"><b>' + ((sub.payf || 'no') === 'no' && !q ? '미납자가 없어요' : '찾는 학생이 없어요') + '</b>' + (q ? '입금자 이름이 보호자 이름일 수도 있어요.' : '') + '</div>');
   }
   return head +
-    '<div class="count"><span>' + L.length + '명</span>' + (isAdmin() ? '<button class="btn small light" id="addP">직접 추가</button>' : '') + '</div>' +
-    (L.length ? '<div class="plist">' + L.map(prow).join('') + '</div>' : '<div class="empty box"><b>' + (D.people.length ? '찾는 학생이 없어요' : '아직 신청한 학생이 없어요') + '</b>' + (D.people.length ? '검색어나 필터를 바꿔 보세요.' : '신청 페이지 링크를 공지하면 여기에 바로 나타나요.') + '</div>');
+    '<div class="count"><span>' + L.length + '명</span>' + tools + '</div>' +
+    (L.length ? '<div class="plist">' + L.map(prow).join('') + '</div>' : '<div class="empty box"><b>' + (D.people.length ? '찾는 학생이 없어요' : '아직 신청한 학생이 없어요') + '</b>' + (D.people.length ? '검색어나 보기 설정을 바꿔 보세요.' : '신청 페이지 링크를 공지하면 여기에 바로 나타나요.') + '</div>');
 };
 function prow(p) {
-  const r = p.room && D.rmap[p.room];
-  return '<button class="prow' + (p.join !== '예' ? ' off' : '') + '" data-id="' + p.id + '">' +
-    '<span class="av ' + gcls(p.gender) + '">' + esc(p.name.slice(-2)) + '</span>' +
-    '<span class="mid"><span class="nm">' + esc(p.name) + '</span><br><span class="ds">' + esc([p.dept === '타교회' ? (p.church || '타교회') : p.dept.replace(/^3부\s*\(?열린예배\)?$/, '열린예배'), p.grade.replace('학년', '') ? '중' + p.grade.replace('학년', '') : '', p.school].filter(Boolean).join(' ')) + '</span></span>' +
-    '<span class="end">' + (p.health ? '<span class="tag lamp">건강</span>' : '') + (p.join !== '예' ? '<span class="tag dim">취소</span>' : r ? '<span class="tag ' + gcls(p.gender) + '">' + esc(r.no) + '조</span>' : '<span class="tag dim">미배정</span>') +
-    '<span class="dot ' + (p.paid === '예' ? 'paid' : 'unpaid') + '" title="' + (p.paid === '예' ? '회비 입금' : '회비 미납') + '"></span></span></button>';
+  return '<button class="prow' + (p.join !== '예' ? ' off' : '') + '" data-id="' + p.id + '">' + roomBadge(p) +
+    '<span class="mid"><span class="nm">' + esc(p.name) + gmark(p.gender) + '</span><br><span class="ds">' + esc([p.dept === '타교회' ? (p.church || '타교회') : deptOf(p), p.grade.replace('학년', '') ? '중' + p.grade.replace('학년', '') : '', p.school].filter(Boolean).join(' ')) + '</span></span>' +
+    '<span class="end">' + (p.health ? '<span class="tag lamp">건강</span>' : '') + (p.join === '예' ? feeTag(p) : '') + '</span></button>';
 }
 function payrow(p, isT) {
   const on = p.paid === '예';
-  return '<div class="prow pay" data-' + (isT ? 'ptid' : 'pid') + '="' + p.id + '"><span class="av ' + gcls(p.gender) + '">' + esc(p.name.slice(-2)) + '</span>' +
-    '<span class="mid"><span class="nm">' + esc(p.name) + '</span><br><span class="ds">' + (isT ? esc([p.dept, shortArr(p.arrive), p.paid === '예' ? p.fee : ''].filter(Boolean).join(' · ')) : '보호자 ' + esc(p.gname || '—')) + (p.paynote ? ' · ' + esc(p.paynote) : '') + '</span></span>' +
-    (isAdmin() ? '<button class="paybtn" data-' + (isT ? 'tpay' : 'pay') + '="' + p.id + '" aria-pressed="' + on + '">' + (on ? '입금' : '입금 확인') + '</button>'
-      : '<span class="tag ' + (on ? 'ok">입금' : 'dim">미납') + '</span>') + '</div>';
+  return '<div class="prow pay" data-' + (isT ? 'ptid' : 'pid') + '="' + p.id + '">' + (isT ? teamBadge(p) : roomBadge(p)) +
+    '<span class="mid"><span class="nm">' + esc(p.name) + gmark(p.gender) + '</span><br><span class="ds">' + (isT ? esc([p.dept, shortArr(p.arrive), on ? p.fee : ''].filter(Boolean).join(' · ')) : '보호자 ' + esc(p.gname || '—')) + (p.paynote ? ' · ' + esc(p.paynote) : '') + '</span></span>' +
+    (isAdmin() ? '<button class="paybtn" data-' + (isT ? 'tpay' : 'pay') + '="' + p.id + '" aria-pressed="' + on + '">' + (on ? '납부' : '입금 확인') + '</button>'
+      : feeTag(p)) + '</div>';
 }
 let payBusy = 0, payLast = null;
 async function togglePay(id, isT, fromSheet) {
@@ -584,6 +666,9 @@ async function togglePay(id, isT, fromSheet) {
     if (--payBusy === 0 && payLast) { const r = payLast; payLast = null; set(r); }
   }
 }
+function bindOpts(map) {
+  Object.keys(map).forEach(id => { const e = $('#' + id); if (e) e.onchange = () => { sub[map[id]] = e.value; show('list', true); }; });
+}
 B.list = () => {
   $$('[data-who]').forEach(b => b.onclick = () => { sub.who = b.dataset.who; show('list'); });
   if (sub.who === 'tch') return bindTlist();
@@ -591,8 +676,11 @@ B.list = () => {
   $$('.prow.pay').forEach(r => r.onclick = e => { if (!e.target.closest('[data-pay]')) person(r.dataset.pid); });
   const q = $('#q');
   q.oninput = () => { sub.q = q.value; const pos = q.selectionStart; show('list', true); const n = $('#q'); n.focus(); n.setSelectionRange(pos, pos); };
-  $$('.chips button').forEach(b => b.onclick = () => { sub.flt = b.dataset.f; show('list', true); });
-  $$('.prow').forEach(b => b.onclick = () => person(b.dataset.id));
+  $$('.chips [data-f]').forEach(b => b.onclick = () => { sub.flt = b.dataset.f; show('list', true); });
+  $$('[data-pf]').forEach(b => b.onclick = () => { sub.payf = b.dataset.pf; show('list', true); });
+  bindOpts({ oSort: 'sort', oDept: 'dept', oSg: 'sg' });
+  $('#payMode').onclick = () => { sub.pay = !sub.pay; show('list'); };
+  $$('button.prow').forEach(b => b.onclick = () => person(b.dataset.id));
   const ad = $('#addP'); if (ad) ad.onclick = () => editPerson(null);
 };
 
@@ -636,12 +724,19 @@ B.rooms = () => {
 
 // 버스
 V.bus = () => {
-  const rep = D.rep;
-  const seatLink = isAdmin() ? ' <button class="link" id="toBusSet">좌석 수 바꾸기</button>' : '';
-  if (!rep.buses.length) return '<div class="box empty"><b>아직 버스 배차가 없어요</b>조 배정을 마치면 조별로 ' + (D.cfg.seats || 45) + '인승 버스에 자동으로 나눠 태워요.' + seatLink + '</div>' + departures();
-  const mem = {}; D.act.forEach(p => { if (p.room) (mem[p.room] = mem[p.room] || []).push(p); });
+  const rep = D.rep, c = D.cfg;
+  const mem = {}; D.act.forEach(p => { if (p.room && D.rmap[p.room]) (mem[p.room] = mem[p.room] || []).push(p); });
+  const used = rep.buses.reduce((t, b) => t + b.used, 0);
+  const lf = rep.busLeft || { rooms: [], solo: [], staff: [] };
+  const nLeft = lf.rooms.reduce((t, no) => t + (mem[no] || []).length + 1, 0) + lf.solo.length + lf.staff.length;
+  const ctl = '<div class="box sec buspanel">' +
+    (isAdmin() ? '<div class="busset"><label><span>버스</span><input class="inp" id="bN" inputmode="numeric" value="' + esc(c.buses || '') + '" placeholder="자동"><b>대</b></label><span class="x">×</span><label><span>좌석</span><input class="inp" id="bS" inputmode="numeric" value="' + esc(c.seats || 45) + '"><b>석</b></label><button class="btn" id="bSave">다시 배차</button></div>'
+      : '<p><b>버스 ' + (c.buses ? c.buses + '대' : rep.buses.length + '대 (자동)') + '</b> · ' + (c.seats || 45) + '인승</p>') +
+    '<div class="busnum"><span>탈 사람 <b>' + (used + nLeft) + '</b>명</span><span>좌석 <b>' + rep.buses.length * rep.seat + '</b>석</span>' + (nLeft ? '<span class="bad">자리 없음 <b>' + nLeft + '</b>명</span>' : '<span class="good">모두 탈 수 있어요</span>') + '</div>' +
+    '<p class="muted">순서: 버스 지정한 조 → 조와 담당 선생님은 같은 버스 → ' + (c.buses ? '버스마다 고르게' : '버스를 꽉 채워서') + ' → 조 미배정 학생 → 나머지 선생님은 버스마다 고르게. 버스 대수를 비우면 필요한 만큼 늘려요.</p></div>';
+  if (!rep.buses.length) return ctl + '<div class="box empty"><b>버스에 탈 사람이 아직 없어요</b>신청이 들어오면 자동으로 배차돼요.</div>' + departures();
   const open = sub.busOpen || {};
-  return '<p class="muted sec">조 단위로 같은 버스에 타요. 좌석 ' + rep.seat + '석 기준' + (rep.ride ? ', 담당 선생님 포함' : '') + '. 탑승 체크는 이 휴대폰에만 저장돼요.' + seatLink + '</p>' +
+  return ctl + (nLeft ? '<div class="box sec leftbox"><b>자리가 없는 사람 ' + nLeft + '명</b><p class="muted">' + esc(lf.rooms.map(n => n + '조').concat(lf.solo.map(id => (D.byId[id] || {}).name).filter(Boolean), lf.staff.map(id => ((D.tById[id] || {}).name || '') + ' 선생님')).join(', ')) + '</p></div>' : '') +
     rep.buses.map(b => {
       const ck = store.get('rt-board-' + b.no) || {};
       const ppl = [];
@@ -649,28 +744,35 @@ V.bus = () => {
         const r = D.rmap[no];
         const rd = rep.ride && r && roomRider(r);
         if (rd) ppl.push({ key: 't' + no, room: no, name: rd.name, t: 1, phone: rd.phone, tid: rd.id, cover: !!rd.id && rd.id === r.cid });
-        (mem[no] || []).slice().sort((a, c) => a.name.localeCompare(c.name, 'ko')).forEach(p => ppl.push({ key: p.id, room: no, name: p.name, p }));
+        (mem[no] || []).slice().sort(byName).forEach(p => ppl.push({ key: p.id, room: no, name: p.name, p }));
       });
+      (b.solo || []).forEach(id => { const p = D.byId[id]; if (p) ppl.push({ key: p.id, room: '_n', name: p.name, p }); });
       (b.staff || []).forEach(id => { const t = D.tById[id]; if (t) ppl.push({ key: 's' + id, room: '_s', name: t.name, t: 2, phone: t.phone, tid: id, team: t.team }); });
       const done = ppl.filter(x => ck[x.key]).length;
       const isOpen = open[b.no];
-      return '<div class="bus"><div class="hd" data-b="' + b.no + '" role="button" aria-expanded="' + !!isOpen + '"><div class="no">' + b.no + '<small style="font-family:var(--body);font-size:15px;font-weight:700">호차</small></div>' +
-        '<div class="meta"><b>' + b.rooms.map(n => n + '조').join(', ') + '</b><div class="muted">' + b.used + '/' + rep.seat + '석</div><div class="bar' + (b.used > rep.seat ? ' over' : '') + '"><i style="width:' + Math.min(100, b.used / rep.seat * 100) + '%"></i></div></div>' +
+      const st = ppl.filter(x => x.p).length, tc = ppl.length - st;
+      const groups = b.rooms.concat((b.solo || []).length ? ['_n'] : [], (b.staff || []).length ? ['_s'] : []);
+      const gname = no => no === '_s' ? '선생님' : no === '_n' ? '조 미배정 학생' : no + '조' + (D.rmap[no] ? ' · ' + esc(D.rmap[no].name || '') + ' · ' + D.rmap[no].gender : '');
+      return '<div class="bus"><div class="hd" data-b="' + b.no + '" role="button" aria-expanded="' + !!isOpen + '"><div class="no">' + b.no + '<small>호차</small></div>' +
+        '<div class="meta"><b>' + (b.rooms.length ? b.rooms.map(n => n + '조').join(' · ') : '') + ((b.solo || []).length ? (b.rooms.length ? ' + ' : '') + '미배정 ' + b.solo.length + '명' : '') + '</b>' +
+        '<div class="muted">학생 ' + st + ' · 선생님 ' + tc + ' · <b class="' + (b.used > rep.seat ? 'over' : '') + '">' + b.used + '/' + rep.seat + '석</b></div><div class="bar' + (b.used > rep.seat ? ' over' : '') + '"><i style="width:' + Math.min(100, b.used / rep.seat * 100) + '%"></i></div></div>' +
         '<div class="chk">' + done + '/' + ppl.length + '<br><span class="muted" style="font-weight:500">탑승</span></div></div>' +
-        (isOpen ? '<div class="body">' + b.rooms.concat((b.staff || []).length ? ['_s'] : []).map(no => no === '_s' ? '<div class="grp">선생님</div>' + ppl.filter(x => x.room === '_s').map(brow(b)).join('') : '<div class="grp">' + no + '조' + (D.rmap[no] ? ' · ' + esc(D.rmap[no].name || '') : '') + '</div>' +
-          ppl.filter(x => x.room === no).map(brow(b)).join('')).join('') +
+        (isOpen ? '<div class="body">' + groups.map(no => '<div class="grp">' + gname(no) + '</div>' + ppl.filter(x => x.room === no).map(brow(b)).join('')).join('') +
           '<button class="link" data-reset="' + b.no + '" style="margin-top:10px">탑승 체크 모두 지우기</button></div>' : '') + '</div>';
     }).join('') + departures();
 };
 const brow = b => x => {
   const ck = store.get('rt-board-' + b.no) || {};
   return '<div class="brow"><input type="checkbox" id="bk' + esc(x.key) + '" data-bus="' + b.no + '" data-k="' + esc(x.key) + '"' + (ck[x.key] ? ' checked' : '') + '>' +
-    '<label for="bk' + esc(x.key) + '">' + esc(x.name) + (x.t === 1 ? ' <span class="tag dim">' + (x.cover ? '먼저 맡는 선생님' : '담당 선생님') + '</span>' : x.t === 2 ? ' <span class="tag dim">' + esc(x.team || '선생님') + '</span>' : (x.p.health ? ' <span class="tag lamp">건강</span>' : '')) + '</label>' +
+    '<label for="bk' + esc(x.key) + '">' + esc(x.name) + (x.p ? gmark(x.p.gender) : '') + (x.t === 1 ? ' <span class="tag dim">' + (x.cover ? '먼저 맡는 선생님' : '담당 선생님') + '</span>' : x.t === 2 ? ' <span class="tag dim">' + esc(x.team || '선생님') + '</span>' : (x.p.health ? ' <span class="tag lamp">건강</span>' : '')) + '</label>' +
     (x.p ? '<button class="link tel" data-id="' + x.p.id + '">정보</button>' : x.tid ? '<button class="link tel" data-tid="' + x.tid + '">정보</button>' : (x.phone ? '<a class="tel" href="tel:' + digits(x.phone) + '">전화</a>' : '')) + '</div>';
 };
 B.bus = () => {
   $$('#v [data-tid]').forEach(b => b.onclick = () => teacher(b.dataset.tid));
-  const tb = $('#toBusSet'); if (tb) tb.onclick = () => { show('settings'); setTimeout(() => { const e = $('#busBox'); if (e) e.scrollIntoView(); }, 50); };
+  const bs = $('#bSave'); if (bs) bs.onclick = async () => {
+    const r = await run(() => call('cfgSave', { cfg: { buses: $('#bN').value.trim(), seats: $('#bS').value.trim() || '45' } }), '버스를 다시 배차했어요');
+    if (r) set(r);
+  };
   $$('.bus .hd').forEach(h => h.onclick = () => { sub.busOpen = sub.busOpen || {}; sub.busOpen[h.dataset.b] = !sub.busOpen[h.dataset.b]; show('bus', true); });
   $$('.brow input').forEach(c => c.onchange = () => { const k = 'rt-board-' + c.dataset.bus; const o = store.get(k) || {}; if (c.checked) o[c.dataset.k] = 1; else delete o[c.dataset.k]; store.set(k, o); show('bus', true); });
   $$('.brow [data-id]').forEach(b => b.onclick = () => person(b.dataset.id));
@@ -874,8 +976,18 @@ function editPerson(id) {
 }
 
 // ───── 선생님 ─────
-const TEAMS = ['진행팀', '조장팀', '지원팀', '중보팀'];
-const ROLES = ['디렉터', '회계', '부감', '팀장'];
+const TEAMS = ['행정팀', '진행팀', '조장팀', '지원팀', '중보팀'];
+const ROLES_ADMIN = ['총괄 디렉터', '회계'], ROLES_TEAM = ['팀장', '팀원'];
+const ROLES = ROLES_ADMIN.concat(ROLES_TEAM);
+const rolesOf = team => team === '행정팀' ? ROLES_ADMIN : team ? ROLES_TEAM : [];
+const TEAM_CLS = { '행정팀': 't1', '진행팀': 't2', '조장팀': 't3', '지원팀': 't4', '중보팀': 't5' };
+const teamBadge = t => t.join !== '예' ? '<span class="rb none">취소</span>' : t.team ? '<span class="rb team ' + TEAM_CLS[t.team] + '">' + esc(t.team) + '</span>' : '<span class="rb none">팀 미정</span>';
+/** 이름 옆 직책: 조장팀은 조를 맡으면 'N조 조장', 그 전엔 '팀원' */
+function roleText(t) {
+  if (!t.team) return '';
+  if (t.team === '조장팀' && t.role !== '팀장') { const rs = tRooms(t); return rs.length ? rs.map(x => x + '조').join('·') + ' 조장' : '팀원'; }
+  return t.role === '디렉터' ? '총괄 디렉터' : t.role || (t.team !== '행정팀' ? '팀원' : '');
+}
 const shortArr = a => String(a || '').replace(/\s*\(.*\)\s*$/, '');
 const isMainT = t => t && t.arrive === D.rep.main;
 const onBusT = t => isMainT(t) && t.move === '버스';
@@ -902,6 +1014,14 @@ function askAmount(name, cur) {
   });
 }
 /** 조마다 실제로 버스에 함께 타는 선생님 */
+/** 팀에 맞는 직책만: 행정팀은 총괄 디렉터·회계, 나머지는 팀장·팀원 */
+function roleOpts(team, cur) {
+  const L = rolesOf(team);
+  if (!L.length) return '<option value=>팀을 먼저 골라 주세요</option>';
+  if (cur === '디렉터') cur = '총괄 디렉터';
+  if (L.indexOf(cur) < 0) cur = team === '행정팀' ? '' : '팀원';
+  return (team === '행정팀' ? '<option value=>고르기</option>' : '') + L.map(x => '<option' + (cur === x ? ' selected' : '') + '>' + x + '</option>').join('');
+}
 function roomRider(r) {
   if (!D.teachers.length) return r.teacher ? { name: r.teacher, phone: r.tphone } : null;
   const lead = D.tById[r.tid], cov = D.tById[r.cid];
@@ -909,58 +1029,73 @@ function roomRider(r) {
   if (onBusT(cov) && !tRooms(cov).length) return cov;
   return null;
 }
-const TFILTERS = [['all', '전체'], ['lead', '조장 희망'], ['late', '후발'], ['car', '자차·카풀'], ['진행팀', '진행팀'], ['조장팀', '조장팀'], ['지원팀', '지원팀'], ['중보팀', '중보팀'], ['none', '팀 미정'], ['pay', '회비 체크'], ['off', '취소']];
+const TFILTERS = [['all', '전체'], ['lead', '조장 희망'], ['late', '후발'], ['car', '자차·카풀'], ['off', '취소']];
+const TDEPT_OPTS = [['', '모든 부서'], ['1부', '1부'], ['2부', '2부'], ['열린예배', '열린예배'], ['기타', '기타']];
 function seg() {
   const w = sub.who || 'stu';
   return '<div class="seg" role="group"><button data-who="stu" aria-pressed="' + (w === 'stu') + '">학생 ' + D.act.length + '</button><button data-who="tch" aria-pressed="' + (w === 'tch') + '">선생님 ' + D.tAct.length + '</button></div>';
 }
 function tlist() {
-  const fl = sub.tflt || 'all', q = (sub.tq || '').trim();
-  let L = D.teachers.filter(t => {
-    if (fl === 'off') return t.join !== '예';
+  const fl = sub.tflt || 'all', q = (sub.tq || '').trim(), pay = !!sub.tpay, tm = sub.tteam || '';
+  let base = D.teachers.filter(t => {
+    if (fl === 'off' && !pay) return t.join !== '예';
     if (t.join !== '예') return false;
-    if (TEAMS.indexOf(fl) >= 0) return t.team === fl;
-    if (fl === 'none') return !t.team;
+    if (sub.tdept && (t.dept || '기타') !== sub.tdept) return false;
+    if (sub.tsg && t.gender !== sub.tsg) return false;
+    if (pay) return true;
     if (fl === 'late') return !isMainT(t);
     if (fl === 'car') return t.move === '자차' || t.move === '카풀';
     if (fl === 'lead') return t.leadHope === '예';
     return true;
   });
-  if (q) L = L.filter(t => [t.name, t.dept, t.phone, t.team, t.ride, t.role].join(' ').indexOf(q) >= 0 || digits(t.phone).indexOf(digits(q) || '@') >= 0);
-  L.sort((a, b) => (ROLES.indexOf(a.role) + 1 || 9) - (ROLES.indexOf(b.role) + 1 || 9) || a.name.localeCompare(b.name, 'ko'));
+  if (q) base = base.filter(t => [t.name, t.dept, t.phone, t.team, t.ride, t.role].join(' ').indexOf(q) >= 0 || digits(t.phone).indexOf(digits(q) || '@') >= 0);
+  const L = base.filter(t => pay ? payPass(t, 'tpayf') : !tm || (tm === 'none' ? !t.team : t.team === tm)).sort(sub.tsort === 'name' ? byName : byTs);
   const A = D.tAct;
-  const byArr = D.arrives.map(x => [shortArr(x), A.filter(t => t.arrive === x).length]).filter(x => x[1]);
-  const byTeam = TEAMS.map(x => [x, A.filter(t => t.team === x).length]).concat([['미정', A.filter(t => !t.team).length]]).filter(x => x[1]);
   const head = seg() + '<div class="search">' + ic('search') + '<input class="inp" id="tq" type="search" placeholder="이름, 팀, 전화번호로 찾기" value="' + esc(q) + '"></div>' +
-    '<div class="chips" role="group">' + TFILTERS.map(f => '<button data-tf="' + f[0] + '" aria-pressed="' + (fl === f[0]) + '">' + f[1] + '</button>').join('') + '</div>';
+    '<div class="opts">' + sel('oTSort', [['ts', '신청순'], ['name', '이름순']], sub.tsort || 'ts') + sel('oTDept', TDEPT_OPTS, sub.tdept || '') + sel('oTSg', [['', '남녀 전체'], ['남', '남자 선생님'], ['여', '여자 선생님']], sub.tsg || '') + '</div>' +
+    (pay ? '' : '<div class="chips" role="group">' + TFILTERS.map(f => '<button data-tf="' + f[0] + '" aria-pressed="' + (fl === f[0]) + '">' + f[1] + '</button>').join('') + '</div>');
+  const tools = '<span class="tools"><button class="btn small ' + (pay ? '' : 'light') + '" id="tPayMode" aria-pressed="' + pay + '">' + (pay ? '회비 체크 끝' : '회비 체크') + '</button>' + (isAdmin() && !pay ? '<button class="btn small light" id="addT">직접 추가</button>' : '') + '</span>';
   if (!D.teachers.length) return head + '<div class="empty box"><b>아직 신청한 선생님이 없어요</b>교사 신청 페이지 링크를 공지하면 여기에 바로 나타나요.' + (isAdmin() ? '<br><button class="btn" id="addT">직접 추가</button>' : '') + '</div>';
-  if (fl === 'pay') {
-    const all = A.filter(t => t.paid === '예').length;
-    return head + '<div class="paysum"><span>입금 확인 <b>' + all + '</b> / ' + A.length + '명 · 미납 ' + (A.length - all) + '명</span><span>' + (isAdmin() ? '계좌 확인 후 누르세요' : '관리자만 바꿀 수 있어요') + '</span></div>' +
-      (L.length ? '<div class="plist">' + L.map(t => payrow(t, 1)).join('') + '</div>' : '<div class="empty box"><b>찾는 선생님이 없어요</b></div>');
-  }
-  return head + (fl === 'all' && !q ? '<div class="box tsum sec"><div><span class="k">출발</span>' + byArr.map(x => '<span class="tag dim">' + esc(x[0]) + ' ' + x[1] + '</span>').join('') + '</div>' +
-      '<div><span class="k">팀</span>' + byTeam.map(x => '<span class="tag ' + (x[0] === '미정' ? 'must' : 'dim') + '">' + esc(x[0]) + ' ' + x[1] + '</span>').join('') + '</div>' +
+  if (pay) return head + '<div class="count"><span>회비 체크</span>' + tools + '</div>' + payHead(base, 'tpayf') +
+    (L.length ? '<div class="plist">' + L.map(t => payrow(t, 1)).join('') + '</div>' : '<div class="empty box"><b>' + ((sub.tpayf || 'no') === 'no' && !q ? '미납자가 없어요' : '찾는 선생님이 없어요') + '</b></div>');
+  const cnt = [['', '전체', base.length]].concat(TEAMS.map(x => [x, x, base.filter(t => t.team === x).length]), [['none', '팀 미정', base.filter(t => !t.team).length]]);
+  return head + (fl === 'all' && !q && !tm ? '<div class="box tsum sec"><div><span class="k">출발</span>' + D.arrives.map(x => [shortArr(x), A.filter(t => t.arrive === x).length]).filter(x => x[1]).map(x => '<span class="tag dim">' + esc(x[0]) + ' ' + x[1] + '</span>').join('') + '</div>' +
       '<div><span class="k">이동</span>' + [['버스', onBusT], ['자차', t => t.move === '자차'], ['카풀', t => t.move === '카풀'], ['대중교통', t => t.move === '대중교통']].map(x => [x[0], A.filter(x[1]).length]).filter(x => x[1]).map(x => '<span class="tag dim">' + x[0] + ' ' + x[1] + '</span>').join('') + '</div>' +
       '<div><span class="k">조장</span><span class="tag ok">희망 ' + A.filter(t => t.leadHope === '예').length + '</span></div></div>' : '') +
-    '<div class="count"><span>' + L.length + '명</span>' + (isAdmin() ? '<button class="btn small light" id="addT">직접 추가</button>' : '') + '</div>' +
-    (L.length ? '<div class="plist">' + L.map(trow).join('') + '</div>' : '<div class="empty box"><b>찾는 선생님이 없어요</b>검색어나 필터를 바꿔 보세요.</div>');
+    '<div class="count"><span>' + L.length + '명' + (tm ? ' · ' + esc(tm === 'none' ? '팀 미정' : tm) : '') + '</span>' + tools + '</div>' +
+    '<div class="chips tchips" role="group" aria-label="팀별 보기">' + cnt.map(x => '<button data-tm="' + x[0] + '" aria-pressed="' + (tm === x[0]) + '"' + (!x[2] && x[0] ? ' class="zero"' : '') + '>' + x[1] + ' <b>' + x[2] + '</b>명</button>').join('') + '</div>' +
+    (L.length ? '<div class="plist">' + L.map(trow).join('') + '</div>' : '<div class="empty box"><b>찾는 선생님이 없어요</b>검색어나 보기 설정을 바꿔 보세요.</div>');
 }
 function trow(t) {
-  const rs = tRooms(t), cv = tCover(t);
-  return '<button class="prow' + (t.join !== '예' ? ' off' : '') + '" data-tid="' + t.id + '">' +
-    '<span class="av ' + gcls(t.gender) + '">' + esc(t.name.slice(-2)) + '</span>' +
-    '<span class="mid"><span class="nm">' + esc(t.name) + (t.role ? ' <span class="tag lamp">' + esc(t.role) + '</span>' : '') + '</span><br><span class="ds">' +
-    esc([t.team, shortArr(t.arrive), t.move === '자차' || t.move === '카풀' || t.move === '대중교통' ? t.move : ''].filter(Boolean).join(' · ')) + '</span></span>' +
-    '<span class="end">' + (t.leadHope === '예' && !rs.length ? '<span class="tag ok">조장 희망</span>' : '') + (t.health ? '<span class="tag lamp">건강</span>' : '') + (rs.length ? '<span class="tag ' + gcls(t.gender) + '">' + rs.map(x => x + '조').join('·') + '</span>' : '') +
-    (cv.length ? '<span class="tag dim">' + cv.map(x => x + '조').join('·') + ' 대신</span>' : '') + (t.join !== '예' ? '<span class="tag dim">취소</span>' : '') +
-    '<span class="dot ' + (t.paid === '예' ? 'paid' : 'unpaid') + '"></span></span></button>';
+  const rt = roleText(t), cv = tCover(t);
+  return '<div class="prow' + (t.join !== '예' ? ' off' : '') + '" role="button" tabindex="0" data-tid="' + t.id + '">' + teamBadge(t) +
+    '<span class="mid"><span class="nm">' + esc(t.name) + gmark(t.gender) + (rt ? ' <span class="tag ' + (/디렉터|회계|팀장/.test(rt) ? 'lamp' : /조장/.test(rt) ? gcls(t.gender) : 'dim') + '">' + esc(rt) + '</span>' : '') + '</span><br><span class="ds">' +
+    esc([t.dept, shortArr(t.arrive), t.move === '자차' || t.move === '카풀' || t.move === '대중교통' ? t.move : '', cv.length ? cv.map(x => x + '조').join('·') + ' 대신' : ''].filter(Boolean).join(' · ')) + '</span></span>' +
+    '<span class="end stack">' + (t.leadHope === '예' && !t.team || t.health ? '<span class="tagline">' + (t.leadHope === '예' && !t.team ? '<span class="tag ok">조장 희망</span>' : '') + (t.health ? '<span class="tag lamp">건강</span>' : '') + '</span>' : '') +
+    (isAdmin() && t.join === '예' ? '<select class="tsel" data-tteam="' + t.id + '" aria-label="' + esc(t.name) + ' 팀">' + '<option value="">팀 미정</option>' + TEAMS.map(x => '<option' + (t.team === x ? ' selected' : '') + '>' + x + '</option>').join('') + '</select>' : '') +
+    (t.join === '예' ? feeTag(t) : '') + '</span></div>';
 }
 function bindTlist() {
   const q = $('#tq');
   if (q) q.oninput = () => { sub.tq = q.value; const pos = q.selectionStart; show('list', true); const n = $('#tq'); n.focus(); n.setSelectionRange(pos, pos); };
   $$('[data-tf]').forEach(b => b.onclick = () => { sub.tflt = b.dataset.tf; show('list', true); });
-  $$('[data-tid]').forEach(b => b.onclick = () => teacher(b.dataset.tid));
+  $$('[data-tm]').forEach(b => b.onclick = () => { sub.tteam = b.dataset.tm; show('list', true); });
+  $$('[data-pf]').forEach(b => b.onclick = () => { sub.tpayf = b.dataset.pf; show('list', true); });
+  bindOpts({ oTSort: 'tsort', oTDept: 'tdept', oTSg: 'tsg' });
+  const pm = $('#tPayMode'); if (pm) pm.onclick = () => { sub.tpay = !sub.tpay; show('list'); };
+  $$('.prow[data-tid]').forEach(b => {
+    b.onclick = e => { if (!e.target.closest('select')) teacher(b.dataset.tid); };
+    b.onkeydown = e => { if ((e.key === 'Enter' || e.key === ' ') && e.target === b) { e.preventDefault(); teacher(b.dataset.tid); } };
+  });
+  $$('[data-tteam]').forEach(s => {
+    s.onclick = e => e.stopPropagation();
+    s.onchange = async () => {
+      const t = D.tById[s.dataset.tteam]; if (!t) return;
+      const old = t.team; t.team = s.value;
+      const r = await run(() => call('teacherSave', { id: t.id, fields: { team: s.value } }), t.name + ' 선생님 → ' + (s.value || '팀 미정'));
+      if (r) set(r); else { t.team = old; show('list', true); }
+    };
+  });
   $$('[data-tpay]').forEach(b => b.onclick = () => togglePay(b.dataset.tpay, 1));
   $$('.prow.pay[data-ptid]').forEach(r => r.onclick = e => { if (!e.target.closest('[data-tpay]')) teacher(r.dataset.ptid); });
   const ad = $('#addT'); if (ad) ad.onclick = () => editTeacher(null);
@@ -976,12 +1111,12 @@ function teacher(id) {
     return '<button type="button" data-v="' + esc(r.no) + '" aria-pressed="' + (sel.indexOf(r.no) >= 0) + '">' + esc(r.no) + '조' + (other ? '<small>' + esc(other) + '</small>' : '') + '</button>';
   }).join('') : '<p class="muted">설정에서 조(숙소)를 먼저 만들어 주세요.</p>') + '</div>';
   const roomLine = (list, pre) => list.map(no => { const r = D.rmap[no]; return no + '조' + (r && r.name ? ' ' + r.name : '') + (pre && r ? ' (담당 ' + (r.teacher || '미정') + ')' : ''); }).join(', ');
-  const html = '<div class="grab"><h2>' + esc(t.name) + ' <span class="tag ' + gcls(t.gender) + '">' + esc(t.gender || '—') + '</span>' + (t.role ? '<span class="tag lamp">' + esc(t.role) + '</span>' : '') +
+  const html = '<div class="grab"><h2>' + esc(t.name) + ' <span class="tag ' + gcls(t.gender) + '">' + esc(t.gender || '—') + '</span>' + (roleText(t) ? '<span class="tag lamp">' + esc(roleText(t)) + '</span>' : '') +
     (t.join !== '예' ? '<span class="tag dim">참석 취소</span>' : t.team ? '<span class="tag ok">' + esc(t.team) + '</span>' : '<span class="tag must">팀 미정</span>') + '</h2><button class="x" aria-label="닫기">×</button></div>' +
     '<div class="box"><div class="crow" style="padding:0;border:0"><div class="mid"><div class="nm">' + esc(t.phone || '연락처 없음') + '</div><div class="ds">' + esc(t.dept || '') + '</div></div>' + smsBtn(t.phone, t.name) + callBtn(t.phone, t.name) + '</div></div>' +
     (isAdmin() && t.join === '예' ? '<h3>팀·조 편성</h3><div class="box">' +
       '<div style="display:flex;gap:8px"><label class="field" style="flex:1;margin-bottom:12px"><span>팀</span><select class="inp" id="tTeam"><option value="">미정</option>' + TEAMS.map(x => '<option' + (t.team === x ? ' selected' : '') + '>' + x + '</option>').join('') + '</select></label>' +
-      '<label class="field" style="flex:1;margin-bottom:12px"><span>직책</span><select class="inp" id="tRole"><option value="">없음</option>' + ROLES.map(x => '<option' + (t.role === x ? ' selected' : '') + '>' + x + '</option>').join('') + '</select></label></div>' +
+      '<label class="field" style="flex:1;margin-bottom:12px"><span>직책</span><select class="inp" id="tRole">' + roleOpts(t.team, t.role) + '</select></label></div>' +
       '<div class="field"><span class="label">담당 조 <small class="muted">한 조에 담당은 한 명이에요</small></span>' + rchips('rooms', rs) + '</div>' +
       '<div class="field"><span class="label">먼저 맡아 줄 조 <small class="muted">담당 선생님이 늦게 오는 조</small></span>' + rchips('cover', cv) + '</div>' +
       (isMainT(t) ? '' : '<p class="hint" style="margin:-6px 0 12px">' + esc(shortArr(t.arrive)) + '에 오는 선생님이에요. 담당 조를 맡기면 그 조를 먼저 맡아 줄 선생님도 정해 주세요.</p>') +
@@ -1002,6 +1137,7 @@ function teacher(id) {
   openSheet(html);
   if (!isAdmin()) return;
   $$('.rchips button').forEach(b => b.onclick = () => b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') !== 'true'));
+  const tt = $('#tTeam'); if (tt) tt.onchange = () => { $('#tRole').innerHTML = roleOpts(tt.value, $('#tRole').value); };
   const pick = k => $$('[data-rk=' + k + '] button[aria-pressed=true]').map(b => b.dataset.v);
   const ts = $('#tSave');
   if (ts) ts.onclick = async () => {
@@ -1091,10 +1227,10 @@ V.settings = () => {
     fld(['tnotice', '교사 신청 안내 (첫 화면)', '', 'area']) +
     '<label class="field"><span>참석 일정 선택지 <small class="muted">한 줄에 하나, 첫 줄이 전체 참석(교회 버스)</small></span><textarea class="inp" data-c="tarrive" rows="4">' + esc(String(c.tarrive || '').replace(/\\n/g, '\n')) + '</textarea></label>' +
     '<button class="btn block" id="tcfgSave">교사 신청 설정 저장</button></div></div>' +
-    '<div class="sec" id="busBox"><h2>버스</h2><div class="box">' + fld(['seats', '버스 좌석 수', '', 'number']) + fld(['staff', '버스마다 비워 둘 좌석 (스태프용)', '', 'number']) +
+    '<div class="sec" id="busBox"><h2>버스</h2><div class="box">' + fld(['buses', '쓸 수 있는 버스 대수 (비우면 필요한 만큼)', '', 'number']) + fld(['seats', '버스 한 대 좌석 수', '', 'number']) + fld(['staff', '버스마다 비워 둘 좌석 (스태프용)', '', 'number']) +
     '<div class="field"><span class="label">담당 선생님도 조와 같은 버스에 타나요?</span><div class="choice" id="rideSel"><button data-v="예" aria-pressed="' + (c.ride !== '아니오') + '">네</button><button data-v="아니오" aria-pressed="' + (c.ride === '아니오') + '">아니요</button></div></div>' +
     '<button class="btn block" id="busSave">버스 설정 저장</button></div></div>' +
-    '<div class="sec" id="roomsBox"><h2>조(숙소) <small>숙소 = 조</small></h2><p class="muted" style="margin:-4px 2px 10px">정원은 학생 수 기준이에요. 남녀는 같은 조가 될 수 없어요. 특정 조를 정한 버스에 태우려면 버스 칸에 호차 번호를 적어 주세요.</p>' +
+    '<div class="sec" id="roomsBox"><h2>조(숙소) <small>숙소 = 조</small></h2><p class="muted" style="margin:-4px 2px 10px">정원은 학생 수 기준이에요. 남녀는 같은 조가 될 수 없어요. 숙소는 번호만 적으면 끝에 호가 붙어요. 담당 선생님은 선생님 명단에서 조장팀으로 정한 분 중에 고를 수 있어요.</p>' +
     '<div class="box" style="padding:0" id="rtBox">' + D.rooms.map(roomEd).join('') + '<div style="padding:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn light small" id="rAdd">조 추가</button><button class="btn light small" id="rAdd5">5개 한꺼번에 추가</button></div></div>' +
     '<button class="btn block" id="rSave" style="margin-top:12px">조(숙소) 저장</button></div>' +
     '<div class="sec"><h2>계정</h2><div class="box" style="padding:0" id="accBox"><p class="muted" style="padding:14px">불러오는 중…</p></div>' +
@@ -1110,10 +1246,26 @@ V.settings = () => {
 };
 function roomEd(r) {
   r = r || {};
-  return '<div class="rt"><input class="inp" data-r="no" placeholder="조" value="' + esc(r.no || '') + '" inputmode="numeric"><select class="inp" data-r="gender"><option value="">성별</option><option' + (r.gender === '남' ? ' selected' : '') + '>남</option><option' + (r.gender === '여' ? ' selected' : '') + '>여</option></select>' +
-    '<input class="inp" data-r="name" placeholder="숙소 (예: 301호)" value="' + esc(r.name || '') + '">' +
-    '<input class="inp" data-r="cap" placeholder="정원" inputmode="numeric" value="' + esc(r.cap || '') + '"><input class="inp wide" data-r="teacher" placeholder="담당 선생님" value="' + esc(r.teacher || '') + '">' +
-    '<div class="full"><input class="inp" data-r="tphone" placeholder="선생님 연락처" inputmode="tel" value="' + esc(r.tphone || '') + '"><input class="inp" data-r="bus" placeholder="버스 지정" inputmode="numeric" style="flex:0 0 96px" value="' + esc(r.bus || '') + '"><button class="link" data-rdel style="color:var(--alert);flex:none">삭제</button></div></div>';
+  const g = r.gender || '';
+  let who;
+  if (D.teachers.length) {
+    const leads = D.tAct.filter(t => t.team === '조장팀' && (!r.gender || !t.gender || t.gender === r.gender)).sort(byName);
+    const cur = r.tid ? D.tById[r.tid] : null;
+    if (cur && leads.indexOf(cur) < 0) leads.unshift(cur);
+    const label = t => t.name + (t.gender ? ' (' + t.gender + ')' : '') + (tRooms(t).filter(x => x !== String(r.no)).length ? ' · ' + tRooms(t).filter(x => x !== String(r.no)).map(x => x + '조').join('·') + ' 담당 중' : '');
+    who = '<div class="lab"><span>담당</span><select class="inp" data-r="tid"><option value="">담당 선생님 고르기</option>' + leads.map(t => '<option value="' + t.id + '"' + (cur === t ? ' selected' : '') + '>' + esc(label(t)) + '</option>').join('') + '</select>' +
+      '<span class="tph">' + esc(cur ? cur.phone || '' : '') + '</span></div>' + (leads.length ? '' : '<p class="hint full">선생님 명단에서 조장팀을 정하면 여기서 고를 수 있어요.</p>');
+  } else {
+    who = '<div class="lab"><span>담당</span><input class="inp" data-r="teacher" placeholder="담당 선생님" value="' + esc(r.teacher || '') + '"><input class="inp" data-r="tphone" placeholder="연락처" inputmode="tel" value="' + esc(r.tphone || '') + '"></div>';
+  }
+  return '<div class="rt">' +
+    '<label class="pre"><input class="inp" data-r="no" value="' + esc(r.no || '') + '" inputmode="numeric" aria-label="조 번호"><span>조</span></label>' +
+    '<input type="hidden" data-r="gender" value="' + esc(g) + '"><span class="gsel" role="group" aria-label="성별"><button type="button" data-g="남" aria-pressed="' + (g === '남') + '">남</button><button type="button" data-g="여" aria-pressed="' + (g === '여') + '">여</button></span>' +
+    '<label class="pre"><input class="inp" data-r="cap" value="' + esc(r.cap || '') + '" inputmode="numeric" aria-label="정원" placeholder="정원"><span>명</span></label>' +
+    '<button type="button" class="rdel" data-rdel aria-label="이 조 삭제">×</button>' +
+    '<label class="lab"><span>숙소</span><input class="inp" data-r="name" placeholder="번호만 적으면 \'호\'가 붙어요 (예: 301)" value="' + esc(r.name || '') + '"></label>' +
+    who +
+    '<label class="lab"><span>버스</span><input class="inp" data-r="bus" placeholder="꼭 태울 호차가 있을 때만 (예: 2)" inputmode="numeric" value="' + esc(r.bus || '') + '"></label></div>';
 }
 B.settings = () => {
   $('#back').onclick = () => show('home');
@@ -1125,9 +1277,19 @@ B.settings = () => {
   $('#cfgSave').onclick = async () => { const cfg = {}; CFG_FORM.forEach(x => cfg[x[0]] = val(x[0])); const r = await run(() => call('cfgSave', { cfg }), '수련회 정보를 저장했어요'); if (r) set(r); };
   choiceBind('topenSel', async v => { const r = await run(() => call('cfgSave', { cfg: { topen: v } }), v === '예' ? '교사 신청을 받기 시작했어요' : '교사 신청을 닫았어요'); if (r) set(r); });
   $('#tcfgSave').onclick = async () => { const r = await run(() => call('cfgSave', { cfg: { tdeadline: val('tdeadline'), tnotice: val('tnotice'), tarrive: val('tarrive') } }), '교사 신청 설정을 저장했어요'); if (r) set(r); };
-  $('#busSave').onclick = async () => { const r = await run(() => call('cfgSave', { cfg: { seats: val('seats'), staff: val('staff'), ride } }), '버스 설정을 저장했어요'); if (r) set(r); };
+  $('#busSave').onclick = async () => { const r = await run(() => call('cfgSave', { cfg: { buses: val('buses'), seats: val('seats'), staff: val('staff'), ride } }), '버스 설정을 저장했어요'); if (r) set(r); };
   const rbox = $('#rtBox');
-  const bindDel = () => $$('[data-rdel]').forEach(b => b.onclick = () => b.closest('.rt').remove());
+  const bindDel = () => {};
+  // 조 편집: 성별 버튼, 삭제, 담당 선생님 → 연락처, 숙소 번호 → '호'
+  rbox.onclick = e => {
+    const gb = e.target.closest('[data-g]');
+    if (gb) { const rt = gb.closest('.rt'); rt.querySelector('[data-r=gender]').value = gb.dataset.g; rt.querySelectorAll('[data-g]').forEach(x => x.setAttribute('aria-pressed', x === gb)); return; }
+    const del = e.target.closest('[data-rdel]'); if (del) del.closest('.rt').remove();
+  };
+  rbox.onchange = e => {
+    if (e.target.matches('[data-r=tid]')) { const t = D.tById[e.target.value]; e.target.closest('.rt').querySelector('.tph').textContent = t ? t.phone || '' : ''; }
+    if (e.target.matches('[data-r=name]') && /^\d+$/.test(e.target.value.trim())) e.target.value = e.target.value.trim() + '호';
+  };
   const addRows = n => {
     const nums = $$('.rt [data-r=no]').map(i => +i.value).filter(x => x > 0);
     let next = nums.length ? Math.max.apply(null, nums) + 1 : 1;
