@@ -220,22 +220,27 @@ nav.tabs button[aria-current="page"] svg { stroke: var(--night); }
 .ask .acts { margin-top: 18px; }
 
 /* 설정 */
-.rt { display: grid; grid-template-columns: 84px auto 92px 1fr; gap: 8px; align-items: center; padding: 14px; border-bottom: 1px solid var(--line); }
-.rt .inp { min-height: 42px; padding: 8px 10px; font-size: 15px; }
-.rt .pre { position: relative; display: block; }
-.rt .pre .inp { width: 100%; padding-right: 30px; font-weight: 700; }
-.rt .pre span { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--sub); font-size: 14px; font-weight: 600; pointer-events: none; }
-.gsel { display: inline-flex; border: 1.5px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--paper); }
-.gsel button { min-width: 46px; min-height: 40px; border: 0; background: none; font-weight: 800; font-size: 15px; color: var(--mist); cursor: pointer; }
+.rtgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (min-width: 760px) { .rtgrid { grid-template-columns: 1fr 1fr 1fr; } }
+.rtadd { grid-column: 1 / -1; display: flex; gap: 8px; flex-wrap: wrap; }
+.rt { background: var(--paper); border-radius: 14px; padding: 10px; display: grid; grid-template-columns: 1fr auto; gap: 7px; align-content: start; min-width: 0; border-top: 4px solid var(--line); }
+.rt:has([data-g="남"][aria-pressed="true"]) { border-top-color: var(--boy); }
+.rt:has([data-g="여"][aria-pressed="true"]) { border-top-color: var(--girl); }
+.rt .inp { min-height: 40px; padding: 7px 9px; font-size: 15px; width: 100%; min-width: 0; }
+.rt .pre { position: relative; display: block; min-width: 0; }
+.rt .pre .inp { padding-right: 26px; font-weight: 800; }
+.rt .pre span { position: absolute; right: 9px; top: 50%; transform: translateY(-50%); color: var(--sub); font-size: 13px; font-weight: 600; pointer-events: none; }
+.gsel { display: inline-flex; border: 1.5px solid var(--line); border-radius: 11px; overflow: hidden; background: var(--paper); }
+.gsel button { min-width: 36px; min-height: 37px; border: 0; background: none; font-weight: 800; font-size: 14px; color: var(--mist); cursor: pointer; padding: 0 6px; }
 .gsel button + button { border-left: 1.5px solid var(--line); }
 .gsel button[data-g="남"][aria-pressed="true"] { background: var(--boy); color: #fff; }
 .gsel button[data-g="여"][aria-pressed="true"] { background: var(--girl); color: #fff; }
-.rt .rdel { justify-self: end; width: 38px; height: 38px; border-radius: 10px; border: 0; background: #FBEDEC; color: var(--alert); font-size: 22px; line-height: 1; cursor: pointer; }
-.rt .lab { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; }
-.rt .lab > span:first-child { width: 34px; flex: none; font-size: 13px; font-weight: 700; color: var(--sub); }
-.rt .lab .inp { flex: 1; min-width: 0; }
-.rt .tph { font-size: 13px; color: var(--sub); white-space: nowrap; font-variant-numeric: tabular-nums; }
-.rt .full { grid-column: 1 / -1; margin: -2px 0 0 42px; }
+.rt .rdel { justify-self: end; align-self: center; width: 36px; height: 36px; border-radius: 10px; border: 0; background: #FBEDEC; color: var(--alert); font-size: 20px; line-height: 1; cursor: pointer; }
+.rt .lab { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.rt .lab > span:first-child { font-size: 12px; font-weight: 700; color: var(--sub); }
+.rt .lab select.inp { font-size: 14px; }
+.rt .tph { font-size: 12px; color: var(--sub); font-variant-numeric: tabular-nums; min-height: 14px; }
+.rt .full { grid-column: 1 / -1; font-size: 12px; margin: 0; }
 .acc { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
 .acc:last-child { border-bottom: 0; }
 .acc .nm { font-weight: 700; flex: 1; min-width: 120px; }
@@ -1137,16 +1142,17 @@ function teacher(id) {
     return '<button type="button" data-v="' + esc(r.no) + '" aria-pressed="' + (sel.indexOf(r.no) >= 0) + '">' + esc(r.no) + '조' + (other ? '<small>' + esc(other) + '</small>' : '') + '</button>';
   }).join('') : '<p class="muted">설정에서 조(숙소)를 먼저 만들어 주세요.</p>') + '</div>';
   const roomLine = (list, pre) => list.map(no => { const r = D.rmap[no]; return no + '조' + (r && r.name ? ' ' + r.name : '') + (pre && r ? ' (담당 ' + (r.teacher || '미정') + ')' : ''); }).join(', ');
-  const html = '<div class="grab"><h2>' + esc(t.name) + ' <span class="tag ' + gcls(t.gender) + '">' + esc(t.gender || '—') + '</span>' + (roleText(t) ? '<span class="tag lamp">' + esc(roleText(t)) + '</span>' : '') +
+  const html = '<div class="grab"><h2>' + esc(t.name) + (t.gender ? ' <span class="tag ' + gcls(t.gender) + '">' + esc(t.gender) + '</span>' : '') + (roleText(t) ? '<span class="tag lamp">' + esc(roleText(t)) + '</span>' : '') +
     (t.join !== '예' ? '<span class="tag dim">참석 취소</span>' : t.team ? '<span class="tag ok">' + esc(t.team) + '</span>' : '<span class="tag must">팀 미정</span>') + '</h2><button class="x" aria-label="닫기">×</button></div>' +
     '<div class="box"><div class="crow" style="padding:0;border:0"><div class="mid"><div class="nm">' + esc(t.phone || '연락처 없음') + '</div><div class="ds">' + esc(t.dept || '') + '</div></div>' + smsBtn(t.phone, t.name) + callBtn(t.phone, t.name) + '</div></div>' +
-    (isAdmin() && t.join === '예' ? '<h3>팀·조 편성</h3><div class="box">' +
+    (isAdmin() && t.join === '예' ? '<h3>' + (t.team === '조장팀' ? '팀·조 편성' : '팀 편성') + '</h3><div class="box">' +
       '<div style="display:flex;gap:8px"><label class="field" style="flex:1;margin-bottom:12px"><span>팀</span><select class="inp" id="tTeam"><option value="">미정</option>' + TEAMS.map(x => '<option' + (t.team === x ? ' selected' : '') + '>' + x + '</option>').join('') + '</select></label>' +
       '<label class="field" style="flex:1;margin-bottom:12px"><span>직책</span><select class="inp" id="tRole">' + roleOpts(t.team, t.role) + '</select></label></div>' +
+      '<div id="leadBox"' + (t.team === '조장팀' ? '' : ' hidden') + '>' +
       '<div class="field"><span class="label">담당 조 <small class="muted">한 조에 담당은 한 명이에요</small></span>' + rchips('rooms', rs) + '</div>' +
       '<div class="field"><span class="label">먼저 맡아 줄 조 <small class="muted">담당 선생님이 늦게 오는 조</small></span>' + rchips('cover', cv) + '</div>' +
-      (isMainT(t) ? '' : '<p class="hint" style="margin:-6px 0 12px">' + esc(shortArr(t.arrive)) + '에 오는 선생님이에요. 담당 조를 맡기면 그 조를 먼저 맡아 줄 선생님도 정해 주세요.</p>') +
-      '<button class="btn block" id="tSave">팀·조 저장</button></div>' : (rs.length || cv.length ? '<h3>맡은 조</h3><div class="box"><dl class="kv">' + (rs.length ? '<dt>담당</dt><dd>' + esc(roomLine(rs)) + '</dd>' : '') + (cv.length ? '<dt>먼저 맡음</dt><dd>' + esc(roomLine(cv, 1)) + '</dd>' : '') + '</dl></div>' : '')) +
+      (isMainT(t) ? '' : '<p class="hint" style="margin:-6px 0 12px">' + esc(shortArr(t.arrive)) + '에 오는 선생님이에요. 담당 조를 맡기면 그 조를 먼저 맡아 줄 선생님도 정해 주세요.</p>') + '</div>' +
+      '<button class="btn block" id="tSave">' + (t.team === '조장팀' ? '팀·조 저장' : '팀 저장') + '</button></div>' : (rs.length || cv.length ? '<h3>맡은 조</h3><div class="box"><dl class="kv">' + (rs.length ? '<dt>담당</dt><dd>' + esc(roomLine(rs)) + '</dd>' : '') + (cv.length ? '<dt>먼저 맡음</dt><dd>' + esc(roomLine(cv, 1)) + '</dd>' : '') + '</dl></div>' : '')) +
     '<h3>참석</h3><div class="box"><dl class="kv"><dt>참석 일정</dt><dd>' + esc(t.arrive || '—') + '</dd><dt>이동</dt><dd>' + esc(moveLabel(t)) + (onBusT(t) ? busOf(t) : '') + '</dd><dt>숙소 신청</dt><dd>' + esc(t.nights || '신청 안 함') + '</dd></dl></div>' +
     '<h3>조장 희망·하고 싶은 말</h3><div class="box"><dl class="kv"><dt>조장</dt><dd>' + (t.leadHope === '예' ? '<span class="tag ok">희망해요</span>' : '—') + '</dd>' +
     (t.note ? '<dt>하고 싶은 말</dt><dd style="white-space:pre-line">' + esc(t.note) + '</dd>' : '') + '</dl></div>' +
@@ -1163,11 +1169,13 @@ function teacher(id) {
   openSheet(html);
   if (!isAdmin()) return;
   $$('.rchips button').forEach(b => b.onclick = () => b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') !== 'true'));
-  const tt = $('#tTeam'); if (tt) tt.onchange = () => { $('#tRole').innerHTML = roleOpts(tt.value, $('#tRole').value); };
+  const tt = $('#tTeam'); if (tt) tt.onchange = () => { $('#tRole').innerHTML = roleOpts(tt.value, $('#tRole').value); const lead = tt.value === '조장팀'; $('#leadBox').hidden = !lead; $('#tSave').textContent = lead ? '팀·조 저장' : '팀 저장'; };
   const pick = k => $$('[data-rk=' + k + '] button[aria-pressed=true]').map(b => b.dataset.v);
   const ts = $('#tSave');
   if (ts) ts.onclick = async () => {
-    const fields = { team: $('#tTeam').value, role: $('#tRole').value, rooms: pick('rooms'), cover: pick('cover') };
+    const lead = $('#tTeam').value === '조장팀';
+    // 조장팀이 아니면 맡은 조는 비워요
+    const fields = { team: $('#tTeam').value, role: $('#tRole').value, rooms: lead ? pick('rooms') : [], cover: lead ? pick('cover') : [] };
     const taken = fields.rooms.filter(no => { const r = D.rmap[no]; return r && r.tid && r.tid !== id; });
     if (taken.length && !await ask(taken.map(no => no + '조 (지금 ' + D.rmap[no].teacher + ')').join(', ') + '\n담당 선생님을 ' + t.name + ' 선생님으로 바꿀까요?', '바꾸기')) return;
     const r2 = await run(() => call('teacherSave', { id, fields }), '팀·조를 저장했어요');
@@ -1257,7 +1265,7 @@ V.settings = () => {
     '<div class="field"><span class="label">담당 선생님도 조와 같은 버스에 타나요?</span><div class="choice" id="rideSel"><button data-v="예" aria-pressed="' + (c.ride !== '아니오') + '">네</button><button data-v="아니오" aria-pressed="' + (c.ride === '아니오') + '">아니요</button></div></div>' +
     '<button class="btn block" id="busSave">버스 설정 저장</button></div></div>' +
     '<div class="sec" id="roomsBox"><h2>조(숙소) <small>숙소 = 조</small></h2><p class="muted" style="margin:-4px 2px 10px">정원은 학생 수 기준이에요. 남녀는 같은 조가 될 수 없어요. 숙소는 번호만 적으면 끝에 호가 붙어요. 담당 선생님은 선생님 명단에서 조장팀으로 정한 분 중에 고를 수 있어요.</p>' +
-    '<div class="box" style="padding:0" id="rtBox">' + D.rooms.map(roomEd).join('') + '<div style="padding:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn light small" id="rAdd">조 추가</button><button class="btn light small" id="rAdd5">5개 한꺼번에 추가</button></div></div>' +
+    '<div id="rtBox" class="rtgrid">' + D.rooms.map(roomEd).join('') + '<div class="rtadd"><button class="btn light small" id="rAdd">조 추가</button><button class="btn light small" id="rAdd5">5개 한꺼번에 추가</button></div></div>' +
     '<button class="btn block" id="rSave" style="margin-top:12px">조(숙소) 저장</button></div>' +
     '<div class="sec"><h2>계정</h2><div class="box" style="padding:0" id="accBox"><p class="muted" style="padding:14px">불러오는 중…</p></div>' +
     '<div class="box" style="margin-top:10px"><p style="font-weight:700;margin-bottom:10px">계정 추가</p><div style="display:flex;gap:8px;flex-wrap:wrap"><input class="inp" id="aName" placeholder="이름" style="flex:1;min-width:120px"><select class="inp" id="aRole" style="flex:0 0 130px"><option value="lead">조 담당</option><option value="admin">관리자</option></select></div>' +
@@ -1289,9 +1297,9 @@ function roomEd(r) {
     '<input type="hidden" data-r="gender" value="' + esc(g) + '"><span class="gsel" role="group" aria-label="성별"><button type="button" data-g="남" aria-pressed="' + (g === '남') + '">남</button><button type="button" data-g="여" aria-pressed="' + (g === '여') + '">여</button></span>' +
     '<label class="pre"><input class="inp" data-r="cap" value="' + esc(r.cap || '') + '" inputmode="numeric" aria-label="정원" placeholder="정원"><span>명</span></label>' +
     '<button type="button" class="rdel" data-rdel aria-label="이 조 삭제">×</button>' +
-    '<label class="lab"><span>숙소</span><input class="inp" data-r="name" placeholder="번호만 적으면 \'호\'가 붙어요 (예: 301)" value="' + esc(r.name || '') + '"></label>' +
+    '<label class="lab"><span>숙소</span><input class="inp" data-r="name" placeholder="예: 301" value="' + esc(r.name || '') + '"></label>' +
     who +
-    '<label class="lab"><span>버스</span><input class="inp" data-r="bus" placeholder="꼭 태울 호차가 있을 때만 (예: 2)" inputmode="numeric" value="' + esc(r.bus || '') + '"></label></div>';
+    '<label class="lab"><span>버스</span><input class="inp" data-r="bus" placeholder="지정할 때만 (예: 2)" inputmode="numeric" value="' + esc(r.bus || '') + '"></label></div>';
 }
 B.settings = () => {
   $('#back').onclick = () => show('home');
