@@ -1306,7 +1306,7 @@ function roomEd(r) {
   const g = r.gender || '';
   let who;
   if (D.teachers.length) {
-    const leads = D.tAct.filter(t => t.team === '조장팀' && (!r.gender || !t.gender || t.gender === r.gender)).sort(byName);
+    const leads = D.tAct.filter(t => t.team === '조장팀').sort((x, y) => (x.gender || '').localeCompare(y.gender || '') || byName(x, y));
     const cur = r.tid ? D.tById[r.tid] : null;
     if (cur && leads.indexOf(cur) < 0) leads.unshift(cur);
     const label = t => t.name + (t.gender ? ' (' + t.gender + ')' : '') + (tRooms(t).filter(x => x !== String(r.no)).length ? ' · ' + tRooms(t).filter(x => x !== String(r.no)).map(x => x + '조').join('·') + ' 담당 중' : '');
@@ -1344,7 +1344,7 @@ B.settings = () => {
     const del = e.target.closest('[data-rdel]'); if (del) del.closest('.rt').remove();
   };
   rbox.onchange = e => {
-    if (e.target.matches('[data-r=tid]')) { const t = D.tById[e.target.value]; e.target.closest('.rt').querySelector('.tph').textContent = t ? t.phone || '' : ''; }
+    if (e.target.matches('[data-r=tid]')) { const t = D.tById[e.target.value], rt = e.target.closest('.rt'); rt.querySelector('.tph').textContent = t ? t.phone || '' : ''; if (t && (t.gender === '남' || t.gender === '여')) { rt.querySelector('[data-r=gender]').value = t.gender; rt.querySelectorAll('[data-g]').forEach(x => x.setAttribute('aria-pressed', x.dataset.g === t.gender)); } }
     if (e.target.matches('[data-r=name]') && /^\d+$/.test(e.target.value.trim())) e.target.value = e.target.value.trim() + '호';
   };
   const addRows = n => {
