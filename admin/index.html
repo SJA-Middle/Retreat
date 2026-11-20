@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="수련회 운영">
 <title>수련회 운영</title>
 <link rel="icon" href="../logo.png">
-<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="apple-touch-icon" href="../retreat-180.png">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="preconnect" href="https://script.google.com">
@@ -712,7 +712,8 @@ async function togglePay(id, isT, fromSheet) {
 function liveSearch(id, key, t) {
   const q = $('#' + id); if (!q) return;
   const go = () => { clearTimeout(liveSearch.t); liveSearch.t = setTimeout(() => softShow(t, id), 160); };
-  q.oninput = e => { sub[key] = q.value; if (!e.isComposing) go(); };
+  // 한글 입력 중(조합 중)에도 바로 찾는다. 검색창은 다시 그리지 않으므로 글자가 겹치지 않는다
+  q.oninput = () => { sub[key] = q.value; go(); };
   q.oncompositionend = () => { sub[key] = q.value; go(); };
 }
 function softShow(t, id) {
