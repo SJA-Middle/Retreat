@@ -131,6 +131,10 @@ nav.tabs button[aria-current="page"] svg { stroke: var(--night); }
 .room .no small { font-family: var(--body); font-size: 15px; font-weight: 700; margin-left: 1px; }
 .room .meta { flex: 1; min-width: 0; font-size: 14px; color: var(--sub); line-height: 1.4; }
 .room .meta b { color: var(--ink); font-size: 15px; }
+.wl .dupw { flex-wrap: wrap; }
+.wl .pick { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 6px; }
+.wl .pick .muted { font-size: 13px; margin-right: 4px; }
+.wl .pick small { color: var(--sub); font-weight: 500; margin-left: 4px; }
 .sharebar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .sharebar .btn { display: inline-flex; align-items: center; gap: 6px; }
 .sharebar .btn svg { width: 18px; height: 18px; }
@@ -1022,12 +1026,14 @@ function person(id) {
   const p = D.byId[id]; if (!p) return;
   openId = id;
   const r = p.room && D.rmap[p.room];
-  const fr = [p.w1, p.w2, p.w3].filter(Boolean);
+  const fk = ['w1', 'w2', 'w3'].filter(k => p[k]), fr = fk.map(k => p[k]);
   const ws = p.ws || [];
   const friendLine = (raw, i) => {
     const s = ws[i] || [], hit = s[0] === 'ok' && D.byId[s[1]];
     if (s[0] === 'unreg') return '<li><span class="tag dim">미등록</span><span class="muted">' + esc(raw.split(' / ').join(' · ')) + '</span></li>';
-    if (!hit) return '<li><span class="tag lamp">' + (s[0] === 'gender' ? '이성 친구' : s[0] === 'dup' ? '누군지 확인 필요' : '확인 필요') + '</span>' + esc(raw.split(' / ').join(' · ')) + '</li>';
+    if (s[0] === 'dup') return '<li class="dupw"><span class="tag lamp">같은 이름 ' + (s[2] || []).length + '명</span>' + esc(raw.split(' / ').join(' · ')) +
+      '<div class="pick">' + (isAdmin() ? '<span class="muted">누구인지 골라 주세요</span>' + (s[2] || []).map(id => D.byId[id]).filter(Boolean).map(q => '<button class="btn small light" data-wpick="' + fk[i] + '|' + q.id + '">' + esc(q.name) + ' <small>' + esc([q.school, q.grade, q.phone ? '…' + String(q.phone).slice(-4) : ''].filter(Boolean).join(' · ')) + '</small></button>').join('') : '<span class="muted">관리자가 누구인지 골라야 해요</span>') + '</div></li>';
+    if (!hit) return '<li><span class="tag lamp">' + (s[0] === 'gender' ? '이성 친구' : '확인 필요') + '</span>' + esc(raw.split(' / ').join(' · ')) + '</li>';
     const same = hit.room && hit.room === p.room;
     return '<li><span class="tag ' + (same ? 'ok' : 'lamp') + '">' + (same ? '같은 조' : (hit.room ? hit.room + '조' : '미배정')) + '</span><button class="link" data-go="' + hit.id + '">' + esc(raw.split(' / ').join(' · ')) + '</button></li>';
   };
@@ -1050,6 +1056,11 @@ function person(id) {
       '<button class="btn light" id="pDel" style="color:var(--alert)">신청 삭제</button></div>' : '');
   openSheet(html);
   $$('#sheetIn [data-go]').forEach(b => b.onclick = () => person(b.dataset.go));
+  $$('#sheetIn [data-wpick]').forEach(b => b.onclick = async () => {
+    const [key, pick] = b.dataset.wpick.split('|');
+    const r = await run(() => call('wishPick', { id: p.id, key, pick }), (D.byId[pick] || {}).name + '(으)로 정했어요');
+    if (r) { set(r); person(p.id); }
+  });
   if (!isAdmin()) return;
   const mv = $('#mv');
   if (mv) mv.onchange = async () => { const r2 = await run(() => call('move', { id, room: mv.value }), mv.value ? mv.value + '조로 옮겼어요' : '미배정으로 바꿨어요'); if (r2) set(r2); else mv.value = p.room; };
