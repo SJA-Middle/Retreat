@@ -135,6 +135,8 @@ nav.tabs button[aria-current="page"] svg { stroke: var(--night); }
 .wl .pick { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 6px; }
 .wl .pick .muted { font-size: 13px; margin-right: 4px; }
 .wl .pick small { color: var(--sub); font-weight: 500; margin-left: 4px; }
+.cvbtn { font-size: 13px; font-weight: 700; color: var(--lantern-deep); padding: 2px 0; }
+.cvlist .prow[aria-pressed=true] { outline: 2px solid var(--pine); }
 .sharebar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .sharebar .btn { display: inline-flex; align-items: center; gap: 6px; }
 .sharebar .btn svg { width: 18px; height: 18px; }
@@ -142,17 +144,6 @@ nav.tabs button[aria-current="page"] svg { stroke: var(--night); }
 .buspanel .sharebar { margin: 10px 0 4px; }
 .room .bustag { font-size: 12px; padding: 1px 7px; margin-left: 4px; vertical-align: 1px; }
 .plan { margin-bottom: 12px; }
-.plist summary { color: var(--night, #17214A); }
-.plr { background: var(--snow); border-radius: 12px; padding: 10px 12px; margin-top: 8px; }
-.plr.m { border-left: 4px solid #3D64C2; } .plr.f { border-left: 4px solid #BC4A74; }
-.plr > b { font-size: 15px; } .plr > .muted { font-size: 12.5px; }
-.plr .mem { margin-top: 6px; }
-.plan .sharebar { margin: 0 0 10px; }
-.cplist { display: flex; flex-direction: column; gap: 8px; }
-.cpick { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; text-align: left; width: 100%; padding: 12px 14px; border: 1px solid var(--line, #E1E5EE); border-radius: 12px; background: #fff; font: inherit; cursor: pointer; }
-.cpick .muted { flex-basis: 100%; font-size: 13px; }
-.cpick.on { border-color: var(--pine, #2E6E5C); background: #EEF6F2; }
-.cvbtn { margin-top: 4px; font-size: 13px; }
 .plan .ph { display: flex; align-items: center; gap: 8px; font-size: 17px; margin-bottom: 4px; }
 .plan > .muted { font-size: 14px; margin-bottom: 10px; }
 .pstat { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; margin-bottom: 10px; }
@@ -164,6 +155,19 @@ nav.tabs button[aria-current="page"] svg { stroke: var(--night); }
 .plan details { margin-bottom: 12px; }
 .plan summary { cursor: pointer; font-size: 14px; font-weight: 700; color: var(--sub); padding: 4px 0; }
 .pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 6px; margin-top: 8px; font-size: 13px; }
+.pfull { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px; margin-top: 8px; }
+.pfull .pr { background: var(--snow); border-radius: 10px; padding: 10px 12px; border-top: 3px solid var(--line); }
+.pfull .pr.m { border-top-color: var(--boy); }
+.pfull .pr.f { border-top-color: var(--girl); }
+.pfull .ph2 { font-size: 14px; }
+.pfull .ph2 .muted { font-size: 12.5px; }
+.pfull .pg { font-size: 12px; color: var(--sub); margin: 2px 0 6px; }
+.pfull .pm { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 14px; }
+.pfull .pm span { white-space: nowrap; }
+.pfull .pm small { color: var(--sub); font-size: 11.5px; }
+.psave { margin-bottom: 8px; display: grid; grid-template-columns: 2fr 1fr; gap: 6px; }
+.psave .btn { display: flex; align-items: center; justify-content: center; gap: 6px; }
+.psave svg { width: 18px; height: 18px; }
 .pgrid .nw { white-space: nowrap; margin-right: 4px; }
 .pgrid > div { background: var(--snow); border-radius: 8px; padding: 6px 8px; }
 .room .cnt { font-weight: 800; font-variant-numeric: tabular-nums; font-size: 15px; }
@@ -620,10 +624,10 @@ V.home = () => {
 };
 B.home = () => {
   $$('.issues li').forEach(li => li.onclick = () => {
-    if (li.dataset.t === 'tlate' && li.dataset.room && isAdmin()) coverPick(li.dataset.room);
-    else if (li.dataset.id) person(li.dataset.id);
+    if (li.dataset.id) person(li.dataset.id);
     else if (li.dataset.t === 'bus') show('bus');
     else if (li.dataset.t === 'tteam') { sub.who = 'tch'; sub.tflt = 'all'; sub.tpay = false; sub.tteam = 'none'; show('list'); }
+    else if (li.dataset.t === 'tlate' && isAdmin()) coverSheet(li.dataset.room);
     else if (li.dataset.room) { sub.roomG = D.rmap[li.dataset.room] ? D.rmap[li.dataset.room].gender : ''; show('rooms'); }
   });
   const mi = $('#moreIss'); if (mi) mi.onclick = () => { sub.allIss = 1; show('home', true); };
@@ -775,15 +779,14 @@ V.rooms = () => {
   const card = r => {
     const m = (mem[r.no] || []).slice().sort((a, b) => a.grade.localeCompare(b.grade) || a.name.localeCompare(b.name, 'ko'));
     const pct = Math.min(100, m.length / r.cap * 100);
-    return '<div class="room ' + gcls(r.gender) + '"><div class="hd"><div class="no">' + esc(r.no) + '<small>조</small></div><div class="meta"><b>' + esc(r.name || '숙소 미정') + '</b>' + (busOf[r.no] ? ' <span class="tag dim bustag">' + busOf[r.no] + '호차</span>' : (m.length ? ' <span class="tag lamp bustag">버스 자리 없음</span>' : '')) + '<br>담당 ' + esc(r.teacher || '미정') + (r.tphone ? ' ' + tel(r.tphone) : '') + (r.cover ? '<br><span class="muted">먼저 맡음 ' + esc(r.cover) + '</span>' + (isAdmin() ? ' <button class="link cvbtn" data-cover="' + esc(r.no) + '">바꾸기</button>' : '')
-      : (isAdmin() && D.tById[r.tid] && !isMainT(D.tById[r.tid]) ? '<br><button class="link cvbtn" data-cover="' + esc(r.no) + '">먼저 맡을 선생님 정하기 ›</button>' : '')) + '</div><div class="cnt">' + m.length + '/' + r.cap + '</div></div>' +
+    return '<div class="room ' + gcls(r.gender) + '"><div class="hd"><div class="no">' + esc(r.no) + '<small>조</small></div><div class="meta"><b>' + esc(r.name || '숙소 미정') + '</b>' + (busOf[r.no] ? ' <span class="tag dim bustag">' + busOf[r.no] + '호차</span>' : (m.length ? ' <span class="tag lamp bustag">버스 자리 없음</span>' : '')) + '<br>담당 ' + esc(r.teacher || '미정') + (r.tphone ? ' ' + tel(r.tphone) : '') + (r.cover ? '<br><span class="muted">먼저 맡음 ' + esc(r.cover) + '</span>' : '') + (lateLead(r) && isAdmin() ? '<br><button class="link cvbtn" data-cover="' + esc(r.no) + '">' + (r.cid ? '먼저 맡는 선생님 바꾸기' : '⚠︎ 먼저 맡아 줄 선생님 정하기') + '</button>' : '') + '</div><div class="cnt">' + m.length + '/' + r.cap + '</div></div>' +
       '<div class="bar' + (m.length > r.cap ? ' over' : '') + '"><i style="width:' + pct + '%"></i></div>' +
       (m.length ? '<div class="mem">' + m.map(memBtn).join('') + '</div>' : '<p class="muted">아직 아무도 없어요.</p>') + '</div>';
   };
   return '<div class="chips" role="group">' + [['', '전체'], ['남', '남학생'], ['여', '여학생']].map(x => '<button data-g="' + x[0] + '" aria-pressed="' + (g === x[0]) + '">' + x[1] + '</button>').join('') + '</div>' +
     '<div class="box sec" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"><div style="flex:1;min-width:180px"><b>희망 친구 반영</b><div class="muted">희망을 적은 ' + rep.wishers + '명 중 ' + rep.happy + '명이 친구와 같은 조, 희망 ' + rep.total + '건 중 ' + rep.hit + '건 반영' + (rep.unreg ? ' · 미등록 친구 ' + rep.unreg + '건은 빼고 셌어요' : '') + '</div></div>' +
     (isAdmin() ? '<button class="btn" id="auto">자동 배정</button><div class="muted" style="flex-basis:100%;font-size:13px">자동 배정은 경우의 수를 2~3가지 보여 드려요. 하나를 고르면 버스도 그 조에 맞춰 바로 배차돼요.</div>' : '') + '</div>' +
-    '<div class="sharebar sec"><button class="btn light" id="shareRooms">' + ic('down', 2) + '조 편성표 이미지 저장</button><button class="btn light" id="shareRoomsPdf">' + ic('down', 2) + 'PDF (인쇄용)</button><span class="muted">A4 크기로 만들어요. 길면 여러 쪽으로 나눠요.</span></div>' +
+    '<div class="sec">' + shareBtns('shareRooms', '조 편성표') + '</div>' +
     '<div class="legend"><span><i class="dot" style="background:var(--pine)"></i>희망 친구와 같은 조</span><span><i class="dot" style="background:var(--lantern-deep)"></i>희망 친구와 다른 조</span>' + (isAdmin() ? '<span>이름을 누르면 조를 옮길 수 있어요</span>' : '') + '</div>' +
     (none.length ? '<div class="room none sec"><div class="hd"><div class="meta"><b>조 미배정</b><br>' + none.length + '명</div></div><div class="mem">' + none.map(memBtn).join('') + '</div></div>' : '') +
     '<div class="rooms">' + rooms.map(card).join('') + '</div>';
@@ -798,12 +801,12 @@ function memBtn(p) {
   return '<button data-id="' + p.id + '">' + w + '<span class="n">' + esc(p.name) + '</span><span class="ds">' + esc(memInfo(p)) + '</span></button>';
 }
 B.rooms = () => {
+  $$('[data-cover]').forEach(b => b.onclick = e => { e.stopPropagation(); coverSheet(b.dataset.cover); });
   $$('.chips button').forEach(b => b.onclick = () => { sub.roomG = b.dataset.g; show('rooms', true); });
   $$('.mem button').forEach(b => b.onclick = () => person(b.dataset.id));
   const tr = $('#toRooms'); if (tr) tr.onclick = () => { show('settings'); setTimeout(() => { const e = $('#roomsBox'); if (e) e.scrollIntoView(); }, 50); };
   const sr = $('#shareRooms'); if (sr) sr.onclick = () => saveShare('rooms', sr);
-  const srp = $('#shareRoomsPdf'); if (srp) srp.onclick = () => saveShare('rooms', srp, 'pdf');
-  $$('[data-cover]').forEach(b => b.onclick = e => { e.stopPropagation(); coverPick(b.dataset.cover); });
+  const srp = $('#shareRoomsPdf'); if (srp) srp.onclick = () => saveShare('rooms', srp, null, null, 'pdf');
   const au = $('#auto'); if (au) au.onclick = async () => {
     au.disabled = true; au.textContent = '경우의 수 만드는 중…';
     const r = await run(() => call('autoPlans'));
@@ -812,85 +815,76 @@ B.rooms = () => {
   };
 };
 
-/** 선생님께 보낼 그림(조 편성표·버스 배차표) 저장: A4 쪽 단위, 이미지 또는 PDF */
+/** 선생님께 보낼 이미지(조 편성표·버스 배차표) 저장 */
 let shareLoad = null;
-async function loadShare() {
-  if (window.shareImage && window.shareImage.pdf) return;
-  shareLoad = shareLoad || new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'share.js?v=2'; s.onload = res; s.onerror = () => { shareLoad = null; rej(new Error('그림 도구를 불러오지 못했어요. 다시 눌러 주세요.')); }; document.head.appendChild(s); });
-  await shareLoad;
-}
-async function saveShare(kind, btn, fmt, data, opt) {
+async function saveShare(kind, btn, data, opt, fmt) {
+  opt = opt || {};
   const old = btn.innerHTML; btn.disabled = true; btn.textContent = fmt === 'pdf' ? 'PDF 만드는 중…' : '그림 만드는 중…';
   try {
-    await loadShare();
-    const S = window.shareImage;
-    const pages = await S[kind](data || D, opt);
+    if (!window.shareImage) {
+      shareLoad = shareLoad || new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'share.js?v=3'; s.onload = res; s.onerror = () => { shareLoad = null; rej(new Error('그림 도구를 불러오지 못했어요. 다시 눌러 주세요.')); }; document.head.appendChild(s); });
+      await shareLoad;
+    }
+    const pages = await window.shareImage[kind](data || D, opt);
     if (!pages || !pages.length) throw new Error('그림을 만들지 못했어요.');
     const d = new Date(), md = (d.getMonth() + 1) + '월' + d.getDate() + '일';
-    const base = (kind === 'rooms' ? '조편성표' : '버스배차표') + (opt && opt.label ? '_' + String(opt.label).replace(/[\\/:*?"<>|\s·]+/g, '') : '') + '_' + md;
-    const files = fmt === 'pdf' ? [new File([await S.pdf(pages)], base + '.pdf', { type: 'application/pdf' })]
-      : await Promise.all(pages.map(async (cv, i) => new File([await S.png(cv)], base + (pages.length > 1 ? '_' + (i + 1) + '쪽' : '') + '.png', { type: 'image/png' })));
+    const base = (opt.file || (kind === 'rooms' ? '조편성표' : '버스배차표')) + '_' + md;
+    const files = fmt === 'pdf' ? [await window.shareImage.toPdf(pages, base)] : await window.shareImage.toPngs(pages, base);
     const touch = matchMedia('(pointer: coarse)').matches;
     if (touch && navigator.canShare && navigator.canShare({ files })) {
       try { await navigator.share({ files }); return; } catch (e) { if (e && e.name === 'AbortError') return; }
     }
-    for (const f of files) {
-      const url = URL.createObjectURL(f), el = document.createElement('a');
-      el.href = url; el.download = f.name; document.body.appendChild(el); el.click(); el.remove();
+    files.forEach((f, k) => setTimeout(() => {
+      const url = URL.createObjectURL(f), a = document.createElement('a');
+      a.href = url; a.download = f.name; document.body.appendChild(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 60000);
-      await new Promise(r => setTimeout(r, 400));
-    }
-    toast((fmt === 'pdf' ? 'PDF를' : '그림 ' + files.length + '장을') + ' 저장했어요 · A4 ' + pages.length + '쪽');
+    }, k * 400));
+    toast((fmt === 'pdf' ? 'PDF를 저장했어요 · A4 ' + pages.length + '쪽' : '이미지 ' + files.length + '장을 저장했어요 · A4'));
   } catch (e) { toast(e.message || '그림을 만들지 못했어요.'); }
   finally { btn.disabled = false; btn.innerHTML = old; }
 }
+/** 이미지·PDF 저장 버튼 한 쌍 */
+const shareBtns = (id, label) => '<div class="sharebar"><button class="btn light" id="' + id + '">' + ic('down', 2) + label + ' 이미지</button><button class="btn light" id="' + id + 'Pdf">' + ic('down', 2) + label + ' PDF</button><span class="muted">A4 크기로 저장돼요. 인쇄는 PDF가 편해요.</span></div>';
 
-/** 자동 배정 안 하나를 지금 데이터처럼 바꿔 본다 (화면·그림용, 저장하지 않음) */
+/** 담당 선생님이 늦게 오는 조인가 */
+const lateLead = r => { const t = r && D.tById[r.tid]; return !!(t && !isMainT(t)); };
+/** 조를 기준으로 '먼저 맡아 줄 선생님' 고르기: 처음부터 오는 선생님 중에서 한 번 눌러 정한다 */
+function coverSheet(no) {
+  const r = D.rmap[no]; if (!r) return;
+  const lead = D.tById[r.tid], cur = D.tById[r.cid];
+  const L = D.tAct.filter(t => isMainT(t) && t.id !== r.tid).sort((a, b) =>
+    (b.gender === r.gender) - (a.gender === r.gender) || (!tCover(a).length && !tRooms(a).length ? -1 : 0) - (!tCover(b).length && !tRooms(b).length ? -1 : 0) || a.name.localeCompare(b.name, 'ko'));
+  const busy = t => [tRooms(t).length ? tRooms(t).map(x => x + '조').join('·') + ' 담당' : '', tCover(t).length ? tCover(t).map(x => x + '조').join('·') + ' 먼저 맡음' : ''].filter(Boolean).join(' · ');
+  openSheet('<div class="grab"><h2>' + esc(r.no) + '조 먼저 맡아 줄 선생님</h2><button class="x" aria-label="닫기">×</button></div>' +
+    '<div class="box"><p style="margin:0">' + esc(r.no) + '조 ' + esc(r.name || '') + ' · 담당 <b>' + esc(lead ? lead.name : r.teacher || '미정') + '</b> 선생님은 <b>' + esc(lead ? shortArr(lead.arrive) : '') + '</b>에 와요.<br>그 전까지 이 조를 챙겨 줄 선생님을 골라 주세요. 처음부터 오는 선생님만 보여요.</p>' +
+    (cur ? '<p style="margin:10px 0 0">지금: <b>' + esc(cur.name) + '</b> 선생님 <button class="btn small light" id="cvClear">빼기</button></p>' : '') + '</div>' +
+    '<div class="plist cvlist">' + L.map(t => '<button class="prow" data-cvpick="' + t.id + '"' + (cur === t ? ' aria-pressed="true"' : '') + '>' + teamBadge(t) +
+      '<span class="mid"><span class="nm">' + esc(t.name) + gmark(t.gender) + (t.gender && r.gender && t.gender !== r.gender ? ' <span class="tag dim">' + (r.gender === '남' ? '남학생' : '여학생') + ' 조와 성별 다름</span>' : '') + '</span><br><span class="ds">' + esc(busy(t) || '맡은 조 없음') + '</span></span>' +
+      '<span class="end">' + (cur === t ? '<span class="tag ok">지금 맡음</span>' : '<span class="tag dim">고르기</span>') + '</span></button>').join('') + '</div>');
+  const save = async (t, add) => {
+    const cv = tCover(t).filter(x => x !== String(no)).concat(add ? [String(no)] : []);
+    const res = await run(() => call('teacherSave', { id: t.id, fields: { cover: cv } }), add ? r.no + '조는 ' + t.name + ' 선생님이 먼저 맡아요' : r.no + '조 먼저 맡는 선생님을 뺐어요');
+    if (res) { closeSheet(); set(res); }
+  };
+  $$('#sheetIn [data-cvpick]').forEach(b => b.onclick = () => { const t = D.tById[b.dataset.cvpick]; if (t && t !== cur) save(t, true); });
+  const cc = $('#cvClear'); if (cc) cc.onclick = () => save(cur, false);
+}
+
+/** 경우의 수 한 안을 적용했다고 치고 만든 자료 (저장하지 않음) */
 function planData(x) {
-  const ro = x.roomOf || {}, byName = {};
-  D.act.forEach(q => (byName[q.name] = byName[q.name] || []).push(q.id));
-  const ids = p => (p.wk || []).map(v => D.byId[v] ? v : (byName[v] || [])[0]).filter(Boolean);
-  const act = D.act.map(p => { const room = ro[p.id] || ''; const wk = ids(p); return Object.assign({}, p, { room, wk, wh: wk.filter(id => room && ro[id] === room) }); });
+  const act = D.act.map(p => Object.assign({}, p, { room: x.roomOf[p.id] || '' }));
   return Object.assign({}, D, { act, rep: Object.assign({}, D.rep, { buses: [] }) });
 }
-function planList(x) {
-  const Q = planData(x), mem = {};
-  Q.act.forEach(p => { if (p.room && D.rmap[p.room]) (mem[p.room] = mem[p.room] || []).push(p); });
-  const rooms = D.rooms.slice().sort((p, q) => (p.gender === q.gender ? 0 : p.gender === '여' ? -1 : 1) || (parseFloat(p.no) || 0) - (parseFloat(q.no) || 0));
-  const none = Q.act.filter(p => !p.room || !D.rmap[p.room]);
-  return rooms.map(r => {
-    const m = (mem[r.no] || []).sort((p, q) => String(p.grade).localeCompare(String(q.grade)) || p.name.localeCompare(q.name, 'ko'));
-    return '<div class="plr ' + gcls(r.gender) + '"><b>' + esc(r.no) + '조</b> <span class="muted">' + esc([r.name, m.length + '/' + r.cap + '명', r.teacher ? '담당 ' + r.teacher : ''].filter(Boolean).join(' · ')) + '</span><div class="mem">' + (m.length ? m.map(memBtn).join('') : '<span class="muted">아무도 없어요</span>') + '</div></div>';
-  }).join('') + (none.length ? '<div class="plr"><b>조 미배정</b> <span class="muted">' + none.length + '명</span><div class="mem">' + none.map(memBtn).join('') + '</div></div>' : '');
-}
-
-/** 담당 선생님이 늦게 오는 조: 먼저 맡아 줄 선생님 고르기 */
-function coverPick(no) {
-  const r = D.rmap[no]; if (!r) { show('rooms'); return; }
-  const lead = D.tById[r.tid];
-  const cands = D.tAct.filter(t => isMainT(t) && t.id !== r.tid && (!t.gender || !r.gender || t.gender === r.gender))
-    .sort((p, q) => (q.team === '조장팀') - (p.team === '조장팀') || tRooms(p).length - tRooms(q).length || p.name.localeCompare(q.name, 'ko'));
-  const row = t => {
-    const rs = tRooms(t), cv = tCover(t);
-    const note = [t.team || '팀 미정', rs.length ? '담당 ' + rs.join('·') + '조' : '맡은 조 없음', cv.length ? '먼저 맡음 ' + cv.join('·') + '조' : '', onBusT(t) ? '교회 버스' : moveLabel(t)].filter(Boolean).join(' · ');
-    return '<button type="button" class="cpick' + (r.cid === t.id ? ' on' : '') + '" data-t="' + esc(t.id) + '"><b>' + esc(t.name) + '</b>' + (t.gender ? '<span class="tag ' + gcls(t.gender) + '">' + esc(t.gender) + '</span>' : '') + (r.cid === t.id ? '<span class="tag ok">지금 맡음</span>' : '') + '<span class="muted">' + esc(note) + '</span></button>';
-  };
-  openSheet('<div class="grab"><h2>' + esc(no) + '조 먼저 맡아 줄 선생님</h2><button class="x" aria-label="닫기">×</button></div>' +
-    '<p class="muted" style="margin:0 2px 12px">' + (lead ? esc(lead.name) + ' 선생님이 ' + esc(shortArr(lead.arrive)) + '에 와요. 그때까지 ' : '담당 선생님이 오기 전까지 ') + esc(no) + '조를 맡아 줄 선생님을 눌러 주세요. 처음부터 함께 가는 선생님만 보여요.</p>' +
-    (cands.length ? '<div class="cplist">' + cands.map(row).join('') + '</div>' : '<div class="box empty"><b>고를 수 있는 선생님이 없어요</b>처음부터 가는 선생님이 신청하면 여기에 보여요.</div>') +
-    (r.cid ? '<button class="btn light block" id="cpClear" style="margin-top:12px">먼저 맡을 선생님 비우기</button>' : ''));
-  $$('#sheetIn .cpick').forEach(b => b.onclick = async () => {
-    const t = D.tById[b.dataset.t]; if (!t || t.id === r.cid) { closeSheet(); return; }
-    const cover = tCover(t).filter(x => String(x) !== String(no)).concat([String(no)]);
-    const r2 = await run(() => call('teacherSave', { id: t.id, fields: { cover } }), t.name + ' 선생님이 ' + no + '조를 먼저 맡아요');
-    if (r2) { closeSheet(); set(r2); }
+function planRooms(x) {
+  const mem = {}; D.act.forEach(p => { const no = x.roomOf[p.id]; if (no) (mem[no] = mem[no] || []).push(p); });
+  const cmp = (a, b) => (parseFloat(a.no) || 0) - (parseFloat(b.no) || 0);
+  return D.rooms.slice().sort(cmp).map(r => {
+    const m = (mem[r.no] || []).slice().sort((a, b) => String(a.grade).localeCompare(String(b.grade)) || a.name.localeCompare(b.name, 'ko'));
+    const c = {}; m.forEach(q => { const g = String(q.grade || '').replace('학년', ''); if (g) c[g] = (c[g] || 0) + 1; });
+    return { r, m, g: Object.keys(c).sort().map(k => '중' + k + ' ' + c[k] + '명').join(' · ') };
   });
-  const cc = $('#cpClear'); if (cc) cc.onclick = async () => {
-    const t = D.tById[r.cid]; if (!t) return;
-    const r2 = await run(() => call('teacherSave', { id: t.id, fields: { cover: tCover(t).filter(x => String(x) !== String(no)) } }), no + '조 먼저 맡을 선생님을 비웠어요');
-    if (r2) { closeSheet(); set(r2); }
-  };
 }
+const planNone = x => D.act.filter(p => !x.roomOf[p.id]);
 
 /** 자동 배정 경우의 수 고르기 */
 function planSheet(plans) {
@@ -902,16 +896,18 @@ function planSheet(plans) {
     '<span>희망 반영<b>' + x.hit + '/' + x.total + '건</b>' + diff(x.hit, f.hit, '건') + '</span>' +
     '<span>버스<b>' + x.buses + '대</b>' + (x.busLeft ? ' <small class="down">자리 없음 ' + x.busLeft + '명</small>' : '') + '</span>' +
     (x.none ? '<span>조 미배정<b class="bad">' + x.none + '명</b></span>' : '') + '</div>' +
-    '<details><summary>조별 학년 구성 보기</summary><div class="pgrid">' + x.rooms.map(y => '<div><b>' + esc(y.no) + '조</b> ' + y.n + '명<br><span class="muted">' + (y.g ? y.g.split(' · ').map(z => '<span class="nw">' + esc(z.replace(' ', ' ') + '명') + '</span>').join(' ') : '—') + '</span></div>').join('') + '</div></details>' +
-    '<details class="plist"><summary>전체 명단 보기 (조별 이름)</summary>' + planList(x) + '</details>' +
-    '<div class="sharebar"><button class="btn light" data-pimg="' + i + '">' + ic('down', 2) + '이 안 명단 이미지</button><button class="btn light" data-ppdf="' + i + '">' + ic('down', 2) + 'PDF</button></div>' +
+    '<details><summary>조별 전체 명단 보기</summary><div class="pfull">' + planRooms(x).map(y => '<div class="pr ' + gcls(y.r.gender) + '"><div class="ph2"><b>' + esc(y.r.no) + '조</b> ' + esc(y.r.name || '') + '<span class="muted"> · ' + esc(y.r.teacher || '담당 미정') + ' · ' + y.m.length + '명</span></div>' +
+      '<div class="pg">' + esc(y.g || '') + '</div><div class="pm">' + y.m.map(q => '<span><b>' + esc(q.name) + '</b> <small>' + esc(memInfo(q)) + '</small></span>').join('') + '</div></div>').join('') +
+      (planNone(x).length ? '<div class="pr"><div class="ph2"><b>조 미배정</b></div><div class="pm">' + planNone(x).map(q => '<span><b>' + esc(q.name) + '</b> <small>' + esc(memInfo(q)) + '</small></span>').join('') + '</div></div>' : '') + '</div></details>' +
+    '<div class="psave"><button class="btn light" data-psave="' + i + '">' + ic('down', 2) + '이 안의 전체 명단 이미지</button><button class="btn light" data-psave="' + i + '" data-fmt="pdf">' + ic('down', 2) + 'PDF</button></div>' +
     '<button class="btn block" data-plan="' + i + '">이 안으로 배정하기</button></div>';
   openSheet('<div class="grab"><h2>자동 배정 경우의 수</h2><button class="x" aria-label="닫기">×</button></div>' +
-    '<p class="muted" style="margin:0 2px 12px">' + (plans.length < 3 ? '결과가 똑같은 안은 하나로 합쳤어요. ' : '') + '안마다 전체 명단을 펼쳐 보거나 이미지·PDF로 내려받아 확인할 수 있어요. 하나를 고르면 조가 배정되고, 버스도 그 조에 맞춰 바로 다시 배차돼요.</p>' +
+    '<p class="muted" style="margin:0 2px 12px">' + (plans.length < 3 ? '결과가 똑같은 안은 하나로 합쳤어요. ' : '') + '하나를 고르면 조가 배정되고, 버스도 그 조에 맞춰 바로 다시 배차돼요.</p>' +
     plans.map(card).join(''));
-  const popt = x => ({ label: x.label, sub: '자동 배정 안 · ' + x.label, wish: true, note: '검토용 안이에요. 아직 배정되지 않았어요.', extra: [['친구와 같은 조', x.happy + '/' + x.wishers + '명', '#BFE3D3']] });
-  $$('#sheetIn [data-pimg]').forEach(b => b.onclick = () => { const x = plans[+b.dataset.pimg]; saveShare('rooms', b, 'png', planData(x), popt(x)); });
-  $$('#sheetIn [data-ppdf]').forEach(b => b.onclick = () => { const x = plans[+b.dataset.ppdf]; saveShare('rooms', b, 'pdf', planData(x), popt(x)); });
+  $$('#sheetIn [data-psave]').forEach(b => b.onclick = () => {
+    const x = plans[+b.dataset.psave];
+    saveShare('rooms', b, planData(x), { title: '조 편성 시안', label: x.label, file: '조편성시안_' + x.label.replace(/[^가-힣A-Za-z0-9]/g, ''), note: '아직 확정 전인 시안이에요. 최종 편성은 운영 앱에서 확인해 주세요.' }, b.dataset.fmt);
+  });
   $$('#sheetIn [data-plan]').forEach(b => b.onclick = async () => {
     const x = plans[+b.dataset.plan];
     if (D.act.some(p => p.room) && !await ask('지금 배정을 모두 지우고 "' + x.label + '" 안으로 바꿀까요?\n손으로 옮긴 학생도 다시 배정되고, 버스도 다시 배차돼요.', '이 안으로 배정')) return;
@@ -930,7 +926,7 @@ V.bus = () => {
   const ctl = '<div class="box sec buspanel">' +
     (isAdmin() ? '<div class="busset"><label><span>버스</span><input class="inp" id="bN" inputmode="numeric" value="' + esc(c.buses || '') + '" placeholder="자동"><b>대</b></label><span class="x">×</span><label><span>좌석</span><input class="inp" id="bS" inputmode="numeric" value="' + esc(c.seats || 45) + '"><b>석</b></label><button class="btn" id="bSave">다시 배차</button></div>'
       : '<p><b>버스 ' + (c.buses ? c.buses + '대' : rep.buses.length + '대 (자동)') + '</b> · ' + (c.seats || 45) + '인승</p>') +
-    (rep.buses.length ? '<div class="sharebar"><button class="btn light" id="shareBus">' + ic('down', 2) + '배차표 이미지 저장</button><button class="btn light" id="shareBusPdf">' + ic('down', 2) + 'PDF (인쇄용)</button><span class="muted">A4 크기로 만들어요. 길면 여러 쪽으로 나눠요.</span></div>' : '') +
+    (rep.buses.length ? shareBtns('shareBus', '배차표') : '') +
     '<div class="busnum"><span>탈 사람 <b>' + (used + nLeft) + '</b>명</span><span>좌석 <b>' + rep.buses.length * rep.seat + '</b>석</span>' + (nLeft ? '<span class="bad">자리 없음 <b>' + nLeft + '</b>명</span>' : '<span class="good">모두 탈 수 있어요</span>') + '</div>' +
     '<p class="muted">순서: 버스 지정한 조 → 조와 담당 선생님은 같은 버스 → ' + (c.buses ? '버스마다 고르게' : '버스를 꽉 채워서') + ' → 조 미배정 학생 → 나머지 선생님은 버스마다 고르게. 버스 대수를 비우면 필요한 만큼 늘려요.</p></div>';
   if (!rep.buses.length) return ctl + '<div class="box empty"><b>버스에 탈 사람이 아직 없어요</b>신청이 들어오면 자동으로 배차돼요.</div>' + departures();
@@ -969,7 +965,7 @@ const brow = b => x => {
 B.bus = () => {
   $$('#v [data-tid]').forEach(b => b.onclick = () => teacher(b.dataset.tid));
   const sb = $('#shareBus'); if (sb) sb.onclick = () => saveShare('buses', sb);
-  const sbp = $('#shareBusPdf'); if (sbp) sbp.onclick = () => saveShare('buses', sbp, 'pdf');
+  const sbp = $('#shareBusPdf'); if (sbp) sbp.onclick = () => saveShare('buses', sbp, null, null, 'pdf');
   const bs = $('#bSave'); if (bs) bs.onclick = async () => {
     const r = await run(() => call('cfgSave', { cfg: { buses: $('#bN').value.trim(), seats: $('#bS').value.trim() || '45' } }), '버스를 다시 배차했어요');
     if (r) set(r);
