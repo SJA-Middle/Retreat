@@ -629,7 +629,7 @@ V.list = () => {
     if (fl === 'health') return !!p.health;
     return true;
   });
-  if (q) L = L.filter(p => [p.name, p.school, p.gname, p.phone, p.gphone, p.dept, p.church, p.grade].join(' ').indexOf(q) >= 0 || digits(p.gphone + p.phone).indexOf(digits(q) || '@') >= 0);
+  if (q) L = L.filter(p => [p.name, p.school, p.gname, p.phone, p.gphone, p.dept, p.church, p.grade].join(' ').indexOf(q) >= 0 || digits(p.gphone + p.phone).indexOf(digits(q).length >= 3 ? digits(q) : '@') >= 0);
   L.sort(sub.sort === 'name' ? byName : byTs);
   const head = seg() + '<div class="search">' + ic('search') + '<input class="inp" id="q" type="search" placeholder="' + (pay ? '입금자 이름(학생·보호자)이나 전화번호로 찾기' : '이름, 학교, 전화번호로 찾기') + '" value="' + esc(q) + '"></div>' +
     '<div class="opts">' + sel('oSort', [['ts', '신청순'], ['name', '이름순']], sub.sort || 'ts') + sel('oDept', DEPT_OPTS, sub.dept || '') + sel('oSg', [['', '남녀 전체'], ['남', '남학생'], ['여', '여학생']], sub.sg || '') + '</div>' +
@@ -678,6 +678,29 @@ async function togglePay(id, isT, fromSheet) {
     if (--payBusy === 0 && payLast) { const r = payLast; payLast = null; set(r); }
   }
 }
+/**
+ * 검색창: 글자를 칠 때마다 화면 전체를 다시 그리면 한글 조합이 끊겨 글자가 여러 번 들어가요.
+ * 검색창은 그대로 두고 그 아래(명단)만 바꿔 끼워요. 한글 조합 중에는 기다렸다가 바꿔요.
+ */
+function liveSearch(id, key, t) {
+  const q = $('#' + id); if (!q) return;
+  const go = () => { clearTimeout(liveSearch.t); liveSearch.t = setTimeout(() => softShow(t, id), 160); };
+  q.oninput = e => { sub[key] = q.value; if (!e.isComposing) go(); };
+  q.oncompositionend = () => { sub[key] = q.value; go(); };
+}
+function softShow(t, id) {
+  const v = $('#v'), cur = $('#' + id);
+  if (tab !== t || !cur || !v.contains(cur)) return;
+  const tmp = document.createElement('div'); tmp.innerHTML = V[t]();
+  const nb = tmp.querySelector('#' + id);
+  if (!nb) { show(t, true); return; }
+  const top = (el, root) => { while (el.parentNode !== root) el = el.parentNode; return el; };
+  const keep = top(cur, v), ntop = top(nb, tmp);
+  [...v.children].forEach(c => { if (c !== keep) c.remove(); });
+  let before = true;
+  [...tmp.children].forEach(c => { if (c === ntop) { before = false; return; } before ? v.insertBefore(c, keep) : v.appendChild(c); });
+  B[t]();
+}
 function bindOpts(map) {
   Object.keys(map).forEach(id => { const e = $('#' + id); if (e) e.onchange = () => { sub[map[id]] = e.value; show('list', true); }; });
 }
@@ -687,7 +710,7 @@ B.list = () => {
   $$('[data-pay]').forEach(b => b.onclick = () => togglePay(b.dataset.pay));
   $$('.prow.pay').forEach(r => r.onclick = e => { if (!e.target.closest('[data-pay]')) person(r.dataset.pid); });
   const q = $('#q');
-  q.oninput = () => { sub.q = q.value; const pos = q.selectionStart; show('list', true); const n = $('#q'); n.focus(); n.setSelectionRange(pos, pos); };
+  liveSearch('q', 'q', 'list');
   $$('.chips [data-f]').forEach(b => b.onclick = () => { sub.flt = b.dataset.f; show('list', true); });
   $$('[data-pf]').forEach(b => b.onclick = () => { sub.payf = b.dataset.pf; show('list', true); });
   bindOpts({ oSort: 'sort', oDept: 'dept', oSg: 'sg' });
@@ -872,7 +895,7 @@ function conEd(c) {
     '<input class="inp two" data-f="note" placeholder="비고" value="' + esc(c.note) + '"><button class="link del" style="color:var(--alert)" data-cdel>삭제</button></div>';
 }
 B.phone = () => {
-  const q = $('#cq'); if (q) q.oninput = () => { sub.cq = q.value; const p = q.selectionStart; show('phone', true); const n = $('#cq'); n.focus(); n.setSelectionRange(p, p); };
+  liveSearch('cq', 'cq', 'phone');
   $$('.hcard').forEach(h => h.onclick = () => person(h.dataset.id));
   const e = $('#cEdit'); if (e) e.onclick = () => { sub.editCon = 1; show('phone'); };
   const add = $('#cAdd');
@@ -1061,7 +1084,7 @@ function tlist() {
     if (fl === 'lead') return t.leadHope === '예';
     return true;
   });
-  if (q) base = base.filter(t => [t.name, t.dept, t.phone, t.team, t.ride, t.role].join(' ').indexOf(q) >= 0 || digits(t.phone).indexOf(digits(q) || '@') >= 0);
+  if (q) base = base.filter(t => [t.name, t.dept, t.phone, t.team, t.ride, t.role].join(' ').indexOf(q) >= 0 || digits(t.phone).indexOf(digits(q).length >= 3 ? digits(q) : '@') >= 0);
   const L = base.filter(t => pay ? payPass(t, 'tpayf') : !tm || (tm === 'none' ? !t.team : t.team === tm)).sort(sub.tsort === 'name' ? byName : byTs);
   const A = D.tAct;
   const head = seg() + '<div class="search">' + ic('search') + '<input class="inp" id="tq" type="search" placeholder="이름, 팀, 전화번호로 찾기" value="' + esc(q) + '"></div>' +
@@ -1107,7 +1130,7 @@ function trow(t) {
 }
 function bindTlist() {
   const q = $('#tq');
-  if (q) q.oninput = () => { sub.tq = q.value; const pos = q.selectionStart; show('list', true); const n = $('#tq'); n.focus(); n.setSelectionRange(pos, pos); };
+  liveSearch('tq', 'tq', 'list');
   $$('[data-tf]').forEach(b => b.onclick = () => { sub.tflt = b.dataset.tf; show('list', true); });
   $$('[data-tm]').forEach(b => b.onclick = () => { sub.tteam = b.dataset.tm; show('list', true); });
   $$('[data-pf]').forEach(b => b.onclick = () => { sub.tpayf = b.dataset.pf; show('list', true); });
@@ -1329,7 +1352,10 @@ B.settings = () => {
     let next = nums.length ? Math.max.apply(null, nums) + 1 : 1;
     const g = ($$('.rt [data-r=gender]').slice(-1)[0] || {}).value || '';
     const cap = ($$('.rt [data-r=cap]').slice(-1)[0] || {}).value || '';
-    for (let i = 0; i < n; i++) { const t = document.createElement('div'); t.innerHTML = roomEd({ no: next++, gender: g, cap }); rbox.lastElementChild.before(t.firstChild); }
+    // 숙소 번호도 마지막 조에서 1씩 늘려요 (203호 → 204호 …)
+    const lastRoom = (($$('.rt [data-r=name]').slice(-1)[0] || {}).value || '').trim().match(/^(\d+)\s*호?$/);
+    let room = lastRoom ? +lastRoom[1] + 1 : 0;
+    for (let i = 0; i < n; i++) { const t = document.createElement('div'); t.innerHTML = roomEd({ no: next++, gender: g, cap, name: room ? (room++) + '호' : '' }); rbox.lastElementChild.before(t.firstChild); }
     bindDel();
   };
   $('#rAdd').onclick = () => addRows(1);
