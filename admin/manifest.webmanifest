@@ -1,6 +1,6 @@
 {
-  "name": "중등부 수련회 운영",
-  "short_name": "수련회 운영",
+  "name": "중등부 수련회 관리자앱",
+  "short_name": "수련회 관리자앱",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
