@@ -293,6 +293,12 @@ nav.tabs button[aria-current="page"] svg { stroke: var(--night); }
 .count.team .tchips { flex: 1; min-width: 0; padding: 0; }
 .tchips button { padding: 7px 12px; font-size: 13px; }
 .tchips button.zero { opacity: .55; }
+.tsel.pend { border-color: var(--lantern-deep); background-color: #FFF6DE; }
+#tbar { position: fixed; left: 12px; right: 12px; bottom: calc(78px + env(safe-area-inset-bottom)); z-index: 30; max-width: 600px; margin: 0 auto; background: var(--night); color: #fff; border-radius: 16px; padding: 10px 10px 10px 16px; display: flex; align-items: center; gap: 8px; box-shadow: 0 12px 30px -12px #17214Aaa; }
+#tbar span { flex: 1; font-size: 15px; }
+body.hasbar main { padding-bottom: calc(180px + env(safe-area-inset-bottom)); }
+#tbar .btn.light { background: #ffffff1f; color: #fff; border-color: transparent; }
+#tbar .btn:not(.light) { background: var(--lantern); color: var(--night); border-color: var(--lantern); }
 .prow .end.stack { flex-direction: column; align-items: flex-end; gap: 6px; }
 .prow .end.stack .tagline { display: flex; gap: 4px; }
 .prow .nm .tag { font-size: 12px; padding: 2px 7px; vertical-align: 2px; margin-left: 4px; }
@@ -498,6 +504,7 @@ function set(r) {
   if (openId) { D.byId[openId] ? person(openId) : D.tById[openId] ? teacher(openId) : closeSheet(); }
 }
 function show(t, keep) {
+  if (typeof tbar === 'function' && (t !== 'list' || sub.who !== 'tch')) setTimeout(tbar);
   if (t === 'settings' && !isAdmin()) t = 'home';
   tab = t;
   history.replaceState(null, '', '#' + t);
@@ -978,8 +985,9 @@ function editPerson(id) {
 // ───── 선생님 ─────
 const TEAMS = ['행정팀', '진행팀', '조장팀', '지원팀', '중보팀'];
 const ROLES_ADMIN = ['총괄 디렉터', '회계'], ROLES_TEAM = ['팀장', '팀원'];
-const ROLES = ROLES_ADMIN.concat(ROLES_TEAM);
-const rolesOf = team => team === '행정팀' ? ROLES_ADMIN : team ? ROLES_TEAM : [];
+const ROLES_PRAISE = ['팀장', '팀원', '찬양팀'];
+const ROLES = ROLES_ADMIN.concat(ROLES_PRAISE);
+const rolesOf = team => team === '행정팀' ? ROLES_ADMIN : team === '진행팀' ? ROLES_PRAISE : team ? ROLES_TEAM : [];
 const TEAM_CLS = { '행정팀': 't1', '진행팀': 't2', '조장팀': 't3', '지원팀': 't4', '중보팀': 't5' };
 const teamBadge = t => t.join !== '예' ? '<span class="rb none">취소</span>' : t.team ? '<span class="rb team ' + TEAM_CLS[t.team] + '">' + esc(t.team) + '</span>' : '<span class="rb none">팀 미정</span>';
 /** 이름 옆 직책: 조장팀은 조를 맡으면 'N조 조장', 그 전엔 '팀원' */
@@ -1014,7 +1022,7 @@ function askAmount(name, cur) {
   });
 }
 /** 조마다 실제로 버스에 함께 타는 선생님 */
-/** 팀에 맞는 직책만: 행정팀은 총괄 디렉터·회계, 나머지는 팀장·팀원 */
+/** 팀에 맞는 직책만: 행정팀은 총괄 디렉터·회계, 진행팀은 팀장·팀원·찬양팀, 나머지는 팀장·팀원 */
 function roleOpts(team, cur) {
   const L = rolesOf(team);
   if (!L.length) return '<option value=>팀을 먼저 골라 주세요</option>';
@@ -1066,13 +1074,30 @@ function tlist() {
     '<div class="chips tchips" role="group" aria-label="팀별 보기">' + cnt.map(x => '<button data-tm="' + x[0] + '" aria-pressed="' + (tm === x[0]) + '"' + (!x[2] && x[0] ? ' class="zero"' : '') + '>' + x[1] + ' <b>' + x[2] + '</b>명</button>').join('') + '</div>' +
     (L.length ? '<div class="plist">' + L.map(trow).join('') + '</div>' : '<div class="empty box"><b>찾는 선생님이 없어요</b>검색어나 보기 설정을 바꿔 보세요.</div>');
 }
+// 팀 바로 정하기: 바꾼 것을 모아 두었다가 아래 막대의 '저장'으로 한 번에
+const TPEND = {};
+function tbar() {
+  let bar = $('#tbar');
+  const n = Object.keys(TPEND).length;
+  document.body.classList.toggle('hasbar', !!n && tab === 'list' && sub.who === 'tch');
+  if (!n || tab !== 'list' || sub.who !== 'tch') { if (bar) bar.remove(); return; }
+  if (!bar) { bar = document.createElement('div'); bar.id = 'tbar'; document.body.appendChild(bar); }
+  bar.innerHTML = '<span><b>' + n + '명</b> 팀을 바꿨어요</span><button class="btn light small" id="tbUndo">되돌리기</button><button class="btn small" id="tbSave">한 번에 저장</button>';
+  $('#tbUndo').onclick = () => { Object.keys(TPEND).forEach(k => delete TPEND[k]); show('list', true); };
+  $('#tbSave').onclick = async () => {
+    const list = Object.keys(TPEND).map(id => ({ id, team: TPEND[id] }));
+    $('#tbSave').disabled = true;
+    const r = await run(() => call('teamsSave', { list }), list.length + '명 팀을 저장했어요');
+    if (r) { Object.keys(TPEND).forEach(k => delete TPEND[k]); set(r); } else if ($('#tbSave')) $('#tbSave').disabled = false;
+  };
+}
 function trow(t) {
   const rt = roleText(t), cv = tCover(t);
   return '<div class="prow' + (t.join !== '예' ? ' off' : '') + '" role="button" tabindex="0" data-tid="' + t.id + '">' + teamBadge(t) +
-    '<span class="mid"><span class="nm">' + esc(t.name) + gmark(t.gender) + (rt ? ' <span class="tag ' + (/디렉터|회계|팀장/.test(rt) ? 'lamp' : /조장/.test(rt) ? gcls(t.gender) : 'dim') + '">' + esc(rt) + '</span>' : '') + '</span><br><span class="ds">' +
+    '<span class="mid"><span class="nm">' + esc(t.name) + gmark(t.gender) + (rt ? ' <span class="tag ' + (/디렉터|회계|팀장/.test(rt) ? 'lamp' : /조장/.test(rt) ? gcls(t.gender) : rt === '찬양팀' ? 'ok' : 'dim') + '">' + esc(rt) + '</span>' : '') + '</span><br><span class="ds">' +
     esc([t.dept, shortArr(t.arrive), t.move === '자차' || t.move === '카풀' || t.move === '대중교통' ? t.move : '', cv.length ? cv.map(x => x + '조').join('·') + ' 대신' : ''].filter(Boolean).join(' · ')) + '</span></span>' +
     '<span class="end stack">' + (t.leadHope === '예' && !t.team || t.health ? '<span class="tagline">' + (t.leadHope === '예' && !t.team ? '<span class="tag ok">조장 희망</span>' : '') + (t.health ? '<span class="tag lamp">건강</span>' : '') + '</span>' : '') +
-    (isAdmin() && t.join === '예' ? '<select class="tsel" data-tteam="' + t.id + '" aria-label="' + esc(t.name) + ' 팀">' + '<option value="">팀 미정</option>' + TEAMS.map(x => '<option' + (t.team === x ? ' selected' : '') + '>' + x + '</option>').join('') + '</select>' : '') +
+    (isAdmin() && t.join === '예' ? (() => { const v = t.id in TPEND ? TPEND[t.id] : t.team; return '<select class="tsel' + (t.id in TPEND ? ' pend' : '') + '" data-tteam="' + t.id + '" aria-label="' + esc(t.name) + ' 팀">' + '<option value="">팀 미정</option>' + TEAMS.map(x => '<option' + (v === x ? ' selected' : '') + '>' + x + '</option>').join('') + '</select>'; })() : '') +
     (t.join === '예' ? feeTag(t) : '') + '</span></div>';
 }
 function bindTlist() {
@@ -1089,13 +1114,14 @@ function bindTlist() {
   });
   $$('[data-tteam]').forEach(s => {
     s.onclick = e => e.stopPropagation();
-    s.onchange = async () => {
+    s.onchange = () => {
       const t = D.tById[s.dataset.tteam]; if (!t) return;
-      const old = t.team; t.team = s.value;
-      const r = await run(() => call('teacherSave', { id: t.id, fields: { team: s.value } }), t.name + ' 선생님 → ' + (s.value || '팀 미정'));
-      if (r) set(r); else { t.team = old; show('list', true); }
+      if (s.value === (t.team || '')) delete TPEND[t.id]; else TPEND[t.id] = s.value;
+      s.classList.toggle('pend', t.id in TPEND);
+      tbar();
     };
   });
+  tbar();
   $$('[data-tpay]').forEach(b => b.onclick = () => togglePay(b.dataset.tpay, 1));
   $$('.prow.pay[data-ptid]').forEach(r => r.onclick = e => { if (!e.target.closest('[data-tpay]')) teacher(r.dataset.ptid); });
   const ad = $('#addT'); if (ad) ad.onclick = () => editTeacher(null);
