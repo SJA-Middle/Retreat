@@ -779,7 +779,7 @@ V.rooms = () => {
   const card = r => {
     const m = (mem[r.no] || []).slice().sort((a, b) => a.grade.localeCompare(b.grade) || a.name.localeCompare(b.name, 'ko'));
     const pct = Math.min(100, m.length / r.cap * 100);
-    return '<div class="room ' + gcls(r.gender) + '"><div class="hd"><div class="no">' + esc(r.no) + '<small>조</small></div><div class="meta"><b>' + esc(r.name || '숙소 미정') + '</b>' + (busOf[r.no] ? ' <span class="tag dim bustag">' + busOf[r.no] + '호차</span>' : (m.length ? ' <span class="tag lamp bustag">버스 자리 없음</span>' : '')) + '<br>담당 ' + esc(r.teacher || '미정') + (r.tphone ? ' ' + tel(r.tphone) : '') + (r.cover ? '<br><span class="muted">먼저 맡음 ' + esc(r.cover) + '</span>' : '') + (lateLead(r) && isAdmin() ? '<br><button class="link cvbtn" data-cover="' + esc(r.no) + '">' + (r.cid ? '먼저 맡는 선생님 바꾸기' : '⚠︎ 먼저 맡아 줄 선생님 정하기') + '</button>' : '') + '</div><div class="cnt">' + m.length + '/' + r.cap + '</div></div>' +
+    return '<div class="room ' + gcls(r.gender) + '"><div class="hd"><div class="no">' + esc(r.no) + '<small>조</small></div><div class="meta"><b>' + esc(r.name || '숙소 미정') + '</b>' + (busOf[r.no] ? ' <span class="tag dim bustag">' + busOf[r.no] + '호차</span>' : (m.length ? ' <span class="tag lamp bustag">버스 자리 없음</span>' : '')) + '<br>담당 ' + esc(r.teacher || '미정') + (r.tphone ? ' ' + tel(r.tphone) : '') + (r.cover ? '<br><span class="muted">1일차 인솔교사 ' + esc(r.cover) + '</span>' : '') + (lateLead(r) && isAdmin() ? '<br><button class="link cvbtn" data-cover="' + esc(r.no) + '">' + (r.cid ? '1일차 인솔교사 바꾸기' : '⚠︎ 1일차 인솔교사 정하기') + '</button>' : '') + '</div><div class="cnt">' + m.length + '/' + r.cap + '</div></div>' +
       '<div class="bar' + (m.length > r.cap ? ' over' : '') + '"><i style="width:' + pct + '%"></i></div>' +
       (m.length ? '<div class="mem">' + m.map(memBtn).join('') + '</div>' : '<p class="muted">아직 아무도 없어요.</p>') + '</div>';
   };
@@ -822,7 +822,7 @@ async function saveShare(kind, btn, data, opt, fmt) {
   const old = btn.innerHTML; btn.disabled = true; btn.textContent = fmt === 'pdf' ? 'PDF 만드는 중…' : '그림 만드는 중…';
   try {
     if (!window.shareImage) {
-      shareLoad = shareLoad || new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'share.js?v=3'; s.onload = res; s.onerror = () => { shareLoad = null; rej(new Error('그림 도구를 불러오지 못했어요. 다시 눌러 주세요.')); }; document.head.appendChild(s); });
+      shareLoad = shareLoad || new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'share.js?v=4'; s.onload = res; s.onerror = () => { shareLoad = null; rej(new Error('그림 도구를 불러오지 못했어요. 다시 눌러 주세요.')); }; document.head.appendChild(s); });
       await shareLoad;
     }
     const pages = await window.shareImage[kind](data || D, opt);
@@ -848,23 +848,31 @@ const shareBtns = (id, label) => '<div class="sharebar"><button class="btn light
 
 /** 담당 선생님이 늦게 오는 조인가 */
 const lateLead = r => { const t = r && D.tById[r.tid]; return !!(t && !isMainT(t)); };
-/** 조를 기준으로 '먼저 맡아 줄 선생님' 고르기: 처음부터 오는 선생님 중에서 한 번 눌러 정한다 */
+/** 조를 기준으로 '1일차 인솔교사' 고르기: 처음부터 오는 선생님 중에서 한 번 눌러 정한다 */
 function coverSheet(no) {
   const r = D.rmap[no]; if (!r) return;
   const lead = D.tById[r.tid], cur = D.tById[r.cid];
   const L = D.tAct.filter(t => isMainT(t) && t.id !== r.tid).sort((a, b) =>
     (b.gender === r.gender) - (a.gender === r.gender) || (!tCover(a).length && !tRooms(a).length ? -1 : 0) - (!tCover(b).length && !tRooms(b).length ? -1 : 0) || a.name.localeCompare(b.name, 'ko'));
-  const busy = t => [tRooms(t).length ? tRooms(t).map(x => x + '조').join('·') + ' 담당' : '', tCover(t).length ? tCover(t).map(x => x + '조').join('·') + ' 먼저 맡음' : ''].filter(Boolean).join(' · ');
-  openSheet('<div class="grab"><h2>' + esc(r.no) + '조 먼저 맡아 줄 선생님</h2><button class="x" aria-label="닫기">×</button></div>' +
+  const busy = t => [tRooms(t).length ? tRooms(t).map(x => x + '조').join('·') + ' 담당' : '', tCover(t).length ? tCover(t).map(x => x + '조').join('·') + ' 1일차 인솔교사' : ''].filter(Boolean).join(' · ');
+  openSheet('<div class="grab"><h2>' + esc(r.no) + '조 1일차 인솔교사</h2><button class="x" aria-label="닫기">×</button></div>' +
     '<div class="box"><p style="margin:0">' + esc(r.no) + '조 ' + esc(r.name || '') + ' · 담당 <b>' + esc(lead ? lead.name : r.teacher || '미정') + '</b> 선생님은 <b>' + esc(lead ? shortArr(lead.arrive) : '') + '</b>에 와요.<br>그 전까지 이 조를 챙겨 줄 선생님을 골라 주세요. 처음부터 오는 선생님만 보여요.</p>' +
     (cur ? '<p style="margin:10px 0 0">지금: <b>' + esc(cur.name) + '</b> 선생님 <button class="btn small light" id="cvClear">빼기</button></p>' : '') + '</div>' +
     '<div class="plist cvlist">' + L.map(t => '<button class="prow" data-cvpick="' + t.id + '"' + (cur === t ? ' aria-pressed="true"' : '') + '>' + teamBadge(t) +
       '<span class="mid"><span class="nm">' + esc(t.name) + gmark(t.gender) + (t.gender && r.gender && t.gender !== r.gender ? ' <span class="tag dim">' + (r.gender === '남' ? '남학생' : '여학생') + ' 조와 성별 다름</span>' : '') + '</span><br><span class="ds">' + esc(busy(t) || '맡은 조 없음') + '</span></span>' +
       '<span class="end">' + (cur === t ? '<span class="tag ok">지금 맡음</span>' : '<span class="tag dim">고르기</span>') + '</span></button>').join('') + '</div>');
-  const save = async (t, add) => {
+  // 누르면 화면부터 바로 바꾸고, 저장은 뒤에서 한다 (서버를 기다리지 않아 버벅이지 않게)
+  const save = (t, add) => {
     const cv = tCover(t).filter(x => x !== String(no)).concat(add ? [String(no)] : []);
-    const res = await run(() => call('teacherSave', { id: t.id, fields: { cover: cv } }), add ? r.no + '조는 ' + t.name + ' 선생님이 먼저 맡아요' : r.no + '조 먼저 맡는 선생님을 뺐어요');
-    if (res) { closeSheet(); set(res); }
+    const before = D.teachers.map(x => [x, x.cover]), rb = [r.cid, r.cover], ib = D.rep.issues;
+    D.teachers.forEach(x => { if (x !== t && tCover(x).indexOf(String(no)) >= 0) x.cover = tCover(x).filter(y => y !== String(no)).join(', '); });
+    t.cover = cv.join(', ');
+    r.cid = add ? t.id : ''; r.cover = add ? t.name : '';
+    if (add) D.rep.issues = ib.filter(x => !(x.t === 'tlate' && String(x.room) === String(no)));
+    closeSheet(); show(tab, true);
+    toast(add ? r.no + '조 1일차 인솔교사: ' + t.name + ' 선생님' : r.no + '조 1일차 인솔교사를 뺐어요');
+    call('teacherSave', { id: t.id, fields: { cover: cv } }).then(res => { if (res && $('#sheet').hidden) set(res); })
+      .catch(e => { before.forEach(([x, c]) => x.cover = c); r.cid = rb[0]; r.cover = rb[1]; D.rep.issues = ib; show(tab, true); toast((e && e.message) || '저장하지 못했어요. 다시 해 주세요.'); });
   };
   $$('#sheetIn [data-cvpick]').forEach(b => b.onclick = () => { const t = D.tById[b.dataset.cvpick]; if (t && t !== cur) save(t, true); });
   const cc = $('#cvClear'); if (cc) cc.onclick = () => save(cur, false);
@@ -959,7 +967,7 @@ V.bus = () => {
 const brow = b => x => {
   const ck = store.get('rt-board-' + b.no) || {};
   return '<div class="brow"><input type="checkbox" id="bk' + esc(x.key) + '" data-bus="' + b.no + '" data-k="' + esc(x.key) + '"' + (ck[x.key] ? ' checked' : '') + '>' +
-    '<label for="bk' + esc(x.key) + '">' + esc(x.name) + (x.p ? gmark(x.p.gender) : '') + (x.t === 1 ? ' <span class="tag dim">' + (x.cover ? '먼저 맡는 선생님' : '담당 선생님') + '</span>' : x.t === 2 ? ' <span class="tag dim">' + esc(x.team || '선생님') + '</span>' : (x.p.health ? ' <span class="tag lamp">건강</span>' : '')) + '</label>' +
+    '<label for="bk' + esc(x.key) + '">' + esc(x.name) + (x.p ? gmark(x.p.gender) : '') + (x.t === 1 ? ' <span class="tag dim">' + (x.cover ? '1일차 인솔교사' : '담당 선생님') + '</span>' : x.t === 2 ? ' <span class="tag dim">' + esc(x.team || '선생님') + '</span>' : (x.p.health ? ' <span class="tag lamp">건강</span>' : '')) + '</label>' +
     (x.p ? '<button class="link tel" data-id="' + x.p.id + '">정보</button>' : x.tid ? '<button class="link tel" data-tid="' + x.tid + '">정보</button>' : (x.phone ? '<a class="tel" href="tel:' + digits(x.phone) + '">전화</a>' : '')) + '</div>';
 };
 B.bus = () => {
@@ -1343,9 +1351,9 @@ function teacher(id) {
       '<label class="field" style="flex:1;margin-bottom:12px"><span>직책</span><select class="inp" id="tRole">' + roleOpts(t.team, t.role) + '</select></label></div>' +
       '<div id="leadBox"' + (t.team === '조장팀' ? '' : ' hidden') + '>' +
       '<div class="field"><span class="label">담당 조 <small class="muted">한 조에 담당은 한 명이에요</small></span>' + rchips('rooms', rs) + '</div>' +
-      '<div class="field"><span class="label">먼저 맡아 줄 조 <small class="muted">담당 선생님이 늦게 오는 조</small></span>' + rchips('cover', cv) + '</div>' +
-      (isMainT(t) ? '' : '<p class="hint" style="margin:-6px 0 12px">' + esc(shortArr(t.arrive)) + '에 오는 선생님이에요. 담당 조를 맡기면 그 조를 먼저 맡아 줄 선생님도 정해 주세요.</p>') + '</div>' +
-      '<button class="btn block" id="tSave">' + (t.team === '조장팀' ? '팀·조 저장' : '팀 저장') + '</button></div>' : (rs.length || cv.length ? '<h3>맡은 조</h3><div class="box"><dl class="kv">' + (rs.length ? '<dt>담당</dt><dd>' + esc(roomLine(rs)) + '</dd>' : '') + (cv.length ? '<dt>먼저 맡음</dt><dd>' + esc(roomLine(cv, 1)) + '</dd>' : '') + '</dl></div>' : '')) +
+      '<div class="field"><span class="label">1일차 인솔교사로 맡을 조 <small class="muted">담당 선생님이 늦게 오는 조</small></span>' + rchips('cover', cv) + '</div>' +
+      (isMainT(t) ? '' : '<p class="hint" style="margin:-6px 0 12px">' + esc(shortArr(t.arrive)) + '에 오는 선생님이에요. 담당 조를 맡기면 그 조의 1일차 인솔교사도 정해 주세요.</p>') + '</div>' +
+      '<button class="btn block" id="tSave">' + (t.team === '조장팀' ? '팀·조 저장' : '팀 저장') + '</button></div>' : (rs.length || cv.length ? '<h3>맡은 조</h3><div class="box"><dl class="kv">' + (rs.length ? '<dt>담당</dt><dd>' + esc(roomLine(rs)) + '</dd>' : '') + (cv.length ? '<dt>1일차 인솔교사</dt><dd>' + esc(roomLine(cv, 1)) + '</dd>' : '') + '</dl></div>' : '')) +
     '<h3>참석</h3><div class="box"><dl class="kv"><dt>참석 일정</dt><dd>' + esc(t.arrive || '—') + '</dd><dt>이동</dt><dd>' + esc(moveLabel(t)) + (onBusT(t) ? busOf(t) : '') + '</dd><dt>숙소 신청</dt><dd>' + esc(t.nights || '신청 안 함') + '</dd></dl></div>' +
     '<h3>조장 희망·하고 싶은 말</h3><div class="box"><dl class="kv"><dt>조장</dt><dd>' + (t.leadHope === '예' ? '<span class="tag ok">희망해요</span>' : '—') + '</dd>' +
     (t.note ? '<dt>하고 싶은 말</dt><dd style="white-space:pre-line">' + esc(t.note) + '</dd>' : '') + '</dl></div>' +

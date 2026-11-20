@@ -137,7 +137,7 @@
       p.t(cnt, rx, y + 42, C.sub, 700, 22, null, 'right'); rx -= p.w(cnt, 700, 22) + 12;
       if (busOf[r.no]) { const bt = busOf[r.no] + '호차', bw = p.w(bt, 800, 20) + 22; p.rr(rx - bw, y + 18, bw, 32, 16, C.night); p.t(bt, rx - 11, y + 41, '#fff', 800, 20, null, 'right'); rx -= bw + 10; }
       p.t(p.fit(r.name || '숙소 미정', rx - ix - 6, 800, 28), ix, y + 42, C.ink, 800, 28);
-      const tn = r.teacher ? '담당 ' + r.teacher + ' 선생님' + (late(r) ? ' (후발)' : '') : '담당 미정';
+      const tn = (r.teacher ? '담당 ' + r.teacher + ' 선생님' + (late(r) ? ' (후발)' : '') : '담당 미정') + (r.cover ? ' · 1일차 인솔 ' + r.cover + ' 선생님' : '');
       p.t(p.fit(tn, X + CW - 22 - ix, 600, 21), ix, y + 74, late(r) ? C.alert : C.sub, 600, 21);
       p.line(X + 26, y + 88, CW - 48, C.line, 2);
       const half = (CW - 52) / 2;
@@ -150,10 +150,11 @@
         p.t(p.fit(info(s), half - w - 14, 500, 18), cx + w, cy - 2, C.sub, 500, 18);
       });
     };
+    // 1조부터 번호 순서대로 두 칸씩 (남녀는 카드 색으로 구분)
+    const seq = D.rooms.slice().sort((a, b) => cmpNo(a.no, b.no));
     const blocks = [];
-    const n = Math.max(cols[0].length, cols[1].length);
-    for (let i = 0; i < n; i++) {
-      const a = cols[0][i], b = cols[1][i];
+    for (let i = 0; i < seq.length; i += 2) {
+      const a = seq[i], b = seq[i + 1];
       const h = Math.max(a ? cardH(a) : 0, b ? cardH(b) : 0);
       blocks.push({ h, gap: 14, draw: (x, y) => { if (a) card(x, a, M, y, h); if (b) card(x, b, M + CW + GAP, y, h); } });
     }
@@ -162,11 +163,12 @@
       const lines = pen(m).wrap(none.map(s => s.name + '(' + s.gender + ')').join(', '), IW - 48, 600, 24);
       blocks.push({ h: 70 + lines.length * 36, draw: (x, y) => { const p = pen(x); p.rr(M, y, IW, 70 + lines.length * 36, 16, C.soft); p.t('조 미배정 ' + none.length + '명', M + 24, y + 44, C.alert, 800, 26); lines.forEach((l, i) => p.t(l, M + 24, y + 84 + i * 36, C.ink, 600, 24)); } });
     }
+    // 쪽마다 위에 색 안내만 작게
     const top = (x, y) => {
-      const p = pen(x);
-      ['여', '남'].forEach((g, i) => { const X = M + i * (CW + GAP); p.rr(X, y - 30, 10, 30, 5, gc(g)); p.t(g === '여' ? '여학생' : '남학생', X + 20, y - 6, C.ink, 800, 26); p.t(cols[i].length + '개 조', X + CW, y - 6, C.sub, 600, 20, null, 'right'); });
+      const p = pen(x); let X = M;
+      [['여', '여학생 ' + cols[0].length + '개 조'], ['남', '남학생 ' + cols[1].length + '개 조']].forEach(k => { p.rr(X, y - 18, 22, 22, 5, gc(k[0])); p.t(k[1], X + 32, y, C.sub, 700, 21); X += p.w(k[1], 700, 21) + 64; });
     };
-    return paginate(D, opt.title || '조 편성표', stats, blocks, { top: (x, y) => top(x, y + 30), topH: 52, note: opt.note || '조 편성은 바뀔 수 있어요. 최신 내용은 운영 앱에서 확인해 주세요.' });
+    return paginate(D, opt.title || '조 편성표', stats, blocks, { top: (x, y) => top(x, y + 8), topH: 34, note: opt.note || '조 편성은 바뀔 수 있어요. 최신 내용은 운영 앱에서 확인해 주세요.' });
   }
 
   // ───── 버스 배차표 ─────
@@ -195,7 +197,7 @@
       b.rooms.forEach(no => {
         const r = rmap[no] || { no, gender: '', name: '', teacher: '' }, ms = mem[no] || [];
         const lead = tBy[r.tid], cov = tBy[r.cid];
-        const who = onBus(lead) ? lead.name + ' 선생님' : onBus(cov) ? cov.name + ' 선생님 (대신 맡음)' : '';
+        const who = onBus(lead) ? lead.name + ' 선생님' : onBus(cov) ? cov.name + ' 선생님 (1일차 인솔교사)' : '';
         const miss = who ? '' : lead ? '담당 ' + lead.name + ' 선생님 ' + (lead.arrive === main ? '따로 이동' : '후발') : (r.teacher ? '담당 ' + r.teacher + ' 선생님' : '담당 미정');
         const lines = m.wrap(ms.map(s => s.name).join('  '), RW, 500, 23);
         out.push({ r, m: ms, who, miss, lines, h: 44 + lines.length * 31 + 12 });
