@@ -131,11 +131,27 @@ nav.tabs button[aria-current="page"] svg { stroke: var(--night); }
 .room .no small { font-family: var(--body); font-size: 15px; font-weight: 700; margin-left: 1px; }
 .room .meta { flex: 1; min-width: 0; font-size: 14px; color: var(--sub); line-height: 1.4; }
 .room .meta b { color: var(--ink); font-size: 15px; }
+.room .bustag { font-size: 12px; padding: 1px 7px; margin-left: 4px; vertical-align: 1px; }
+.plan { margin-bottom: 12px; }
+.plan .ph { display: flex; align-items: center; gap: 8px; font-size: 17px; margin-bottom: 4px; }
+.plan > .muted { font-size: 14px; margin-bottom: 10px; }
+.pstat { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; margin-bottom: 10px; }
+.pstat span { background: var(--snow); border-radius: 10px; padding: 8px 10px; font-size: 12.5px; color: var(--sub); }
+.pstat b { display: block; color: var(--ink); font-size: 16px; margin-top: 2px; }
+.pstat b.bad, .pstat .down { color: var(--lantern-deep); }
+.pstat .up { color: var(--pine); }
+.pstat small { font-weight: 700; font-size: 12px; }
+.plan details { margin-bottom: 12px; }
+.plan summary { cursor: pointer; font-size: 14px; font-weight: 700; color: var(--sub); padding: 4px 0; }
+.pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 6px; margin-top: 8px; font-size: 13px; }
+.pgrid .nw { white-space: nowrap; margin-right: 4px; }
+.pgrid > div { background: var(--snow); border-radius: 8px; padding: 6px 8px; }
 .room .cnt { font-weight: 800; font-variant-numeric: tabular-nums; font-size: 15px; }
 .room .bar { margin-bottom: 10px; }
-.mem { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 10px; }
+.mem { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 2px 10px; }
 .mem button { display: flex; align-items: center; gap: 6px; background: none; border: 0; padding: 6px 2px; font-size: 15px; text-align: left; cursor: pointer; border-radius: 8px; min-width: 0; }
-.mem button span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mem button .n { white-space: nowrap; flex: none; font-weight: 600; }
+.mem button .ds { font-size: 12px; color: var(--sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .mem button:active { background: var(--snow); }
 .mem i { font-style: normal; font-size: 12px; color: var(--mist); flex: none; }
 .mem .wish { width: 7px; height: 7px; border-radius: 50%; background: var(--pine); flex: none; }
@@ -253,7 +269,6 @@ nav.tabs button[aria-current="page"] svg { stroke: var(--night); }
 .danger { border: 1.5px solid #F2C9C5; }
 @media (min-width: 720px) {
   .stat { grid-template-columns: repeat(4, 1fr); }
-  .mem { grid-template-columns: 1fr 1fr 1fr; }
 }
 .seg { display: flex; background: #E6E9F2; border-radius: 12px; padding: 3px; margin-bottom: 12px; }
 .seg button { flex: 1; border: 0; background: none; padding: 9px 8px; border-radius: 10px; font-weight: 700; font-size: 15px; color: var(--sub); cursor: pointer; }
@@ -733,35 +748,64 @@ V.rooms = () => {
   const none = D.act.filter(p => (!p.room || !D.rmap[p.room]) && (!g || p.gender === g));
   const rep = D.rep;
   if (!D.rooms.length) return '<div class="box empty"><b>아직 조(숙소)가 없어요</b>' + (isAdmin() ? '설정에서 조 번호, 성별, 숙소, 정원, 담당 선생님을 넣어 주세요.<br><button class="btn" id="toRooms">조(숙소) 만들기</button>' : '관리자가 조를 만들면 여기에 보여요.') + '</div>';
+  const busOf = {}; (rep.buses || []).forEach(b => b.rooms.forEach(no => busOf[no] = b.no));
   const card = r => {
     const m = (mem[r.no] || []).slice().sort((a, b) => a.grade.localeCompare(b.grade) || a.name.localeCompare(b.name, 'ko'));
     const pct = Math.min(100, m.length / r.cap * 100);
-    return '<div class="room ' + gcls(r.gender) + '"><div class="hd"><div class="no">' + esc(r.no) + '<small>조</small></div><div class="meta"><b>' + esc(r.name || '숙소 미정') + '</b><br>담당 ' + esc(r.teacher || '미정') + (r.tphone ? ' ' + tel(r.tphone) : '') + (r.cover ? '<br><span class="muted">먼저 맡음 ' + esc(r.cover) + '</span>' : '') + '</div><div class="cnt">' + m.length + '/' + r.cap + '</div></div>' +
+    return '<div class="room ' + gcls(r.gender) + '"><div class="hd"><div class="no">' + esc(r.no) + '<small>조</small></div><div class="meta"><b>' + esc(r.name || '숙소 미정') + '</b>' + (busOf[r.no] ? ' <span class="tag dim bustag">' + busOf[r.no] + '호차</span>' : (m.length ? ' <span class="tag lamp bustag">버스 자리 없음</span>' : '')) + '<br>담당 ' + esc(r.teacher || '미정') + (r.tphone ? ' ' + tel(r.tphone) : '') + (r.cover ? '<br><span class="muted">먼저 맡음 ' + esc(r.cover) + '</span>' : '') + '</div><div class="cnt">' + m.length + '/' + r.cap + '</div></div>' +
       '<div class="bar' + (m.length > r.cap ? ' over' : '') + '"><i style="width:' + pct + '%"></i></div>' +
       (m.length ? '<div class="mem">' + m.map(memBtn).join('') + '</div>' : '<p class="muted">아직 아무도 없어요.</p>') + '</div>';
   };
   return '<div class="chips" role="group">' + [['', '전체'], ['남', '남학생'], ['여', '여학생']].map(x => '<button data-g="' + x[0] + '" aria-pressed="' + (g === x[0]) + '">' + x[1] + '</button>').join('') + '</div>' +
     '<div class="box sec" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"><div style="flex:1;min-width:180px"><b>희망 친구 반영</b><div class="muted">희망을 적은 ' + rep.wishers + '명 중 ' + rep.happy + '명이 친구와 같은 조, 희망 ' + rep.total + '건 중 ' + rep.hit + '건 반영</div></div>' +
-    (isAdmin() ? '<button class="btn" id="auto">자동 배정</button>' : '') + '</div>' +
+    (isAdmin() ? '<button class="btn" id="auto">자동 배정</button><div class="muted" style="flex-basis:100%;font-size:13px">자동 배정은 경우의 수를 2~3가지 보여 드려요. 하나를 고르면 버스도 그 조에 맞춰 바로 배차돼요.</div>' : '') + '</div>' +
     '<div class="legend"><span><i class="dot" style="background:var(--pine)"></i>희망 친구와 같은 조</span><span><i class="dot" style="background:var(--lantern-deep)"></i>희망 친구와 다른 조</span>' + (isAdmin() ? '<span>이름을 누르면 조를 옮길 수 있어요</span>' : '') + '</div>' +
     (none.length ? '<div class="room none sec"><div class="hd"><div class="meta"><b>조 미배정</b><br>' + none.length + '명</div></div><div class="mem">' + none.map(memBtn).join('') + '</div></div>' : '') +
     '<div class="rooms">' + rooms.map(card).join('') + '</div>';
 };
+/** 조 명단 옆 글씨: 학년 · 예배 부서 */
+function memInfo(p) {
+  const g = String(p.grade || '').replace('학년', '');
+  return [g ? '중' + g : '', p.dept === '타교회' ? (p.church || '타교회') : deptOf(p)].filter(Boolean).join(' · ');
+}
 function memBtn(p) {
   const w = p.wk && p.wk.length ? (p.wh && p.wh.length ? '<span class="wish" title="희망 친구와 같은 조"></span>' : '<span class="miss" title="희망 친구와 다른 조"></span>') : '<span class="nowish"></span>';
-  return '<button data-id="' + p.id + '">' + w + '<span>' + esc(p.name) + '</span><i>' + esc(p.grade.replace('학년', '') ? '중' + p.grade.replace('학년', '') : '') + '</i>' + (p.health ? '<i class="hl" title="건강 특이사항 있음">건강</i>' : '') + '</button>';
+  return '<button data-id="' + p.id + '">' + w + '<span class="n">' + esc(p.name) + '</span><span class="ds">' + esc(memInfo(p)) + '</span></button>';
 }
 B.rooms = () => {
   $$('.chips button').forEach(b => b.onclick = () => { sub.roomG = b.dataset.g; show('rooms', true); });
   $$('.mem button').forEach(b => b.onclick = () => person(b.dataset.id));
   const tr = $('#toRooms'); if (tr) tr.onclick = () => { show('settings'); setTimeout(() => { const e = $('#roomsBox'); if (e) e.scrollIntoView(); }, 50); };
   const au = $('#auto'); if (au) au.onclick = async () => {
-    const placed = D.act.some(p => p.room);
-    if (placed && !await ask('지금 배정을 모두 지우고 새로 배정할까요?\n손으로 옮긴 학생도 다시 배정돼요.', '새로 배정하기')) return;
-    const r = await run(() => call('autoAssign'), '자동 배정을 마쳤어요');
-    if (r) set(r);
+    au.disabled = true; au.textContent = '경우의 수 만드는 중…';
+    const r = await run(() => call('autoPlans'));
+    au.disabled = false; au.textContent = '자동 배정';
+    if (r && r.plans) planSheet(r.plans);
   };
 };
+
+/** 자동 배정 경우의 수 고르기 */
+function planSheet(plans) {
+  const f = plans[0];
+  const diff = (v, b, unit) => v === b ? '' : ' <small class="' + (v > b ? 'up' : 'down') + '">' + (v > b ? '+' : '') + (v - b) + unit + '</small>';
+  const card = (x, i) => '<div class="box plan"><div class="ph"><b>' + esc(x.label) + '</b>' + (i === 0 ? '<span class="tag ok">기본</span>' : '') + '</div>' +
+    '<p class="muted">' + esc(x.desc) + '</p>' +
+    '<div class="pstat"><span>친구와 같은 조<b>' + x.happy + '/' + x.wishers + '명</b>' + diff(x.happy, f.happy, '명') + '</span>' +
+    '<span>희망 반영<b>' + x.hit + '/' + x.total + '건</b>' + diff(x.hit, f.hit, '건') + '</span>' +
+    '<span>버스<b>' + x.buses + '대</b>' + (x.busLeft ? ' <small class="down">자리 없음 ' + x.busLeft + '명</small>' : '') + '</span>' +
+    (x.none ? '<span>조 미배정<b class="bad">' + x.none + '명</b></span>' : '') + '</div>' +
+    '<details><summary>조별 학년 구성 보기</summary><div class="pgrid">' + x.rooms.map(y => '<div><b>' + esc(y.no) + '조</b> ' + y.n + '명<br><span class="muted">' + (y.g ? y.g.split(' · ').map(z => '<span class="nw">' + esc(z.replace(' ', ' ') + '명') + '</span>').join(' ') : '—') + '</span></div>').join('') + '</div></details>' +
+    '<button class="btn block" data-plan="' + i + '">이 안으로 배정하기</button></div>';
+  openSheet('<div class="grab"><h2>자동 배정 경우의 수</h2><button class="x" aria-label="닫기">×</button></div>' +
+    '<p class="muted" style="margin:0 2px 12px">' + (plans.length < 3 ? '결과가 똑같은 안은 하나로 합쳤어요. ' : '') + '하나를 고르면 조가 배정되고, 버스도 그 조에 맞춰 바로 다시 배차돼요.</p>' +
+    plans.map(card).join(''));
+  $$('#sheetIn [data-plan]').forEach(b => b.onclick = async () => {
+    const x = plans[+b.dataset.plan];
+    if (D.act.some(p => p.room) && !await ask('지금 배정을 모두 지우고 "' + x.label + '" 안으로 바꿀까요?\n손으로 옮긴 학생도 다시 배정되고, 버스도 다시 배차돼요.', '이 안으로 배정')) return;
+    const r = await run(() => call('autoApply', { roomOf: x.roomOf }));
+    if (r) { closeSheet(); set(r); toast('조 배정과 버스 배차를 마쳤어요 · 버스 ' + r.rep.buses.length + '대'); }
+  });
+}
 
 // 버스
 V.bus = () => {
