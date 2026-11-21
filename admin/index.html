@@ -227,6 +227,17 @@ nav.tabs button[aria-current="page"] svg { stroke: var(--night); }
 .crow .mid { flex: 1; min-width: 0; }
 .crow .nm { font-weight: 700; }
 .smenu .prow { width: 100%; text-align: left; }
+.backbar { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.backbar button { display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px 9px 10px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--night, #1B2350); font-size: 15px; font-weight: 700; cursor: pointer; flex: none; }
+.backbar button:active { background: var(--snow); }
+.backbar .arr { font-size: 24px; line-height: 0.8; margin-top: -2px; }
+.backbar b { font-size: 19px; }
+#setWrap .sk > h2:first-child { display: none; }
+.myroom .rooms { grid-template-columns: 1fr; }
+.myroom .room { border-width: 2px; }
+.mhealth { margin-top: 8px; font-size: 14px; }
+.mhealth .hrow { padding: 6px 0; border-top: 1px solid var(--line); cursor: pointer; }
+.mhealth .hrow:first-of-type { margin-top: 6px; }
 .smenu .chev { font-size: 22px; color: var(--sub); margin-left: 4px; }
 .rbadge { flex: none; width: 68px; padding: 7px 6px; box-sizing: border-box; border-radius: 10px; background: var(--rc); color: #fff; font-size: 13px; font-weight: 800; text-align: center; line-height: 1.2; word-break: keep-all; }
 .crow .ds { font-size: 13px; color: var(--sub); }
@@ -608,7 +619,7 @@ V.home = () => {
   return '<div class="hero"><div class="t">' + esc(U.name) + ' 선생님 <span class="tag ' + (isAdmin() ? 'lamp' : 'dim') + '" style="margin-left:4px">' + (isAdmin() ? '관리자' : '조 담당') + '</span></div>' +
     (dd ? '<div class="dday" style="margin-top:12px">' + dd.big + '</div><div class="sub">' + dd.txt + (D.cfg.dates ? ', ' + esc(D.cfg.dates) : '') + '</div>'
       : '<div class="sub">' + (D.cfg.dates ? esc(D.cfg.dates) : (isAdmin() ? '설정에서 수련회 날짜를 넣으면 D-day가 보여요.' : '')) + '</div>') +
-    '</div>' +
+    '</div>' + myRoomsHtml() +
     '<div class="stat sec">' +
     '<div class="box"><div class="k">참가 신청</div><div class="v">' + a.length + '<small>명</small></div><div class="split"><span class="tag m">남 ' + m + '</span><span class="tag f">여 ' + f + '</span>' + (D.people.length - a.length ? '<span class="tag dim">취소 ' + (D.people.length - a.length) + '</span>' : '') + '</div></div>' +
     '<div class="box" id="toPay" role="button" style="cursor:pointer"><div class="k">회비 입금</div><div class="v">' + paid + '<small>/' + a.length + '</small></div><div class="bar ok"><i style="width:' + (a.length ? paid / a.length * 100 : 0) + '%"></i></div></div>' +
@@ -639,6 +650,7 @@ B.home = () => {
     else if (li.dataset.t === 'tlate' && isAdmin()) coverSheet(li.dataset.room);
     else if (li.dataset.room) { sub.roomG = D.rmap[li.dataset.room] ? D.rmap[li.dataset.room].gender : ''; show('rooms'); }
   });
+  $$('.myroom .mem button, .myroom .hrow').forEach(b => b.onclick = () => person(b.dataset.id));
   const mi = $('#moreIss'); if (mi) mi.onclick = () => { sub.allIss = 1; show('home', true); };
   $('#copyApply').onclick = () => copy(APPLY_URL);
   const ts = $('#toSet'); if (ts) ts.onclick = () => { sub.setSec = ''; show('settings'); };
@@ -784,14 +796,19 @@ V.rooms = () => {
   const none = D.act.filter(p => (!p.room || !D.rmap[p.room]) && (!g || p.gender === g));
   const rep = D.rep;
   if (!D.rooms.length) return '<div class="box empty"><b>아직 조(숙소)가 없어요</b>' + (isAdmin() ? '설정에서 조 번호, 성별, 숙소, 정원, 담당 선생님을 넣어 주세요.<br><button class="btn" id="toRooms">조(숙소) 만들기</button>' : '관리자가 조를 만들면 여기에 보여요.') + '</div>';
-  const busOf = {}; (rep.buses || []).forEach(b => b.rooms.forEach(no => busOf[no] = b.no));
-  const card = r => {
-    const m = (mem[r.no] || []).slice().sort((a, b) => a.grade.localeCompare(b.grade) || a.name.localeCompare(b.name, 'ko'));
+  const card = r => roomCard(r, mem[r.no] || []);
+  return roomsView(g, none, rep, rooms, card);
+};
+/** 조 카드 하나 (조·방 화면과 홈의 '내 조'에서 같이 쓴다) */
+function roomCard(r, mem) {
+    const busOf = {}; (D.rep.buses || []).forEach(b => b.rooms.forEach(no => busOf[no] = b.no));
+    const m = mem.slice().sort((a, b) => a.grade.localeCompare(b.grade) || a.name.localeCompare(b.name, 'ko'));
     const pct = Math.min(100, m.length / r.cap * 100);
     return '<div class="room ' + gcls(r.gender) + '"><div class="hd"><div class="no">' + esc(r.no) + '<small>조</small></div><div class="meta"><b>' + esc(r.name || '숙소 미정') + '</b>' + (busOf[r.no] ? ' <span class="tag dim bustag">' + busOf[r.no] + '호차</span>' : (m.length ? ' <span class="tag lamp bustag">버스 자리 없음</span>' : '')) + '<br>담당 ' + esc(r.teacher || '미정') + (r.tphone ? ' ' + tel(r.tphone) : '') + (r.cover ? '<br><span class="muted">1일차 인솔교사 ' + esc(r.cover) + '</span>' : '') + (lateLead(r) && isAdmin() ? '<br><button class="link cvbtn" data-cover="' + esc(r.no) + '">' + (r.cid ? '1일차 인솔교사 바꾸기' : '⚠︎ 1일차 인솔교사 정하기') + '</button>' : '') + '</div><div class="cnt">' + m.length + '/' + r.cap + '</div></div>' +
       '<div class="bar' + (m.length > r.cap ? ' over' : '') + '"><i style="width:' + pct + '%"></i></div>' +
       (m.length ? '<div class="mem">' + m.map(memBtn).join('') + '</div>' : '<p class="muted">아직 아무도 없어요.</p>') + '</div>';
-  };
+}
+function roomsView(g, none, rep, rooms, card) {
   return '<div class="chips" role="group">' + [['', '전체'], ['남', '남학생'], ['여', '여학생']].map(x => '<button data-g="' + x[0] + '" aria-pressed="' + (g === x[0]) + '">' + x[1] + '</button>').join('') + '</div>' +
     '<div class="box sec" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"><div style="flex:1;min-width:180px"><b>희망 친구 반영</b><div class="muted">희망을 적은 ' + rep.wishers + '명 중 ' + rep.happy + '명이 친구와 같은 조, 희망 ' + rep.total + '건 중 ' + rep.hit + '건 반영' + (rep.unreg ? ' · 미등록 친구 ' + rep.unreg + '건은 빼고 셌어요' : '') + '</div></div>' +
     (isAdmin() ? '<button class="btn" id="auto">자동 배정</button><div class="muted" style="flex-basis:100%;font-size:13px">자동 배정은 경우의 수를 2~3가지 보여 드려요. 하나를 고르면 버스도 그 조에 맞춰 바로 배차돼요.</div>' : '') + '</div>' +
@@ -799,7 +816,29 @@ V.rooms = () => {
     '<div class="legend"><span><i class="dot" style="background:var(--pine)"></i>희망 친구와 같은 조</span><span><i class="dot" style="background:var(--lantern-deep)"></i>희망 친구와 다른 조</span>' + (isAdmin() ? '<span>이름을 누르면 조를 옮길 수 있어요</span>' : '') + '</div>' +
     (none.length ? '<div class="room none sec"><div class="hd"><div class="meta"><b>조 미배정</b><br>' + none.length + '명</div></div><div class="mem">' + none.map(memBtn).join('') + '</div></div>' : '') +
     '<div class="rooms">' + rooms.map(card).join('') + '</div>';
-};
+}
+/** 로그인한 선생님이 맡은 조 (담당 조 + 1일차 인솔하는 조) */
+function myRooms() {
+  const nn = x => String(x || '').replace(/\s+/g, '');
+  const me = nn(U && U.name); if (!me) return [];
+  const t = (D.teachers || []).filter(x => x.join !== '아니오' && nn(x.name) === me)[0];
+  const out = [];
+  D.rooms.forEach(r => {
+    if (t ? r.tid === t.id : nn(r.teacher) === me) out.push({ r, cover: false });
+    else if (t && r.cid === t.id) out.push({ r, cover: true });
+  });
+  return out;
+}
+/** 홈 맨 위: 내가 맡은 조 */
+function myRoomsHtml() {
+  const L = myRooms(); if (!L.length) return '';
+  return '<div class="sec myroom"><h2>내가 맡은 조 <small>' + L.map(x => x.r.no + '조' + (x.cover ? '(1일차 인솔)' : '')).join(', ') + '</small></h2><div class="rooms">' + L.map(x => {
+    const m = D.act.filter(p => String(p.room) === String(x.r.no));
+    const h = m.filter(p => p.health);
+    return roomCard(x.r, m) +
+      (h.length ? '<div class="box mhealth"><b>' + esc(x.r.no) + '조 건강 특이사항 ' + h.length + '명</b>' + h.map(p => '<div class="hrow" data-id="' + p.id + '"><b>' + esc(p.name) + '</b> ' + esc(p.health) + '</div>').join('') + '</div>' : '');
+  }).join('') + '</div></div>';
+}
 /** 조 명단 옆 글씨: 학년 · 예배 부서 */
 function memInfo(p) {
   const g = String(p.grade || '').replace('학년', '');
@@ -1475,7 +1514,7 @@ V.settings = () => {
     ['link', '링크·QR', '신청 페이지 주소 복사'], ['ins', '여행자보험·개인정보', nRrn ? '주민등록번호 ' + nRrn + '건 남음' : '보험명단, 주민번호 파기', nRrn ? 'must' : ''], ['test', '테스트 정리', '테스트 신청 지우기']];
   const on = sub.setSec && M.some(m => m[0] === sub.setSec) ? sub.setSec : '';
   const cur = M.filter(m => m[0] === on)[0];
-  return '<button class="link" id="back" style="margin-bottom:10px">' + (on ? '‹ 설정 목록' : '홈으로') + '</button>' +
+  return (on ? '<div class="backbar"><button id="back" aria-label="설정 목록으로 돌아가기"><span class="arr">‹</span>설정 목록</button><b>' + esc(cur[1]) + '</b></div>' : '<button class="link" id="back" style="margin-bottom:10px">홈으로</button>') +
     (on ? '' : '<div class="sec"><h2>설정</h2><div class="plist smenu">' + M.map(m => '<button class="prow" data-sk="' + m[0] + '"><span class="mid"><span class="nm">' + m[1] + '</span><br><span class="ds">' + esc(m[2]) + '</span></span>' + (m[3] ? '<span class="tag ' + m[3] + '">' + esc(m[4] || '할 일') + '</span>' : '') + '<span class="chev">›</span></button>').join('') + '</div></div>') +
     '<div id="setWrap"' + (on ? '' : ' hidden') + ' data-on="' + on + '">' +
     '<div class="sec sk" data-sk="open"><h2>학생 신청 받기</h2><div class="box"><div class="choice" id="openSel"><button data-v="예" aria-pressed="' + (c.open === '예') + '">신청 받기</button><button data-v="아니오" aria-pressed="' + (c.open !== '예') + '">신청 닫기</button></div>' +
