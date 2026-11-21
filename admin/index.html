@@ -335,6 +335,9 @@ nav.tabs button[aria-current="page"] svg { stroke: var(--night); }
 .rb { flex: none; min-width: 56px; height: 32px; padding: 0 8px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; letter-spacing: -.01em; white-space: nowrap; }
 .rb.m { background: var(--boy-soft); color: var(--boy); }
 .rb.f { background: var(--girl-soft); color: var(--girl); }
+.rb.rr { flex-direction: column; height: auto; min-height: 32px; padding: 4px 8px; line-height: 1.15; }
+.rb.rr small { font-size: 11px; font-weight: 700; opacity: .85; text-align: center; word-break: keep-all; }
+.rb.m, .rb.f, .rb.none, .rb.team { width: 72px; min-width: 0; }
 .rb.none { background: #F1F2F6; color: var(--mist); font-size: 13px; font-weight: 700; }
 .rb.team { min-width: 60px; font-size: 13px; }
 .rb.t1 { background: #EEE8FA; color: #5B3FA8; }
@@ -672,8 +675,10 @@ const feeTag = p => '<span class="fee ' + (p.paid === '예' ? 'ok">회비납부'
 const roomBadge = p => {
   if (p.join !== '예') return '<span class="rb none">취소</span>';
   const r = p.room && D.rmap[p.room];
-  return r ? '<span class="rb ' + gcls(p.gender) + '">' + esc(r.no) + '조</span>' : '<span class="rb none">미배정</span>';
+  return r ? '<span class="rb ' + gcls(p.gender) + (r.name ? ' rr' : '') + '">' + esc(r.no) + '조' + (r.name ? '<small>' + esc(roomName(r)) + '</small>' : '') + '</span>' : '<span class="rb none">미배정</span>';
 };
+/** 숙소 이름: 숫자만 적었으면 '호'를 붙인다 (301 → 301호) */
+const roomName = r => { const n = String(r && r.name || '').trim(); return /^\d+$/.test(n) ? n + '호' : n; };
 const sel = (id, opts, v) => '<select class="osel" id="' + id + '">' + opts.map(o => '<option value="' + esc(o[0]) + '"' + (v === o[0] ? ' selected' : '') + '>' + esc(o[1]) + '</option>').join('') + '</select>';
 const byTs = (a, b) => String(a.ts).localeCompare(String(b.ts)) || a.name.localeCompare(b.name, 'ko');
 const byName = (a, b) => a.name.localeCompare(b.name, 'ko') || String(a.ts).localeCompare(String(b.ts));
@@ -1174,7 +1179,7 @@ function person(id) {
   };
   const rooms = D.rooms.filter(x => x.gender === p.gender);
   const cntOf = no => D.act.filter(q => q.room === no).length;
-  const html = '<div class="grab"><h2>' + esc(p.name) + ' <span class="tag ' + gcls(p.gender) + '">' + esc(p.gender) + '</span>' + (p.join !== '예' ? '<span class="tag dim">참가 취소</span>' : r ? '<span class="tag ' + gcls(p.gender) + '">' + esc(r.no) + '조</span>' : '<span class="tag dim">미배정</span>') + '</h2><button class="x" aria-label="닫기">×</button></div>' +
+  const html = '<div class="grab"><h2>' + esc(p.name) + ' <span class="tag ' + gcls(p.gender) + '">' + esc(p.gender) + '</span>' + (p.join !== '예' ? '<span class="tag dim">참가 취소</span>' : r ? '<span class="tag ' + gcls(p.gender) + '">' + esc(r.no) + '조' + (r.name ? ' · ' + esc(roomName(r)) : '') + '</span>' : '<span class="tag dim">미배정</span>') + '</h2><button class="x" aria-label="닫기">×</button></div>' +
     (isAdmin() && p.join === '예' ? '<div class="box"><label class="field" style="margin:0"><span>조(숙소)</span><select class="inp" id="mv"><option value="">미배정</option>' + rooms.map(x => '<option value="' + esc(x.no) + '"' + (x.no === p.room ? ' selected' : '') + '>' + esc(x.no) + '조 ' + esc(x.name || '') + ' (' + cntOf(x.no) + '/' + x.cap + ')' + '</option>').join('') + '</select></label></div>' : '') +
     '<h3>학생</h3><div class="box"><dl class="kv"><dt>예배 부서</dt><dd>' + esc(p.dept === '타교회' ? '타교회 (' + (p.church || '—') + ')' : p.dept) + '</dd><dt>학년</dt><dd>' + esc(p.grade || '—') + '</dd><dt>학교</dt><dd>' + esc(p.school || '—') + '</dd><dt>학생 휴대폰</dt><dd>' + tel(p.phone) + '</dd>' +
     (r ? '<dt>숙소</dt><dd>' + esc(r.name || '—') + '</dd><dt>담당 선생님</dt><dd>' + esc(r.teacher || '미정') + '</dd>' : '') + '</dl></div>' +
