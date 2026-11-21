@@ -226,6 +226,8 @@ nav.tabs button[aria-current="page"] svg { stroke: var(--night); }
 .crow:last-child { border-bottom: 0; }
 .crow .mid { flex: 1; min-width: 0; }
 .crow .nm { font-weight: 700; }
+.smenu .prow { width: 100%; text-align: left; }
+.smenu .chev { font-size: 22px; color: var(--sub); margin-left: 4px; }
 .rbadge { flex: none; width: 68px; padding: 7px 6px; box-sizing: border-box; border-radius: 10px; background: var(--rc); color: #fff; font-size: 13px; font-weight: 800; text-align: center; line-height: 1.2; word-break: keep-all; }
 .crow .ds { font-size: 13px; color: var(--sub); }
 .call { width: 44px; height: 44px; border-radius: 50%; background: var(--pine-soft); color: var(--pine); display: inline-flex; align-items: center; justify-content: center; flex: none; text-decoration: none; }
@@ -639,7 +641,7 @@ B.home = () => {
   });
   const mi = $('#moreIss'); if (mi) mi.onclick = () => { sub.allIss = 1; show('home', true); };
   $('#copyApply').onclick = () => copy(APPLY_URL);
-  const ts = $('#toSet'); if (ts) ts.onclick = () => show('settings');
+  const ts = $('#toSet'); if (ts) ts.onclick = () => { sub.setSec = ''; show('settings'); };
   $('#toPay').onclick = () => { sub.who = 'stu'; sub.pay = true; sub.payf = 'no'; sub.q = ''; show('list'); };
   $('#toT').onclick = () => { sub.who = 'tch'; sub.tflt = 'all'; sub.tteam = ''; sub.tpay = false; sub.tq = ''; show('list'); };
   $('#toTPay').onclick = () => { sub.who = 'tch'; sub.tpay = true; sub.tpayf = 'no'; sub.tq = ''; show('list'); };
@@ -811,7 +813,7 @@ B.rooms = () => {
   $$('[data-cover]').forEach(b => b.onclick = e => { e.stopPropagation(); coverSheet(b.dataset.cover); });
   $$('.chips button').forEach(b => b.onclick = () => { sub.roomG = b.dataset.g; show('rooms', true); });
   $$('.mem button').forEach(b => b.onclick = () => person(b.dataset.id));
-  const tr = $('#toRooms'); if (tr) tr.onclick = () => { show('settings'); setTimeout(() => { const e = $('#roomsBox'); if (e) e.scrollIntoView(); }, 50); };
+  const tr = $('#toRooms'); if (tr) tr.onclick = () => { sub.setSec = 'rooms'; show('settings'); };
   const sr = $('#shareRooms'); if (sr) sr.onclick = () => saveShare('rooms', sr);
   const srp = $('#shareRoomsPdf'); if (srp) srp.onclick = () => saveShare('rooms', srp, null, null, 'pdf');
   const au = $('#auto'); if (au) au.onclick = async () => {
@@ -1467,33 +1469,41 @@ V.settings = () => {
   const c = D.cfg;
   const fld = x => '<label class="field"><span>' + x[1] + '</span>' + (x[3] === 'area' ? '<textarea class="inp" data-c="' + x[0] + '">' + esc(c[x[0]]) + '</textarea>'
     : '<input class="inp" data-c="' + x[0] + '" value="' + esc(c[x[0]]) + '"' + (x[2] ? ' placeholder="' + esc(x[2]) + '"' : '') + (x[3] ? ' type="' + x[3] + '"' : '') + '>') + '</label>';
-  return '<button class="link" id="back" style="margin-bottom:10px">홈으로</button>' +
-    '<div class="sec"><h2>신청 받기</h2><div class="box"><div class="choice" id="openSel"><button data-v="예" aria-pressed="' + (c.open === '예') + '">신청 받기</button><button data-v="아니오" aria-pressed="' + (c.open !== '예') + '">신청 닫기</button></div>' +
+  const nRrn = D.people.filter(p => p.hasRrn).length + D.teachers.filter(t => t.hasRrn).length;
+  const M = [['open', '학생 신청', '신청 페이지 열고 닫기', D.open ? 'ok' : 'dim', D.open ? '받는 중' : '닫힘'], ['info', '수련회 정보', c.title || '이름·일정·장소·회비'], ['tch', '교사 신청', '마감일·안내·참석 일정', D.topen ? 'ok' : 'dim', D.topen ? '받는 중' : '닫힘'],
+    ['bus', '버스', (c.buses ? c.buses + '대' : '필요한 만큼') + (c.seats ? ', ' + c.seats + '석' : '')], ['rooms', '조(숙소)', D.rooms.length + '개 조'], ['acc', '계정', '로그인할 수 있는 사람'],
+    ['link', '링크·QR', '신청 페이지 주소 복사'], ['ins', '여행자보험·개인정보', nRrn ? '주민등록번호 ' + nRrn + '건 남음' : '보험명단, 주민번호 파기', nRrn ? 'must' : ''], ['test', '테스트 정리', '테스트 신청 지우기']];
+  const on = sub.setSec && M.some(m => m[0] === sub.setSec) ? sub.setSec : '';
+  const cur = M.filter(m => m[0] === on)[0];
+  return '<button class="link" id="back" style="margin-bottom:10px">' + (on ? '‹ 설정 목록' : '홈으로') + '</button>' +
+    (on ? '' : '<div class="sec"><h2>설정</h2><div class="plist smenu">' + M.map(m => '<button class="prow" data-sk="' + m[0] + '"><span class="mid"><span class="nm">' + m[1] + '</span><br><span class="ds">' + esc(m[2]) + '</span></span>' + (m[3] ? '<span class="tag ' + m[3] + '">' + esc(m[4] || '할 일') + '</span>' : '') + '<span class="chev">›</span></button>').join('') + '</div></div>') +
+    '<div id="setWrap"' + (on ? '' : ' hidden') + ' data-on="' + on + '">' +
+    '<div class="sec sk" data-sk="open"><h2>학생 신청 받기</h2><div class="box"><div class="choice" id="openSel"><button data-v="예" aria-pressed="' + (c.open === '예') + '">신청 받기</button><button data-v="아니오" aria-pressed="' + (c.open !== '예') + '">신청 닫기</button></div>' +
     '<p class="muted" style="margin-top:10px">' + (D.open ? '지금 신청 페이지에서 신청할 수 있어요.' : '지금은 신청 페이지가 닫혀 있어요.' + (c.open === '예' && c.deadline ? ' (마감일이 지났어요)' : '')) + '</p></div></div>' +
-    '<div class="sec"><h2>수련회 정보</h2><div class="box">' + CFG_FORM.map(fld).join('') + '<button class="btn block" id="cfgSave">수련회 정보 저장</button></div></div>' +
-    '<div class="sec" id="tBox"><h2>교사 신청</h2><div class="box"><div class="choice" id="topenSel"><button data-v="예" aria-pressed="' + (c.topen === '예') + '">교사 신청 받기</button><button data-v="아니오" aria-pressed="' + (c.topen !== '예') + '">닫기</button></div>' +
+    '<div class="sec sk" data-sk="info"><h2>수련회 정보</h2><div class="box">' + CFG_FORM.map(fld).join('') + '<button class="btn block" id="cfgSave">수련회 정보 저장</button></div></div>' +
+    '<div class="sec sk" data-sk="tch" id="tBox"><h2>교사 신청</h2><div class="box"><div class="choice" id="topenSel"><button data-v="예" aria-pressed="' + (c.topen === '예') + '">교사 신청 받기</button><button data-v="아니오" aria-pressed="' + (c.topen !== '예') + '">닫기</button></div>' +
     '<p class="muted" style="margin:10px 0 16px">' + (D.topen ? '지금 교사 신청 페이지에서 신청할 수 있어요.' : '지금은 교사 신청 페이지가 닫혀 있어요.') + '</p>' +
     fld(['tdeadline', '교사 신청 마감일', '', 'date']) +
     fld(['tnotice', '교사 신청 안내 (첫 화면)', '', 'area']) +
     '<label class="field"><span>참석 일정 선택지 <small class="muted">한 줄에 하나, 첫 줄이 전체 참석(교회 버스)</small></span><textarea class="inp" data-c="tarrive" rows="4">' + esc(String(c.tarrive || '').replace(/\\n/g, '\n')) + '</textarea></label>' +
     '<button class="btn block" id="tcfgSave">교사 신청 설정 저장</button></div></div>' +
-    '<div class="sec" id="busBox"><h2>버스</h2><div class="box">' + fld(['buses', '쓸 수 있는 버스 대수 (비우면 필요한 만큼)', '', 'number']) + fld(['seats', '버스 한 대 좌석 수', '', 'number']) + fld(['staff', '버스마다 비워 둘 좌석 (스태프용)', '', 'number']) +
+    '<div class="sec sk" data-sk="bus" id="busBox"><h2>버스</h2><div class="box">' + fld(['buses', '쓸 수 있는 버스 대수 (비우면 필요한 만큼)', '', 'number']) + fld(['seats', '버스 한 대 좌석 수', '', 'number']) + fld(['staff', '버스마다 비워 둘 좌석 (스태프용)', '', 'number']) +
     '<div class="field"><span class="label">담당 선생님도 조와 같은 버스에 타나요?</span><div class="choice" id="rideSel"><button data-v="예" aria-pressed="' + (c.ride !== '아니오') + '">네</button><button data-v="아니오" aria-pressed="' + (c.ride === '아니오') + '">아니요</button></div></div>' +
     '<button class="btn block" id="busSave">버스 설정 저장</button></div></div>' +
-    '<div class="sec" id="roomsBox"><h2>조(숙소) <small>숙소 = 조</small></h2><p class="muted" style="margin:-4px 2px 10px">정원은 학생 수 기준이에요. 남녀는 같은 조가 될 수 없어요. 숙소는 번호만 적으면 끝에 호가 붙어요. 담당 선생님은 선생님 명단에서 조장팀으로 정한 분 중에 고를 수 있어요.</p>' +
+    '<div class="sec sk" data-sk="rooms" id="roomsBox"><h2>조(숙소) <small>숙소 = 조</small></h2><p class="muted" style="margin:-4px 2px 10px">정원은 학생 수 기준이에요. 남녀는 같은 조가 될 수 없어요. 숙소는 번호만 적으면 끝에 호가 붙어요. 담당 선생님은 선생님 명단에서 조장팀으로 정한 분 중에 고를 수 있어요.</p>' +
     '<div class="box capall"><b>모든 조 정원</b><label class="pre"><input class="inp" id="capAll" inputmode="numeric" placeholder="예: 8" value="' + esc(capCommon()) + '" aria-label="모든 조 정원"><span>명</span></label><small>여기에 쓰면 모든 조 정원이 한 번에 바뀌어요. 정원이 다른 조만 아래 카드에서 따로 고치면 돼요.</small></div>' +
     '<div id="rtBox" class="rtgrid">' + D.rooms.map(roomEd).join('') + '<div class="rtadd"><button class="btn light small" id="rAdd">조 추가</button><button class="btn light small" id="rAdd5">5개 한꺼번에 추가</button></div></div>' +
     '<button class="btn block" id="rSave" style="margin-top:12px">조(숙소) 저장</button></div>' +
-    '<div class="sec"><h2>계정</h2><div class="box" style="padding:0" id="accBox"><p class="muted" style="padding:14px">불러오는 중…</p></div>' +
+    '<div class="sec sk" data-sk="acc"><h2>계정</h2><div class="box" style="padding:0" id="accBox"><p class="muted" style="padding:14px">불러오는 중…</p></div>' +
     '<div class="box" style="margin-top:10px"><p style="font-weight:700;margin-bottom:10px">계정 추가</p><div style="display:flex;gap:8px;flex-wrap:wrap"><input class="inp" id="aName" placeholder="이름" style="flex:1;min-width:120px"><select class="inp" id="aRole" style="flex:0 0 130px"><option value="lead">조 담당</option><option value="admin">관리자</option></select></div>' +
     '<p class="muted" style="margin:8px 0 12px">처음 PIN은 000000이고, 첫 로그인 때 본인이 새 PIN을 정해요. 조 담당은 모든 내용을 볼 수 있지만 고칠 수는 없어요.<br><b>각 팀 팀장·총괄 디렉터·회계</b>는 교사 명단의 직책에 따라 저절로 관리자가 돼요. 계정을 따로 만들지 않아도 이름과 PIN 000000으로 처음 로그인하면 돼요.</p><button class="btn block" id="aAdd">계정 추가</button></div></div>' +
-    '<div class="sec"><h2>링크</h2><div class="box"><dl class="kv"><dt>신청 페이지</dt><dd><a href="' + APPLY_URL + '" target="_blank" rel="noopener">' + esc(APPLY_URL) + '</a></dd><dt>교사 신청</dt><dd><a href="' + TEACHER_URL + '" target="_blank" rel="noopener">' + esc(TEACHER_URL) + '</a></dd><dt>관리자 앱</dt><dd>' + esc(location.href.split('#')[0]) + '</dd></dl>' +
+    '<div class="sec sk" data-sk="link"><h2>링크·QR</h2><div class="box"><dl class="kv"><dt>신청 페이지</dt><dd><a href="' + APPLY_URL + '" target="_blank" rel="noopener">' + esc(APPLY_URL) + '</a></dd><dt>교사 신청</dt><dd><a href="' + TEACHER_URL + '" target="_blank" rel="noopener">' + esc(TEACHER_URL) + '</a></dd><dt>관리자 앱</dt><dd>' + esc(location.href.split('#')[0]) + '</dd></dl>' +
     '<div class="acts" style="margin-top:14px"><button class="btn light" id="cpA">신청 링크 복사</button><button class="btn light" id="cpT">교사 링크 복사</button><button class="btn light" id="cpB">관리자 앱 링크 복사</button><a class="btn light" target="_blank" rel="noopener" href="https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&margin=40&data=' + encodeURIComponent(APPLY_URL) + '">신청 QR 크게 보기</a></div></div></div>' +
-    '<div class="sec"><h2>여행자보험·개인정보</h2><div class="box danger">' +
+    '<div class="sec sk" data-sk="ins"><h2>여행자보험·개인정보</h2><div class="box danger">' +
     '<p>보험 가입할 때 <b>보험명단</b>을 내려받아 ' + esc(c.insurer || '보험사') + '에 보내 주세요. 가입을 마치면 주민등록번호를 파기해 주세요.</p>' +
     '<p class="muted" style="margin-top:6px">' + (c.purged ? '주민등록번호를 ' + esc(c.purged.slice(0, 16)) + '에 파기했어요. 그 뒤에 들어온 신청 ' + D.people.filter(p => p.hasRrn).length + '건은 아직 남아 있어요.' : '주민등록번호가 있는 신청 ' + D.people.filter(p => p.hasRrn).length + '건' + (D.teachers.some(t => t.hasRrn) ? ' (선생님 ' + D.teachers.filter(t => t.hasRrn).length + '건 별도)' : '')) + '</p>' +
     '<div class="acts" style="margin-top:14px"><button class="btn light" id="ins">보험명단 내려받기</button><button class="btn warn" id="purge">주민등록번호 파기</button></div></div></div>' +
-    '<div class="sec"><h2>테스트 정리</h2><div class="box"><p class="muted">테스트할 때는 이름을 \'테스트\'로 시작해서 넣어 주세요 (예: 테스트김민준). 아래 첫 버튼은 그런 신청만 골라 지워서, 실제 신청이 들어온 뒤에도 안전하게 쓸 수 있어요.</p><button class="btn light block" id="wipeX" style="margin-top:12px">\'테스트\' 이름 신청만 지우기</button><button class="btn light block" id="wipe" style="margin-top:8px;color:var(--alert)">학생 신청서 모두 지우기</button><button class="btn light block" id="wipeT" style="margin-top:8px;color:var(--alert)">교사 신청서 모두 지우기</button></div></div>';
+    '<div class="sec sk" data-sk="test"><h2>테스트 정리</h2><div class="box"><p class="muted">테스트할 때는 이름을 \'테스트\'로 시작해서 넣어 주세요 (예: 테스트김민준). 아래 첫 버튼은 그런 신청만 골라 지워서, 실제 신청이 들어온 뒤에도 안전하게 쓸 수 있어요.</p><button class="btn light block" id="wipeX" style="margin-top:12px">\'테스트\' 이름 신청만 지우기</button><button class="btn light block" id="wipe" style="margin-top:8px;color:var(--alert)">학생 신청서 모두 지우기</button><button class="btn light block" id="wipeT" style="margin-top:8px;color:var(--alert)">교사 신청서 모두 지우기</button></div></div></div>';
 };
 /** 조 정원이 모두 같으면 그 값, 아니면 가장 많은 값 */
 function capCommon() {
@@ -1524,7 +1534,11 @@ function roomEd(r) {
     '<label class="lab"><span>버스</span><input class="inp" data-r="bus" placeholder="지정할 때만 (예: 2)" inputmode="numeric" value="' + esc(r.bus || '') + '"></label></div>';
 }
 B.settings = () => {
-  $('#back').onclick = () => show('home');
+  // 설정은 목록에서 하나를 눌러 그 항목만 본다
+  const wrap = $('#setWrap');
+  $$('#setWrap .sk').forEach(e => e.hidden = e.dataset.sk !== wrap.dataset.on);
+  $$('.smenu [data-sk]').forEach(b => b.onclick = () => { sub.setSec = b.dataset.sk; show('settings'); });
+  $('#back').onclick = () => { if (sub.setSec) { sub.setSec = ''; show('settings'); } else show('home'); };
   const choiceBind = (id, cb) => $$('#' + id + ' button').forEach(b => b.onclick = () => { $$('#' + id + ' button').forEach(x => x.setAttribute('aria-pressed', x === b)); cb(b.dataset.v); });
   choiceBind('openSel', async v => { const r = await run(() => call('cfgSave', { cfg: { open: v } }), v === '예' ? '신청을 받기 시작했어요' : '신청을 닫았어요'); if (r) set(r); });
   let ride = D.cfg.ride !== '아니오' ? '예' : '아니오';
@@ -1623,7 +1637,7 @@ function accRender(L) {
 }
 
 $('#reload').onclick = () => load(true);
-$('#gear').onclick = () => show('settings');
+$('#gear').onclick = () => { sub.setSec = ''; show('settings'); };
 $('#out').onclick = async () => { if (await ask('로그아웃할까요?', '로그아웃')) logout(); };
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && U && D && Date.now() - (load.t || 0) > 60000) { load.t = Date.now(); load(); } });
 
