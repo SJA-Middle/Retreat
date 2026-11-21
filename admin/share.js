@@ -168,7 +168,7 @@
       const p = pen(x); let X = M;
       [['여', '여학생 ' + cols[0].length + '개 조'], ['남', '남학생 ' + cols[1].length + '개 조']].forEach(k => { p.rr(X, y - 18, 22, 22, 5, gc(k[0])); p.t(k[1], X + 32, y, C.sub, 700, 21); X += p.w(k[1], 700, 21) + 64; });
     };
-    return paginate(D, opt.title || '조 편성표', stats, blocks, { top: (x, y) => top(x, y + 8), topH: 34, note: opt.note || '조 편성은 바뀔 수 있어요. 최신 내용은 운영 앱에서 확인해 주세요.' });
+    return paginate(D, opt.title || '조 편성표', stats, blocks, { top: (x, y) => top(x, y + 8), topH: 34, note: opt.note || '조 편성은 바뀔 수 있어요. 최신 내용은 관리자 앱에서 확인해 주세요.' });
   }
 
   // ───── 버스 배차표 ─────
@@ -257,7 +257,7 @@
       blocks.push(box('버스를 타지 않는 선생님 ' + off.length + '명', C.ink, Object.keys(groups).map(k => [k + ' (' + groups[k].length + '명)', m.wrap(groups[k].join(' · '), IW - 52, 600, 23)])));
     }
     const top = (x, y) => { pen(x).t('조와 담당 선생님은 같은 버스에 타요' + (staffSeat ? ' · 버스마다 스태프석 ' + staffSeat + '석' : ''), M, y + 4, C.sub, 600, 21); };
-    return paginate(D, '버스 배차표', stats, blocks, { top, topH: 30, note: opt.note || '배차는 조 편성에 따라 바뀔 수 있어요. 최신 내용은 운영 앱에서 확인해 주세요.' });
+    return paginate(D, '버스 배차표', stats, blocks, { top, topH: 30, note: opt.note || '배차는 조 편성에 따라 바뀔 수 있어요. 최신 내용은 관리자 앱에서 확인해 주세요.' });
   }
 
   /** 쪽 캔버스 → PNG 파일들 */

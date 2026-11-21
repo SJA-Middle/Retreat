@@ -226,6 +226,7 @@ nav.tabs button[aria-current="page"] svg { stroke: var(--night); }
 .crow:last-child { border-bottom: 0; }
 .crow .mid { flex: 1; min-width: 0; }
 .crow .nm { font-weight: 700; }
+.rbadge { flex: none; width: 84px; padding: 7px 6px; box-sizing: border-box; border-radius: 10px; background: var(--rc); color: #fff; font-size: 13px; font-weight: 800; text-align: center; line-height: 1.2; word-break: keep-all; }
 .crow .ds { font-size: 13px; color: var(--sub); }
 .call { width: 44px; height: 44px; border-radius: 50%; background: var(--pine-soft); color: var(--pine); display: inline-flex; align-items: center; justify-content: center; flex: none; text-decoration: none; }
 .call.sms { background: var(--snow); color: var(--night-2); }
@@ -383,7 +384,7 @@ body.hasbar main { padding-bottom: calc(180px + env(safe-area-inset-bottom)); }
 <section id="login" hidden>
   <div class="sky"><div class="in">
     <div class="org">새중앙교회 중등부 수련회</div>
-    <h1>수련회 운영</h1>
+    <h1>수련회 관리자 앱</h1>
     <p>관리자와 조 담당 선생님이 쓰는 화면이에요.</p>
   </div>
   <svg class="ridge" viewBox="0 0 400 56" preserveAspectRatio="none" aria-hidden="true"><path d="M0 56 L0 38 L38 22 L70 34 L112 8 L150 30 L188 18 L224 36 L262 14 L300 32 L338 20 L372 34 L400 26 L400 56 Z" fill="#24336E" opacity=".9"/><path d="M0 56 L0 46 L48 34 L92 44 L140 30 L186 46 L236 34 L284 46 L330 36 L372 46 L400 40 L400 56 Z" fill="var(--snow)"/></svg>
@@ -518,7 +519,7 @@ function showLogin(must) {
 async function logout(silent) {
   if (!silent && U) { try { await call('logout'); } catch (e) { } }
   U = null; D = null; store.del(KEY);
-  try { sessionStorage.removeItem('rt-d'); } catch (e) { }
+  try { sessionStorage.removeItem('rt-d'); localStorage.removeItem('rt-d2'); } catch (e) { }
   closeSheet();
   showLogin();
 }
@@ -534,17 +535,23 @@ async function start() {
   if (h && (TABS.some(t => t[0] === h) || h === 'settings')) tab = h;
   await load();
 }
-async function load() {
-  if (!D) { try { const c = JSON.parse(sessionStorage.getItem('rt-d') || 'null'); if (c && c.me && c.me.name === U.name) set(c); } catch (e) { } }
-  const r = await run(() => call('data'));
+/** 처음 열 때: 지난번에 받아 둔 자료를 먼저 바로 보여 주고(이 기기에만, 하루까지), 새 자료는 뒤에서 받아 바꾼다 */
+async function load(fresh) {
+  if (!D) {
+    try {
+      const c = JSON.parse(sessionStorage.getItem('rt-d') || localStorage.getItem('rt-d2') || 'null');
+      if (c && c.me && c.me.name === U.name && (!c._at || Date.now() - c._at < 864e5)) set(c, true);
+    } catch (e) { }
+  }
+  const r = await run(() => call('data', fresh ? { fresh: 1 } : {}));
   if (!r) { if (!D) $('#v').innerHTML = '<div class="empty"><b>불러오지 못했어요</b>잠시 후 위의 새로고침을 눌러 주세요.</div>'; return; }
   set(r);
 }
-function set(r) {
-  try { sessionStorage.setItem('rt-d', JSON.stringify(r)); } catch (e) { }
+function set(r, cached) {
+  if (!cached) { r._at = Date.now(); try { const j = JSON.stringify(r); sessionStorage.setItem('rt-d', j); localStorage.setItem('rt-d2', j); } catch (e) { } }
   D = r;
   $('#ttl').textContent = String(D.cfg.title || '수련회').replace(/(\d{4})년\s*/, '$1 ') + ' 관리자';
-  document.title = (D.cfg.title || '수련회') + ' 운영';
+  document.title = '수련회 관리자앱';
   D.byId = {}; D.people.forEach(p => D.byId[p.id] = p);
   D.act = D.people.filter(p => p.join === '예');
   D.rmap = {}; D.rooms.forEach(r => D.rmap[r.no] = r);
@@ -822,7 +829,7 @@ async function saveShare(kind, btn, data, opt, fmt) {
   const old = btn.innerHTML; btn.disabled = true; btn.textContent = fmt === 'pdf' ? 'PDF 만드는 중…' : '그림 만드는 중…';
   try {
     if (!window.shareImage) {
-      shareLoad = shareLoad || new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'share.js?v=4'; s.onload = res; s.onerror = () => { shareLoad = null; rej(new Error('그림 도구를 불러오지 못했어요. 다시 눌러 주세요.')); }; document.head.appendChild(s); });
+      shareLoad = shareLoad || new Promise((res, rej) => { const s = document.createElement('script'); s.src = 'share.js?v=5'; s.onload = res; s.onerror = () => { shareLoad = null; rej(new Error('그림 도구를 불러오지 못했어요. 다시 눌러 주세요.')); }; document.head.appendChild(s); });
       await shareLoad;
     }
     const pages = await window.shareImage[kind](data || D, opt);
@@ -914,7 +921,7 @@ function planSheet(plans) {
     plans.map(card).join(''));
   $$('#sheetIn [data-psave]').forEach(b => b.onclick = () => {
     const x = plans[+b.dataset.psave];
-    saveShare('rooms', b, planData(x), { title: '조 편성 시안', label: x.label, file: '조편성시안_' + x.label.replace(/[^가-힣A-Za-z0-9]/g, ''), note: '아직 확정 전인 시안이에요. 최종 편성은 운영 앱에서 확인해 주세요.' }, b.dataset.fmt);
+    saveShare('rooms', b, planData(x), { title: '조 편성 시안', label: x.label, file: '조편성시안_' + x.label.replace(/[^가-힣A-Za-z0-9]/g, ''), note: '아직 확정 전인 시안이에요. 최종 편성은 관리자 앱에서 확인해 주세요.' }, b.dataset.fmt);
   });
   $$('#sheetIn [data-plan]').forEach(b => b.onclick = async () => {
     const x = plans[+b.dataset.plan];
@@ -1054,11 +1061,19 @@ V.phone = () => {
   return '<div class="search">' + ic('search') + '<input class="inp" id="cq" type="search" placeholder="학생·보호자 이름으로 찾기" value="' + esc(q) + '"></div>' +
     (q ? '<div class="sec"><div class="plist">' + (found.length ? found.map(p => '<div class="crow"><span class="av ' + gcls(p.gender) + '">' + esc(p.name.slice(-2)) + '</span><div class="mid"><div class="nm">' + esc(p.name) + (p.room ? ' <span class="tag ' + gcls(p.gender) + '">' + esc(p.room) + '조</span>' : '') + '</div><div class="ds">보호자 ' + esc(p.gname) + (p.grel ? '(' + esc(p.grel) + ')' : '') + ' ' + esc(p.gphone) + (p.phone ? '<br>학생 ' + esc(p.phone) : '') + '</div></div>' + smsBtn(p.gphone, '보호자') + callBtn(p.gphone, '보호자') + '</div>').join('') : '<div class="empty">찾는 학생이 없어요.</div>') + '</div></div>' : '') +
     '<div class="sec"><h2>비상 연락처' + (isAdmin() ? '<button class="btn small light" id="cEdit">고치기</button>' : '') + '</h2>' +
-    (D.contacts.length ? Object.keys(groups).map(g => '<h3 class="muted" style="margin:10px 2px 6px">' + esc(g) + '</h3><div class="plist">' + groups[g].map(c => '<div class="crow"><div class="mid"><div class="nm">' + esc(c.name) + (c.role ? ' <span class="muted" style="font-weight:500">' + esc(c.role) + '</span>' : '') + '</div><div class="ds">' + esc(c.phone) + (c.note ? ', ' + esc(c.note) : '') + '</div></div>' + callBtn(c.phone, c.name) + '</div>').join('') + '</div>').join('')
+    (D.contacts.length ? '<div class="plist">' + Object.keys(groups).map(g => groups[g].map(c => { const tag = c.role || c.group || ''; const grp = c.role && c.group && c.group !== c.role ? c.group : '';
+      return '<div class="crow">' + (tag ? '<span class="rbadge" style="--rc:' + roleColor(tag) + '">' + esc(tag) + '</span>' : '') + '<div class="mid"><div class="nm">' + esc(c.name) + '</div><div class="ds">' + esc(c.phone) + (grp ? ', ' + esc(grp) : '') + (c.note ? ', ' + esc(c.note) : '') + '</div></div>' + callBtn(c.phone, c.name) + '</div>'; }).join('')).join('') + '</div>'
       : '<div class="box muted">' + (isAdmin() ? '수련회 총괄, 의료 담당, 차량, 숙소 관리자 연락처를 넣어 두세요.' : '아직 등록된 비상 연락처가 없어요.') + '</div>') + '</div>' +
     '<div class="sec"><h2>조 담당 선생님</h2><div class="plist">' + (D.rooms.length ? D.rooms.map(r => '<div class="crow"><span class="av ' + gcls(r.gender) + '">' + esc(r.no) + '</span><div class="mid"><div class="nm">' + esc(r.teacher || '미정') + '</div><div class="ds">' + esc(r.no) + '조, ' + esc(r.name || '숙소 미정') + (r.tphone ? ', ' + esc(r.tphone) : '') + '</div></div>' + callBtn(r.tphone, r.teacher) + '</div>').join('') : '<div class="empty">아직 조가 없어요.</div>') + '</div></div>' +
     '<div class="sec"><h2>건강 특이사항 <small>' + health.length + '명</small></h2><div class="plist">' + (health.length ? health.map(p => '<div class="hcard" data-id="' + p.id + '"><b>' + esc(p.name) + '</b> <span class="muted">' + (p.room ? esc(p.room) + '조' : '미배정') + '</span><p>' + esc(p.health) + '</p></div>').join('') : '<div class="empty">건강 특이사항을 적은 학생이 없어요.</div>') + '</div></div>';
 };
+/** 역할 이름마다 늘 같은 색 */
+function roleColor(t) {
+  const P = ['#2F6B4F', '#3D64C2', '#BC4A74', '#B7791F', '#6B4FA8', '#0E7C86', '#C0392B', '#55606E'];
+  const fix = { '총괄': 0, '총괄 디렉터': 0, '디렉터': 0, '의료': 6, '보건': 6, '간호': 6, '차량': 1, '운전': 1, '숙소': 3, '회계': 4, '교역자': 5, '목사': 5, '전도사': 5 };
+  for (const k in fix) if (t.indexOf(k) >= 0) return P[fix[k]];
+  let h = 0; for (const ch of t) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return P[h % P.length];
+}
 function conEd(c) {
   return '<div class="ed"><input class="inp" data-f="group" placeholder="구분" value="' + esc(c.group) + '"><input class="inp two" data-f="name" placeholder="이름" value="' + esc(c.name) + '">' +
     '<input class="inp" data-f="role" placeholder="역할" value="' + esc(c.role) + '"><input class="inp two" data-f="phone" placeholder="전화번호" inputmode="tel" value="' + esc(c.phone) + '">' +
@@ -1364,7 +1379,7 @@ function teacher(id) {
     (isAdmin() ? '<h3>관리</h3><div class="acts">' +
       '<button class="btn light" id="tPaid">' + (t.paid === '예' ? '회비 미납으로 바꾸기' : '회비 입금 확인') + '</button>' +
       '<button class="btn light" id="tEdit">정보 고치기</button>' +
-      '<button class="btn light" id="tAcc">운영 앱 계정 만들기</button>' +
+      '<button class="btn light" id="tAcc">관리자 앱 계정 만들기</button>' +
       '<button class="btn light" id="tJoin">' + (t.join === '예' ? '참석 취소로 바꾸기' : '다시 참석으로 바꾸기') + '</button>' +
       '<button class="btn light" id="tDel" style="color:var(--alert)">신청 삭제</button></div>' : '');
   openSheet(html);
@@ -1385,7 +1400,7 @@ function teacher(id) {
   $('#tPaid').onclick = () => togglePay(id, 1, true);
   $('#tEdit').onclick = () => editTeacher(id);
   $('#tAcc').onclick = async () => {
-    if (!await ask(t.name + ' 선생님 운영 앱 계정을 만들까요?\n조 담당(열람만) 권한이고, 처음 PIN은 000000이에요.', '만들기')) return;
+    if (!await ask(t.name + ' 선생님 관리자 앱 계정을 만들까요?\n조 담당(열람만) 권한이고, 처음 PIN은 000000이에요.', '만들기')) return;
     await run(() => call('accSave', { name: t.name, role: 'lead' }), t.name + ' 계정을 만들었어요. 첫 PIN은 000000이에요');
   };
   $('#tJoin').onclick = async () => {
@@ -1471,9 +1486,9 @@ V.settings = () => {
     '<button class="btn block" id="rSave" style="margin-top:12px">조(숙소) 저장</button></div>' +
     '<div class="sec"><h2>계정</h2><div class="box" style="padding:0" id="accBox"><p class="muted" style="padding:14px">불러오는 중…</p></div>' +
     '<div class="box" style="margin-top:10px"><p style="font-weight:700;margin-bottom:10px">계정 추가</p><div style="display:flex;gap:8px;flex-wrap:wrap"><input class="inp" id="aName" placeholder="이름" style="flex:1;min-width:120px"><select class="inp" id="aRole" style="flex:0 0 130px"><option value="lead">조 담당</option><option value="admin">관리자</option></select></div>' +
-    '<p class="muted" style="margin:8px 0 12px">처음 PIN은 000000이고, 첫 로그인 때 본인이 새 PIN을 정해요. 조 담당은 모든 내용을 볼 수 있지만 고칠 수는 없어요.</p><button class="btn block" id="aAdd">계정 추가</button></div></div>' +
-    '<div class="sec"><h2>링크</h2><div class="box"><dl class="kv"><dt>신청 페이지</dt><dd><a href="' + APPLY_URL + '" target="_blank" rel="noopener">' + esc(APPLY_URL) + '</a></dd><dt>교사 신청</dt><dd><a href="' + TEACHER_URL + '" target="_blank" rel="noopener">' + esc(TEACHER_URL) + '</a></dd><dt>운영 앱</dt><dd>' + esc(location.href.split('#')[0]) + '</dd></dl>' +
-    '<div class="acts" style="margin-top:14px"><button class="btn light" id="cpA">신청 링크 복사</button><button class="btn light" id="cpT">교사 링크 복사</button><button class="btn light" id="cpB">운영 앱 링크 복사</button><a class="btn light" target="_blank" rel="noopener" href="https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&margin=40&data=' + encodeURIComponent(APPLY_URL) + '">신청 QR 크게 보기</a></div></div></div>' +
+    '<p class="muted" style="margin:8px 0 12px">처음 PIN은 000000이고, 첫 로그인 때 본인이 새 PIN을 정해요. 조 담당은 모든 내용을 볼 수 있지만 고칠 수는 없어요.<br><b>각 팀 팀장·총괄 디렉터·회계</b>는 교사 명단의 직책에 따라 저절로 관리자가 돼요. 계정을 따로 만들지 않아도 이름과 PIN 000000으로 처음 로그인하면 돼요.</p><button class="btn block" id="aAdd">계정 추가</button></div></div>' +
+    '<div class="sec"><h2>링크</h2><div class="box"><dl class="kv"><dt>신청 페이지</dt><dd><a href="' + APPLY_URL + '" target="_blank" rel="noopener">' + esc(APPLY_URL) + '</a></dd><dt>교사 신청</dt><dd><a href="' + TEACHER_URL + '" target="_blank" rel="noopener">' + esc(TEACHER_URL) + '</a></dd><dt>관리자 앱</dt><dd>' + esc(location.href.split('#')[0]) + '</dd></dl>' +
+    '<div class="acts" style="margin-top:14px"><button class="btn light" id="cpA">신청 링크 복사</button><button class="btn light" id="cpT">교사 링크 복사</button><button class="btn light" id="cpB">관리자 앱 링크 복사</button><a class="btn light" target="_blank" rel="noopener" href="https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&margin=40&data=' + encodeURIComponent(APPLY_URL) + '">신청 QR 크게 보기</a></div></div></div>' +
     '<div class="sec"><h2>여행자보험·개인정보</h2><div class="box danger">' +
     '<p>보험 가입할 때 <b>보험명단</b>을 내려받아 ' + esc(c.insurer || '보험사') + '에 보내 주세요. 가입을 마치면 주민등록번호를 파기해 주세요.</p>' +
     '<p class="muted" style="margin-top:6px">' + (c.purged ? '주민등록번호를 ' + esc(c.purged.slice(0, 16)) + '에 파기했어요. 그 뒤에 들어온 신청 ' + D.people.filter(p => p.hasRrn).length + '건은 아직 남아 있어요.' : '주민등록번호가 있는 신청 ' + D.people.filter(p => p.hasRrn).length + '건' + (D.teachers.some(t => t.hasRrn) ? ' (선생님 ' + D.teachers.filter(t => t.hasRrn).length + '건 별도)' : '')) + '</p>' +
@@ -1600,14 +1615,14 @@ B.settings = () => {
 function accRender(L) {
   const box = $('#accBox'); if (!box) return;
   box.innerHTML = L.map(a => '<div class="acc"><span class="nm">' + esc(a.name) + (a.name === U.name ? ' <span class="muted" style="font-weight:500">나</span>' : '') + '</span>' +
-    '<span class="tag ' + (a.role === 'admin' ? 'lamp' : 'dim') + '">' + (a.role === 'admin' ? '관리자' : '조 담당') + '</span>' + (a.locked ? '<span class="tag must">잠김</span>' : a.must ? '<span class="tag opt">첫 로그인 전</span>' : '') +
-    (a.name === U.name ? '' : '<button class="link" data-role="' + esc(a.name) + '" data-to="' + (a.role === 'admin' ? 'lead' : 'admin') + '">' + (a.role === 'admin' ? '조 담당으로' : '관리자로') + '</button><button class="link" data-reset="' + esc(a.name) + '">PIN 초기화</button><button class="link" style="color:var(--alert)" data-del="' + esc(a.name) + '">삭제</button>') + '</div>').join('');
+    '<span class="tag ' + (a.role === 'admin' ? 'lamp' : 'dim') + '">' + (a.role === 'admin' ? '관리자' : '조 담당') + '</span>' + (a.auto ? '<span class="tag dim">팀장·디렉터·회계</span>' : '') + (a.locked ? '<span class="tag must">잠김</span>' : a.must ? '<span class="tag opt">첫 로그인 전</span>' : '') +
+    (a.name === U.name ? '' : (a.auto ? '' : '<button class="link" data-role="' + esc(a.name) + '" data-to="' + (a.role === 'admin' ? 'lead' : 'admin') + '">' + (a.role === 'admin' ? '조 담당으로' : '관리자로') + '</button>') + '<button class="link" data-reset="' + esc(a.name) + '">PIN 초기화</button><button class="link" style="color:var(--alert)" data-del="' + esc(a.name) + '">삭제</button>') + '</div>').join('');
   box.querySelectorAll('[data-role]').forEach(b => b.onclick = async () => { const r = await run(() => call('accSave', { name: b.dataset.role, role: b.dataset.to }), '권한을 바꿨어요'); if (r) accRender(r); });
   box.querySelectorAll('[data-reset]').forEach(b => b.onclick = async () => { if (!await ask(b.dataset.reset + ' 선생님 PIN을 000000으로 되돌릴까요?\n잠김도 함께 풀려요.', 'PIN 초기화')) return; const r = await run(() => call('accReset', { name: b.dataset.reset }), 'PIN을 초기화했어요'); if (r) accRender(r); });
   box.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => { if (!await ask(b.dataset.del + ' 선생님 계정을 지울까요?', '삭제', true)) return; const r = await run(() => call('accDel', { name: b.dataset.del }), '계정을 지웠어요'); if (r) accRender(r); });
 }
 
-$('#reload').onclick = () => load();
+$('#reload').onclick = () => load(true);
 $('#gear').onclick = () => show('settings');
 $('#out').onclick = async () => { if (await ask('로그아웃할까요?', '로그아웃')) logout(); };
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && U && D && Date.now() - (load.t || 0) > 60000) { load.t = Date.now(); load(); } });
