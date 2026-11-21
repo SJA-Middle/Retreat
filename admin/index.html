@@ -226,7 +226,7 @@ nav.tabs button[aria-current="page"] svg { stroke: var(--night); }
 .crow:last-child { border-bottom: 0; }
 .crow .mid { flex: 1; min-width: 0; }
 .crow .nm { font-weight: 700; }
-.rbadge { flex: none; width: 84px; padding: 7px 6px; box-sizing: border-box; border-radius: 10px; background: var(--rc); color: #fff; font-size: 13px; font-weight: 800; text-align: center; line-height: 1.2; word-break: keep-all; }
+.rbadge { flex: none; width: 68px; padding: 7px 6px; box-sizing: border-box; border-radius: 10px; background: var(--rc); color: #fff; font-size: 13px; font-weight: 800; text-align: center; line-height: 1.2; word-break: keep-all; }
 .crow .ds { font-size: 13px; color: var(--sub); }
 .call { width: 44px; height: 44px; border-radius: 50%; background: var(--pine-soft); color: var(--pine); display: inline-flex; align-items: center; justify-content: center; flex: none; text-decoration: none; }
 .call.sms { background: var(--snow); color: var(--night-2); }
@@ -1061,13 +1061,13 @@ V.phone = () => {
   return '<div class="search">' + ic('search') + '<input class="inp" id="cq" type="search" placeholder="학생·보호자 이름으로 찾기" value="' + esc(q) + '"></div>' +
     (q ? '<div class="sec"><div class="plist">' + (found.length ? found.map(p => '<div class="crow"><span class="av ' + gcls(p.gender) + '">' + esc(p.name.slice(-2)) + '</span><div class="mid"><div class="nm">' + esc(p.name) + (p.room ? ' <span class="tag ' + gcls(p.gender) + '">' + esc(p.room) + '조</span>' : '') + '</div><div class="ds">보호자 ' + esc(p.gname) + (p.grel ? '(' + esc(p.grel) + ')' : '') + ' ' + esc(p.gphone) + (p.phone ? '<br>학생 ' + esc(p.phone) : '') + '</div></div>' + smsBtn(p.gphone, '보호자') + callBtn(p.gphone, '보호자') + '</div>').join('') : '<div class="empty">찾는 학생이 없어요.</div>') + '</div></div>' : '') +
     '<div class="sec"><h2>비상 연락처' + (isAdmin() ? '<button class="btn small light" id="cEdit">고치기</button>' : '') + '</h2>' +
-    (D.contacts.length ? '<div class="plist">' + Object.keys(groups).map(g => groups[g].map(c => { const tag = c.role || c.group || ''; const grp = c.role && c.group && c.group !== c.role ? c.group : '';
-      return '<div class="crow">' + (tag ? '<span class="rbadge" style="--rc:' + roleColor(tag) + '">' + esc(tag) + '</span>' : '') + '<div class="mid"><div class="nm">' + esc(c.name) + '</div><div class="ds">' + esc(c.phone) + (grp ? ', ' + esc(grp) : '') + (c.note ? ', ' + esc(c.note) : '') + '</div></div>' + callBtn(c.phone, c.name) + '</div>'; }).join('')).join('') + '</div>'
+    (D.contacts.length ? '<div class="plist">' + Object.keys(groups).map(g => groups[g].map(c => { const tag = c.group || '';
+      return '<div class="crow">' + (tag ? '<span class="rbadge" style="--rc:' + roleColor(tag) + '">' + esc(tag) + '</span>' : '') + '<div class="mid"><div class="nm">' + esc(c.name) + (c.role ? ' <span class="muted" style="font-weight:500">' + esc(c.role) + '</span>' : '') + '</div><div class="ds">' + esc(c.phone) + (c.note ? ', ' + esc(c.note) : '') + '</div></div>' + callBtn(c.phone, c.name) + '</div>'; }).join('')).join('') + '</div>'
       : '<div class="box muted">' + (isAdmin() ? '수련회 총괄, 의료 담당, 차량, 숙소 관리자 연락처를 넣어 두세요.' : '아직 등록된 비상 연락처가 없어요.') + '</div>') + '</div>' +
     '<div class="sec"><h2>조 담당 선생님</h2><div class="plist">' + (D.rooms.length ? D.rooms.map(r => '<div class="crow"><span class="av ' + gcls(r.gender) + '">' + esc(r.no) + '</span><div class="mid"><div class="nm">' + esc(r.teacher || '미정') + '</div><div class="ds">' + esc(r.no) + '조, ' + esc(r.name || '숙소 미정') + (r.tphone ? ', ' + esc(r.tphone) : '') + '</div></div>' + callBtn(r.tphone, r.teacher) + '</div>').join('') : '<div class="empty">아직 조가 없어요.</div>') + '</div></div>' +
     '<div class="sec"><h2>건강 특이사항 <small>' + health.length + '명</small></h2><div class="plist">' + (health.length ? health.map(p => '<div class="hcard" data-id="' + p.id + '"><b>' + esc(p.name) + '</b> <span class="muted">' + (p.room ? esc(p.room) + '조' : '미배정') + '</span><p>' + esc(p.health) + '</p></div>').join('') : '<div class="empty">건강 특이사항을 적은 학생이 없어요.</div>') + '</div></div>';
 };
-/** 역할 이름마다 늘 같은 색 */
+/** 구분 이름마다 늘 같은 색 */
 function roleColor(t) {
   const P = ['#2F6B4F', '#3D64C2', '#BC4A74', '#B7791F', '#6B4FA8', '#0E7C86', '#C0392B', '#55606E'];
   const fix = { '총괄': 0, '총괄 디렉터': 0, '디렉터': 0, '의료': 6, '보건': 6, '간호': 6, '차량': 1, '운전': 1, '숙소': 3, '회계': 4, '교역자': 5, '목사': 5, '전도사': 5 };
